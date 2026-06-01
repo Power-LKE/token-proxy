@@ -36,10 +36,12 @@ class UserManager:
             print(f"[Init] Created admin user, API Key: {admin_key}")
 
     def _save(self):
-    raw = [u.model_dump() for u in self._users.values()]
-    os.makedirs(os.path.dirname(self.data_path), exist_ok=True)
-    with open(self.data_path, "w", encoding="utf-8") as f:
-        json.dump(raw, f, ensure_ascii=False, indent=2)
+        raw = [u.model_dump() for u in self._users.values()]
+        os.makedirs(os.path.dirname(self.data_path), exist_ok=True)
+        with open(self.data_path, "w", encoding="utf-8") as f:
+            json.dump(raw, f, ensure_ascii=False, indent=2)
+
+    def _generate_key(self, prefix: str = "sk") -> str:
     def _generate_key(self, prefix: str = "sk") -> str:
         return f"{prefix}-{uuid.uuid4().hex}"
 
