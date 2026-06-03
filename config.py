@@ -8,6 +8,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# 设置上游 API Key（会覆盖 .env 文件中的值，但不覆盖已存在的系统环境变量）
+os.environ.setdefault("DEEPSEEK_API_KEY", "sk-1d8fc48c02e34404998c933534fd8d04")
+
 
 @dataclass
 class UpstreamProvider:
@@ -42,5 +45,5 @@ HOST = os.getenv("PROXY_HOST", "0.0.0.0")
 PORT = int(os.getenv("PROXY_PORT", "8000"))
 SERVICE_NAME = os.getenv("SERVICE_NAME", "TokenProxy")
 DEFAULT_BALANCE = float(os.getenv("DEFAULT_BALANCE", "1.0"))
-USER_DATA_PATH = os.getenv("USER_DATA_PATH", "data/users.json")
+USER_DATA_PATH = os.getenv("USER_DATA_PATH", "/tmp/users.json")
 MARKUP = float(os.getenv("MARKUP", "1.3"))
