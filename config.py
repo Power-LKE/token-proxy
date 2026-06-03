@@ -8,9 +8,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# 设置上游 API Key（会覆盖 .env 文件中的值，但不覆盖已存在的系统环境变量）
-os.environ.setdefault("DEEPSEEK_API_KEY", "sk-1d8fc48c02e34404998c933534fd8d04")
-
 
 @dataclass
 class UpstreamProvider:
