@@ -42,7 +42,6 @@ class UserManager:
             json.dump(raw, f, ensure_ascii=False, indent=2)
 
     def _generate_key(self, prefix: str = "sk") -> str:
-    def _generate_key(self, prefix: str = "sk") -> str:
         return f"{prefix}-{uuid.uuid4().hex}"
 
     def authenticate(self, api_key: str) -> Optional[UserInfo]:
