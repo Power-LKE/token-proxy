@@ -105,7 +105,7 @@ async def chat_completions(request: Request, body: ChatCompletionRequest):
 
 # === 管理后台 API ===
 
-@router.post("/v1/admin/verify", summary="管理员验证", tags=["管理"])
+@router.api_route("/v1/admin/verify", methods=["GET", "POST"], summary="?????", tags=["??"])
 async def admin_verify(request: Request):
     api_key = _get_api_key(request)
     if not api_key or not user_manager.is_admin_key(api_key):
