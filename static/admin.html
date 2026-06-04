@@ -3,28 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TokenProxy ????</title>
+<title>TokenProxy 管理后台</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 body{background:#0f0f1a;color:#e0e0e0;min-height:100vh}
 #loginBg{align-items:center;background:#0f0f1a;display:flex;height:100vh;justify-content:center;left:0;position:fixed;top:0;width:100vw;z-index:999}
-.login-box{background:#1a1a2e;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);padding:40px;text-align:center;width:420px;max-width:90vw}
+.login-box{background:#1a1a2e;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);padding:40px;text-align:center;width:380px;max-width:90vw}
 .login-box h1{color:#fff;font-size:22px;margin-bottom:4px}
-.login-box p{color:#888;font-size:13px;margin-bottom:16px}
-.key-display{background:#252540;border:1px solid #333;border-radius:8px;padding:10px 14px;margin-bottom:16px;text-align:left;display:none}
-.key-display .label{color:#888;font-size:11px;margin-bottom:4px}
-.key-display .key-row{display:flex;align-items:center;gap:8px}
-.key-display .key-value{color:#a5b4fc;font-family:monospace;font-size:13px;word-break:break-all;flex:1}
-.key-display .copy-btn{background:#4f46e5;border:none;border-radius:4px;color:#fff;cursor:pointer;font-size:11px;padding:4px 10px;white-space:nowrap}
-.key-display .copy-btn:hover{background:#4338ca}
-.login-box input{background:#252540;border:1px solid #333;border-radius:8px;color:#fff;font-size:14px;margin-bottom:12px;outline:none;padding:12px 16px;width:100%;box-sizing:border-box}
+.login-box p{color:#888;font-size:13px;margin-bottom:24px}
+.login-box .login-hint{color:#666;font-size:11px;margin-bottom:24px;line-height:1.6}
+.login-box .login-hint code{color:#a5b4fc;background:#252540;padding:1px 5px;border-radius:3px}
+.login-box input{background:#252540;border:1px solid #333;border-radius:8px;color:#fff;font-size:14px;margin-bottom:16px;outline:none;padding:12px 16px;width:100%;box-sizing:border-box}
 .login-box input:focus{border-color:#4f46e5}
 .login-box button{background:#4f46e5;border:none;border-radius:8px;color:#fff;cursor:pointer;font-size:15px;padding:12px;width:100%}
 .login-box button:hover{background:#4338ca}
-.login-box button:disabled{opacity:.5;cursor:not-allowed}
 .login-box .login-msg{background:rgba(239,68,68,.15);border:1px solid #ef4444;border-radius:6px;color:#fca5a5;font-size:13px;margin-top:12px;padding:8px;display:none}
-.loading-dots:after{content:".";animation:dots 1.5s steps(3) infinite}
-@keyframes dots{0%{content:"."}33%{content:".."}66%{content:"..."}}
 #dash{display:none}
 .sidebar{background:#14142a;border-right:1px solid #1e1e3a;height:100vh;left:0;padding:24px;position:fixed;top:0;width:220px}
 .sidebar h2{color:#fff;font-size:16px;margin-bottom:4px}
@@ -66,20 +59,14 @@ td{border-bottom:1px solid #1e1e3a;color:#c0c0c0;padding:12px 14px}
 
 <div id="loginBg">
 <div class="login-box">
-<h1>TokenProxy ????</h1>
-<p>?????? API Key ??</p>
-
-<!-- Auto-fetched admin key display -->
-<div class="key-display" id="keyDisplay">
-<div class="label">????? Key??????</div>
-<div class="key-row">
-  <span class="key-value" id="fetchedAdminKey">???...</span>
-  <button class="copy-btn" onclick="copyAdminKey()">?? Key</button>
+<h1>TokenProxy 管理后台</h1>
+<p>请使用管理员 API Key 登录</p>
+<div class="login-hint">
+提示：Key 在 Render 日志中 (查看 [Init] Created admin user)<br>
+或在 Render Dashboard 设置 <code>ADMIN_API_KEY</code> 环境变量
 </div>
-</div>
-
-<input type="password" id="loginKey" placeholder="???? Key ?????..." autocomplete="off" />
-<button id="loginBtn">? ?</button>
+<input type="password" id="loginKey" placeholder="输入管理员 API Key..." autocomplete="off" />
+<button id="loginBtn">登 录</button>
 <div class="login-msg" id="loginMsg"></div>
 </div>
 </div>
@@ -87,58 +74,58 @@ td{border-bottom:1px solid #1e1e3a;color:#c0c0c0;padding:12px 14px}
 <div id="dash">
 <div class="sidebar">
 <h2>TokenProxy</h2>
-<div class="sub">????</div>
-<a id="navOverview" class="active" onclick="showPage('overview')">??</a>
-<a id="navUsers" onclick="showPage('users')">????</a>
-<a id="navCreate" onclick="showPage('create')">????</a>
-<a id="navSettings" onclick="showPage('settings')">??</a>
+<div class="sub">管理中心</div>
+<a id="navOverview" class="active" onclick="showPage('overview')">概览</a>
+<a id="navUsers" onclick="showPage('users')">用户管理</a>
+<a id="navCreate" onclick="showPage('create')">创建用户</a>
+<a id="navSettings" onclick="showPage('settings')">设置</a>
 </div>
 
 <div class="main">
 <div class="page active" id="pageOverview">
-<h2 style="font-size:20px;margin-bottom:20px">????</h2>
+<h2 style="font-size:20px;margin-bottom:20px">服务概览</h2>
 <div class="stats">
-<div class="stat-card"><div class="l">???</div><div class="v" id="statUsers">-</div></div>
-<div class="stat-card"><div class="l">???</div><div class="v" id="statBalance">- ?</div></div>
-<div class="stat-card"><div class="l">????</div><div class="v" id="statStatus">???...</div></div>
+<div class="stat-card"><div class="l">用户数</div><div class="v" id="statUsers">-</div></div>
+<div class="stat-card"><div class="l">总余额</div><div class="v" id="statBalance">- 元</div></div>
+<div class="stat-card"><div class="l">服务状态</div><div class="v" id="statStatus">检查中...</div></div>
 </div>
 </div>
 
 <div class="page" id="pageUsers">
-<h2 style="font-size:20px;margin-bottom:16px">????</h2>
-<input type="text" class="inp" id="searchInput" placeholder="?????? Key..." style="max-width:300px;margin-bottom:12px" />
+<h2 style="font-size:20px;margin-bottom:16px">用户管理</h2>
+<input type="text" class="inp" id="searchInput" placeholder="搜索用户名或 Key..." style="max-width:300px;margin-bottom:12px" />
 <div id="userList"></div>
 </div>
 
 <div class="page" id="pageCreate">
-<h2 style="font-size:20px;margin-bottom:16px">????</h2>
+<h2 style="font-size:20px;margin-bottom:16px">创建用户</h2>
 <div class="card">
 <div class="row">
-<div><label>???</label><input type="text" class="inp" id="newName" placeholder="?????" /></div>
-<div><label>???????</label><input type="number" class="inp" id="newBal" value="1.0" step="0.1" /></div>
+<div><label>用户名</label><input type="text" class="inp" id="newName" placeholder="例如：张三" /></div>
+<div><label>初始余额（元）</label><input type="number" class="inp" id="newBal" value="1.0" step="0.1" /></div>
 </div>
-<button class="btn btn-success" id="createBtn">????</button>
+<button class="btn btn-success" id="createBtn">创建用户</button>
 <div class="msg" id="createMsg"></div>
 </div>
 </div>
 
 <div class="page" id="pageSettings">
-<h2 style="font-size:20px;margin-bottom:16px">??</h2>
+<h2 style="font-size:20px;margin-bottom:16px">设置</h2>
 <div class="card">
-<h3>?????</h3>
-<p>????? API Key?</p>
+<h3>管理员信息</h3>
+<p>你的管理员 API Key：</p>
 <div style="background:#252540;border-radius:6px;display:flex;padding:10px 14px;font-family:monospace;font-size:13px">
 <span id="adminKeyDisplay" style="color:#a5b4fc;flex:1;word-break:break-all">-</span>
-<button class="btn" onclick="copyText(adminKeyDisplay.textContent)" style="margin-left:8px;padding:4px 10px;font-size:11px">??</button>
+<button class="btn" onclick="copyText(adminKeyDisplay.textContent)" style="margin-left:8px;padding:4px 10px;font-size:11px">复制</button>
 </div>
 </div>
 <div class="card">
-<h3>????</h3>
+<h3>充值操作</h3>
 <div class="row">
-<div><label>?? API Key</label><input type="text" class="inp" id="topKey" placeholder="???? API Key" /></div>
-<div><label>???????</label><input type="number" class="inp" id="topAmt" value="10" step="1" /></div>
+<div><label>用户 API Key</label><input type="text" class="inp" id="topKey" placeholder="输入用户 API Key" /></div>
+<div><label>充值金额（元）</label><input type="number" class="inp" id="topAmt" value="10" step="1" /></div>
 </div>
-<button class="btn btn-primary" id="topBtn">??</button>
+<button class="btn btn-primary" id="topBtn">充值</button>
 <div class="msg" id="topMsg"></div>
 </div>
 </div>
@@ -157,45 +144,12 @@ function api(path, method, body) {
     return fetch(window.location.origin + path, opts).then(function(r){ return r.json(); });
 }
 
-// Auto-fetch admin key on page load
-function fetchAdminKey() {
-    fetch(window.location.origin + "/v1/admin/init", {cache: "no-cache"})
-        .then(function(r){ return r.json(); })
-        .then(function(d){
-            if (d.admin_key) {
-                $("fetchedAdminKey").textContent = d.admin_key;
-                $("loginKey").placeholder = "???? Key ?????...";
-                $("keyDisplay").style.display = "block";
-            } else {
-                $("fetchedAdminKey").textContent = "???????? Render ??";
-            }
-        })
-        .catch(function(e){
-            $("fetchedAdminKey").textContent = "????: " + e.message;
-        });
-}
-fetchAdminKey();
-
-function copyAdminKey() {
-    var key = $("fetchedAdminKey").textContent;
-    if (key && key.indexOf("????") === -1) {
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(key);
-        }
-        showToast("?????? Key");
-        // Auto-fill into input
-        $("loginKey").value = key;
-    }
-}
-
 // Login
 $("loginBtn").onclick = function() {
     var key = $("loginKey").value.trim();
     var msg = $("loginMsg");
-    if (!key) { msg.textContent = "?????? API Key"; msg.style.display = "block"; return; }
+    if (!key) { msg.textContent = "请输入管理员 API Key"; msg.style.display = "block"; return; }
     ADMIN_KEY = key;
-    $("loginBtn").disabled = true;
-    $("loginBtn").textContent = "???...";
     api("/v1/admin/verify", "POST").then(function(d){
         if (d.status === "ok") {
             $("loginBg").style.display = "none";
@@ -203,27 +157,27 @@ $("loginBtn").onclick = function() {
             $("adminKeyDisplay").textContent = key;
             loadOverview();
         } else {
-            msg.textContent = d.error || "????";
+            msg.textContent = d.error || "验证失败";
             msg.style.display = "block";
-            $("loginBtn").disabled = false;
-            $("loginBtn").textContent = "? ?";
         }
     }).catch(function(e){
-        msg.textContent = "????: " + e.message;
+        msg.textContent = "网络错误：" + e.message;
         msg.style.display = "block";
-        $("loginBtn").disabled = false;
-        $("loginBtn").textContent = "? ?";
     });
 };
 $("loginKey").onkeydown = function(e) { if (e.key === "Enter") $("loginBtn").click(); };
 
 // Navigation
 function showPage(name) {
-    ["navOverview","navUsers","navCreate","navSettings"].forEach(function(id){ $(id).classList.remove("active"); });
-    if (name === "overview") $("navOverview").classList.add("active");
-    if (name === "users") $("navUsers").classList.add("active");
-    if (name === "create") $("navCreate").classList.add("active");
-    if (name === "settings") $("navSettings").classList.add("active");
+    document.querySelectorAll(".sidebar a").forEach(function(a){ a.classList.remove("active"); });
+    document.getElementById("navOverview").classList.remove("active");
+    document.getElementById("navUsers").classList.remove("active");
+    document.getElementById("navCreate").classList.remove("active");
+    document.getElementById("navSettings").classList.remove("active");
+    if (name === "overview") document.getElementById("navOverview").classList.add("active");
+    if (name === "users") document.getElementById("navUsers").classList.add("active");
+    if (name === "create") document.getElementById("navCreate").classList.add("active");
+    if (name === "settings") document.getElementById("navSettings").classList.add("active");
     document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
     $("page" + name.charAt(0).toUpperCase() + name.slice(1)).classList.add("active");
     if (name === "overview") loadOverview();
@@ -234,11 +188,11 @@ function showPage(name) {
 function loadOverview() {
     api("/v1/admin/verify", "POST").then(function(d){
         $("statUsers").textContent = d.user_count;
-        $("statBalance").textContent = d.total_balance.toFixed(2) + " ?";
-        $("statStatus").textContent = "??";
+        $("statBalance").textContent = d.total_balance.toFixed(2) + " 元";
+        $("statStatus").textContent = "正常";
         $("statStatus").style.color = "#4ade80";
     }).catch(function(e){
-        $("statStatus").textContent = "????";
+        $("statStatus").textContent = "连接失败";
         $("statStatus").style.color = "#f87171";
     });
 }
@@ -254,21 +208,21 @@ function renderUsers() {
     var q = $("searchInput").value || "";
     var filtered = q ? allUsers.filter(function(u){ return u.name.indexOf(q) !== -1 || u.api_key.indexOf(q) !== -1; }) : allUsers;
     if (filtered.length === 0) {
-        $("userList").innerHTML = '<p style="color:#888;text-align:center;padding:20px">????</p>';
+        $("userList").innerHTML = '<p style="color:#888;text-align:center;padding:20px">暂无用户</p>';
         return;
     }
-    var h = "<table><thead><tr><th>???</th><th>API Key</th><th>??</th><th>??</th><th>????</th><th>??</th></tr></thead><tbody>";
+    var h = "<table><thead><tr><th>用户名</th><th>API Key</th><th>余额</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead><tbody>";
     for (var i = 0; i < filtered.length; i++) {
         var u = filtered[i];
-        var badge = u.is_active ? '<span class="badge on">??</span>' : '<span class="badge off">??</span>';
+        var badge = u.is_active ? '<span class="badge on">启用</span>' : '<span class="badge off">禁用</span>';
         h += "<tr><td>" + u.name + "</td>";
-        h += '<td class="key-cell">' + u.api_key.substring(0,20) + '... <button class="btn" style="padding:2px 6px;font-size:11px" onclick="copyKey(' + "'" + u.api_key + "'" + ')">??</button></td>';
-        h += "<td>" + u.balance.toFixed(2) + " ?</td>";
+        h += '<td class="key-cell">' + u.api_key.substring(0,20) + '... <button class="btn" style="padding:2px 6px;font-size:11px" onclick="copyKey(\' + u.api_key + \')">复制</button></td>';
+        h += "<td>" + u.balance.toFixed(2) + " 元</td>";
         h += "<td>" + badge + "</td>";
         h += '<td style="font-size:12px;color:#666">' + (u.created_at||"-").substring(0,10) + "</td>";
-        var toggTxt = u.is_active ? "??" : "??";
+        var toggTxt = u.is_active ? "禁用" : "启用";
         var toggCls = u.is_active ? "btn-warning" : "btn-success";
-        h += '<td><button class="btn ' + toggCls + '" style="padding:4px 10px;font-size:12px" onclick="togUser(' + "'" + u.api_key + "'" + ')">' + toggTxt + "</button></td>";
+        h += '<td><button class="btn ' + toggCls + '" style="padding:4px 10px;font-size:12px" onclick="togUser(\' + u.api_key + \')">' + toggTxt + "</button></td>";
         h += "</tr>";
     }
     h += "</tbody></table>";
@@ -278,7 +232,7 @@ $("searchInput").onkeyup = function(){ renderUsers(); };
 
 function copyKey(k) {
     if (navigator.clipboard) navigator.clipboard.writeText(k);
-    showToast("???");
+    showToast("已复制");
 }
 
 function showToast(msg) {
@@ -300,18 +254,18 @@ $("createBtn").onclick = function() {
     var name = $("newName").value.trim();
     var bal = parseFloat($("newBal").value) || 1.0;
     var msg = $("createMsg");
-    if (!name) { msg.textContent = "??????"; msg.className = "msg err"; msg.style.display = "block"; return; }
+    if (!name) { msg.textContent = "请输入用户名"; msg.className = "msg err"; msg.style.display = "block"; return; }
     api("/v1/admin/users", "POST", {name: name, balance: bal}).then(function(d){
         if (d.api_key) {
-            msg.innerHTML = '?? <b>' + d.name + '</b> ?????<br>API Key: <code style="color:#a5b4fc">' + d.api_key + "</code>";
+            msg.innerHTML = '用户 <b>' + d.name + '</b> 创建成功！<br>API Key: <code style="color:#a5b4fc">' + d.api_key + "</code>";
             msg.className = "msg"; msg.style.display = "block";
             $("newName").value = "";
             loadOverview(); loadUsers();
         } else {
-            msg.textContent = d.error || "????";
+            msg.textContent = d.error || "创建失败";
             msg.className = "msg err"; msg.style.display = "block";
         }
-    }).catch(function(e){ msg.textContent = "????: " + e.message; msg.className = "msg err"; msg.style.display = "block"; });
+    }).catch(function(e){ msg.textContent = "网络错误：" + e.message; msg.className = "msg err"; msg.style.display = "block"; });
 };
 
 // Topup
@@ -319,19 +273,19 @@ $("topBtn").onclick = function() {
     var key = $("topKey").value.trim();
     var amt = parseFloat($("topAmt").value) || 0;
     var msg = $("topMsg");
-    if (!key) { msg.textContent = "????? API Key"; msg.className = "msg err"; msg.style.display = "block"; return; }
-    if (amt <= 0) { msg.textContent = "???????? 0"; msg.className = "msg err"; msg.style.display = "block"; return; }
+    if (!key) { msg.textContent = "请输入用户 API Key"; msg.className = "msg err"; msg.style.display = "block"; return; }
+    if (amt <= 0) { msg.textContent = "充值金额必须大于 0"; msg.className = "msg err"; msg.style.display = "block"; return; }
     api("/v1/admin/users/topup", "POST", {api_key: key, amount: amt}).then(function(d){
         if (d.balance !== undefined) {
-            msg.innerHTML = '?????<b>' + d.name + '</b> ?????<b>' + d.balance.toFixed(2) + '</b> ?';
+            msg.innerHTML = '充值成功！<b>' + d.name + "</b> 当前余额：<b>" + d.balance.toFixed(2) + "</b> 元";
             msg.className = "msg"; msg.style.display = "block";
             $("topKey").value = "";
             loadOverview(); loadUsers();
         } else {
-            msg.textContent = d.error || "????";
+            msg.textContent = d.error || "充值失败";
             msg.className = "msg err"; msg.style.display = "block";
         }
-    }).catch(function(e){ msg.textContent = "????: " + e.message; msg.className = "msg err"; msg.style.display = "block"; });
+    }).catch(function(e){ msg.textContent = "网络错误：" + e.message; msg.className = "msg err"; msg.style.display = "block"; });
 };
 </script>
 </body>
