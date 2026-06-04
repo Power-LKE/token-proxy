@@ -1,93 +1,90 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang=zh-CN>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TokenProxy 管理后台</title>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width,initial-scale=1.0">
+<title>TokenProxy Management</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 body{background:#f0f2f5;color:#333}
-nav{background:#1a1a2e;color:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
-nav h1{font-size:18px}
+nav{background:#1a1a2e;color:#fff;padding:16px 24px}
+nav h1{font-size:18px;display:inline}
+nav span{float:right;font-size:13px;color:#aaa}
 main{max-width:960px;margin:0 auto;padding:24px}
-.card{background:#fff;border-radius:8px;padding:24px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.card{background:#fff;border-radius:8px;padding:24px;margin-bottom:20px}
 .card h2{font-size:16px;margin-bottom:16px;color:#1a1a2e}
-.form-row{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-.form-row input{flex:1;min-width:150px;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px}
-.btn{padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-size:14px}
-.btn-primary{background:#1a1a2e;color:#fff}
-.btn-primary:hover{background:#16213e}
+.row{display:flex;gap:12px;margin-bottom:12px}
+.row input{flex:1;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px}
+.btn{padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-size:14px;background:#1a1a2e;color:#fff}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee}
 th{color:#666;font-weight:500;font-size:12px}
-.msg{padding:12px;border-radius:6px;margin-bottom:12px;display:none}
-.success{background:#d4edda;color:#155724;display:block}
-.error{background:#f8d7da;color:#721c24;display:block}
-.badge{padding:2px 10px;border-radius:10px;font-size:11px}
-.bg-green{background:#d4edda;color:#155724}
-.bg-red{background:#f8d7da;color:#721c24}
-.hidden{display:none}
+.msg{display:none;padding:12px;border-radius:6px;margin-bottom:12px}
+.green{background:#d4edda;color:#155724}.red{background:#f8d7da;color:#721c24}
+.bg-green{background:#d4edda;color:#155724}.bg-red{background:#f8d7da;color:#721c24}
+.hide{display:none}
+.cp{background:none;border:1px solid #ccc;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;margin-left:4px}
 </style>
 </head>
 <body>
-<nav><h1>TokenProxy AI API</h1><span id=navStatus style="font-size:13px;color:#aaa">未登录</span></nav>
+<nav><h1>TokenProxy</h1><span id=navS>not logged in</span></nav>
 <main>
-<div id=loginCard class="card" style="text-align:center;padding:60px 40px;max-width:500px;margin:60px auto">
-  <h2>登录</h2>
-  <input type=password id=adminKeyInput placeholder="admin-xxxxxxxx..." style="width:100%;padding:12px;margin:12px 0;font-size:14px;text-align:center">
-  <button class="btn btn-primary" onclick=login() style="width:100%;padding:12px">登录</button>
+<div id=login class=card style="max-width:400px;margin:60px auto;text-align:center;padding:40px">
+  <h2>Login</h2>
+  <input type=password id=keyIn placeholder="admin key" style="width:100%;padding:12px;margin:12px 0;text-align:center">
+  <button id=loginBtn class=btn style="width:100%">Login</button>
 </div>
-<div id=appContent class=hidden>
-  <div class=card><h2>统计</h2><div id=stats style="font-size:14px;color:#666">...</div></div>
+<div id=app class=hide>
+  <div class=card><h2>Users</h2><div id=stats></div></div>
   <div class=card>
-    <h2>创建用户</h2>
+    <h2>Create User</h2>
     <div id=createMsg class=msg></div>
-    <div class=form-row>
-      <input type=text id=userName placeholder="用户名称">
-      <input type=number id=userBalance placeholder="充值金额" value=10 step=0.01>
-      <button class="btn btn-primary" onclick=createUser()>创建</button>
+    <div class=row>
+      <input type=text id=nameIn placeholder=name>
+      <input type=number id=balIn placeholder=balance value=10>
+      <button id=createBtn class=btn>Create</button>
     </div>
   </div>
   <div class=card>
-    <h2>用户列表</h2>
-    <table><thead><tr><th>名称</th><th>Key</th><th>余额</th><th>状态</th></tr></thead><tbody id=userTable></tbody></table>
+    <table><thead><tr><th>Name</th><th>Key</th><th>Balance</th><th>Status</th></tr></thead><tbody id=userList></tbody></table>
   </div>
 </div>
 </main>
 <script>
-var API=window.location.origin,adminKey=null;
-function login(){
-  var v=document.getElementById("adminKeyInput").value.trim();
+var API=window.location.origin,key="";
+document.getElementById("loginBtn").onclick=function(){
+  var v=document.getElementById("keyIn").value.trim();
   if(!v)return;
   fetch(API+"/v1/balance",{headers:{"Authorization":"Bearer "+v}}).then(function(r){return r.json()}).then(function(d){
     if(d.name){
-      adminKey=v;
-      document.getElementById("loginCard").style.display="none";
-      document.getElementById("appContent").className="";
-      document.getElementById("navStatus").textContent=d.name+" ("+d.balance+"\u5143)";
-      loadUsers();
-    }else{alert("Key\u65e0\u6548")}
-  }).catch(function(){alert("Key\u65e0\u6548")});
-}
-function msg(e,t,c){e.textContent=t;e.className="msg "+c;setTimeout(function(){e.className="msg"},3000)}
-function createUser(){
-  var n=document.getElementById("userName").value.trim(),b=parseFloat(document.getElementById("userBalance").value)||10;
-  if(!n){alert("\u8bf7\u8f93\u5165\u7528\u6237\u540d\u79f0");return}
+      key=v;
+      document.getElementById("login").className="hide";
+      document.getElementById("app").className="";
+      document.getElementById("navS").textContent=d.name+" $"+d.balance;
+      load();
+    }else alert("Invalid key");
+  }).catch(function(){alert("Request failed")});
+};
+function msg(el,t,c){el.textContent=t;el.className="msg "+c;setTimeout(function(){el.className="msg"},3000)}
+document.getElementById("createBtn").onclick=function(){
+  if(!key)return;
+  var n=document.getElementById("nameIn").value.trim(),b=parseFloat(document.getElementById("balIn").value)||10;
+  if(!n){alert("Enter name");return}
   var el=document.getElementById("createMsg");
-  fetch(API+"/v1/admin/users",{method:"POST",headers:{"Authorization":"Bearer "+adminKey,"Content-Type":"application/json"},body:JSON.stringify({name:n,balance:b})}).then(function(r){return r.json()}).then(function(d){
-    if(d.api_key){msg(el,"OK Key: "+d.api_key,"success");document.getElementById("userName").value="";loadUsers()}
-    else{msg(el,d.error||"\u5931\u8d25","error")}
-  }).catch(function(){msg(el,"\u8bf7\u6c42\u5931\u8d25","error")});
-}
-function loadUsers(){
-  fetch(API+"/v1/admin/users",{headers:{"Authorization":"Bearer "+adminKey}}).then(function(r){return r.json()}).then(function(d){
-    var users=d.users||[],total=0,html="";
-    for(var i=0;i<users.length;i++){
-      var u=users[i];total+=u.balance;
-      html+="<tr><td>"+u.name+"</td><td style=\"font-family:monospace;font-size:12px\">"+u.api_key.substr(0,16)+"...</td><td>"+u.balance.toFixed(2)+"</td><td><span class=\"badge "+(u.is_active?"bg-green":"bg-red")+"\">"+(u.is_active?"\u6b63\u5e38":"\u7981\u7528")+"</span></td></tr>";
+  fetch(API+"/v1/admin/users",{method:"POST",headers:{"Authorization":"Bearer "+key,"Content-Type":"application/json"},body:JSON.stringify({name:n,balance:b})}).then(function(r){return r.json()}).then(function(d){
+    if(d.api_key){msg(el,"OK: "+d.api_key,"green");document.getElementById("nameIn").value="";load()}
+    else msg(el,d.error||"Error","red");
+  }).catch(function(){msg(el,"Network error","red")});
+};
+function load(){
+  fetch(API+"/v1/admin/users",{headers:{"Authorization":"Bearer "+key}}).then(function(r){return r.json()}).then(function(d){
+    var users=d.users||[],total=0,h="",i,u;
+    for(i=0;i<users.length;i++){
+      u=users[i];total+=u.balance;
+      h+="<tr><td>"+u.name+"</td><td style=font-family:monospace;font-size:12px>"+u.api_key.substr(0,16)+'...<button class=cp onclick="navigator.clipboard.writeText(\''+u.api_key+'\')">copy</button></td><td>'+u.balance.toFixed(2)+"</td><td><span class="+(u.is_active?"bg-green":"bg-red")+">"+(u.is_active?"active":"disabled")+"</span></td></tr>";
     }
-    document.getElementById("userTable").innerHTML=html;
-    document.getElementById("stats").textContent="\u7528\u6237: "+users.length+" | \u603b\u4f59\u989d: "+total.toFixed(2);
+    document.getElementById("userList").innerHTML=h;
+    document.getElementById("stats").textContent="Total users: "+users.length+" | Total balance: $"+total.toFixed(2);
   });
 }
 </script>
