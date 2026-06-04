@@ -3,7 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TokenProxy Management</title>
+<title>TokenProxy 管理后台</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+body{background:#f0f2f5;color:#333}
+nav{background:#1a1a2e;color:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
+nav h1{font-size:18px}
+main{max-width:960px;margin:0 auto;padding:24px}
+.card{background:#fff;border-radius:8px;padding:24px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.card h2{font-size:16px;margin-bottom:16px;color:#1a1a2e}
+.form-row{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.form-row input{flex:1;min-width:150px;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px}
+.btn{padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-size:14px}
+.btn-primary{background:#1a1a2e;color:#fff}
+.btn-primary:hover{background:#16213e}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee}
+th{color:#666;font-weight:500;font-size:12px}
+.msg{padding:12px;border-radius:6px;margin-bottom:12px;display:none}
+.msg.success{background:#d4edda;color:#155724;display:block}
+.msg.error{background:#f8d7da;color:#721c24;display:block}
+.badge{padding:2px 10px;border-radius:10px;font-size:11px}
+.bg-green{background:#d4edda;color:#155724}
+.bg-red{background:#f8d7da;color:#721c24}
+.copy-btn{background:none;border:1px solid #ccc;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer}
+.copy-btn:hover{background:#eee}
+.hidden{display:none}
+.login-box{text-align:center;padding:60px 40px;max-width:500px;margin:60px auto}
+.login-box input{width:100%;padding:12px;border:1px solid #ddd;border-radius:6px;font-size:14px;margin:12px 0;text-align:center}
+</style>
 </head>
-<body><h1>Hello</h1></body>
+<body>
+<nav><h1>TokenProxy AI API</h1><span id="navStatus" style="font-size:13px;color:#aaa">未登录</span></nav>
+<main>
+<div id="loginCard" class="card login-box">
+  <h2>登录</h2>
+  <p style="color:#888;font-size:13px;margin-bottom:12px">请输入管理员 Key 登录</p>
+  <input type="password" id="adminKeyInput" placeholder="admin-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+  <button class="btn btn-primary" onclick="login()" style="width:100%;max-width:400px;padding:12px">登录</button>
+</div>
+<div id="appContent" class="hidden">
+  <div class="card">
+    <h2>统计</h2>
+    <div id="stats" style="font-size:14px;color:#666">加载中...</div>
+  </div>
+  <div class="card">
+    <h2>创建用户</h2>
+    <div id="createMsg" class="msg"></div>
+    <div class="form-row">
+      <input type="text" id="userName" placeholder="用户名称" />
+      <input type="number" id="userBalance" placeholder="充值金额" value="10" step="0.01" />
+      <button class="btn btn-primary" onclick="createUser()">创建</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>用户列表</h2>
+    <table><thead><tr><th>名称</th><th>API Key</th><th>余额</th><th>状态</th></tr></thead><tbody id="userTable"></tbody></table>
+  </div>
+</div>
+</main>
+<script>
+let API = window.location.origin;
+let adminKey = "";
+function login(){
+  adminKey=document.getElementById("adminKeyInput").value.trim();
+  if(!adminKey) return;
+  fetch(API+"/v1/balance",{headers:{"Authorization":"Bearer "+adminKey}})
+    .then(r=>r.json()).then(d=>{
+      if(d.name){
+        document.getElementById("loginCard").style.display="none";
+        document.getElementById("appContent").classList.remove("hidden");
+        document.getElementById("navStatus").textContent=d.name+" ("+d.balance+"元)";
+        loadUsers();
+      } else alert("Key无效");
+    }).catch(()=>alert("Key无效"));
+}
+function msg(el,t,type){el.textContent=t;el.className="msg "+type;setTimeout(()=>el.className="msg",3000)}
+function createUser(){
+  let n=document.getElementById("userName").value.trim(),b=parseFloat(document.getElementById("userBalance").value)||10;
+  if(!n){alert("请输入用户名称");return}
+  let el=document.getElementById("createMsg");
+  fetch(API+"/v1/admin/users",{method:"POST",headers:{"Authorization":"Bearer "+adminKey,"Content-Type":"application/json"},body:JSON.stringify({name:n,balance:b})})
+    .then(r=>r.json()).then(d=>{if(d.api_key){msg(el,"创建成功! Key: "+d.api_key,"success");document.getElementById("userName").value="";loadUsers()}else msg(el,d.error||"失败","error")})
+    .catch(()=>msg(el,"请求失败","error"));
+}
+function loadUsers(){
+  fetch(API+"/v1/admin/users",{headers:{"Authorization":"Bearer "+adminKey}})
+    .then(r=>r.json()).then(d=>{
+      let users=d.users||[],total=0;
+      document.getElementById("userTable").innerHTML=users.map(u=>{total+=u.balance;return "<tr><td>"+u.name+'</td><td style="font-family:monospace;font-size:12px">'+u.api_key.substring(0,16)+'...<button class="copy-btn" onclick="navigator.clipboard.writeText(''+u.api_key+'')">复制</button></td><td>'+u.balance.toFixed(2)+'</td><td><span class="badge '+(u.is_active?"bg-green":"bg-red")+'">'+(u.is_active?"正常":"禁用")+'</span></td></tr>";}).join("");
+      document.getElementById("stats").innerHTML="用户: "+users.length+" | 总余额: "+total.toFixed(2);
+    });
+}
+</script>
+</body>
 </html>
