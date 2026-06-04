@@ -66,4 +66,4 @@ if __name__ == "__main__":
     print(f"监听地址: http://{HOST}:{PORT}")
     print(f"API 文档: http://localhost:{PORT}/docs")
     uvicorn.run(app, host=HOST, port=PORT)
-
+# Admin UI: /admin /user
