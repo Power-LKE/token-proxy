@@ -5,125 +5,128 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TokenProxy 管理后台</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 body{background:#0f0f1a;color:#e0e0e0;min-height:100vh}
-#loginScreen{align-items:center;background:#0f0f1a;display:flex;height:100vh;justify-content:center;left:0;position:fixed;top:0;width:100vw;z-index:100}
-.login-box{background:#1a1a2e;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);padding:40px;text-align:center;width:380px}
+#loginBg{align-items:center;background:#0f0f1a;display:flex;height:100vh;justify-content:center;left:0;position:fixed;top:0;width:100vw;z-index:999}
+.login-box{background:#1a1a2e;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);padding:40px;text-align:center;width:380px;max-width:90vw}
 .login-box h1{color:#fff;font-size:22px;margin-bottom:4px}
 .login-box p{color:#888;font-size:13px;margin-bottom:24px}
-.login-box input{background:#252540;border:1px solid #333;border-radius:8px;color:#fff;font-size:14px;margin-bottom:16px;outline:none;padding:12px 16px;width:100%}
+.login-box .login-hint{color:#666;font-size:11px;margin-bottom:24px;line-height:1.6}
+.login-box .login-hint code{color:#a5b4fc;background:#252540;padding:1px 5px;border-radius:3px}
+.login-box input{background:#252540;border:1px solid #333;border-radius:8px;color:#fff;font-size:14px;margin-bottom:16px;outline:none;padding:12px 16px;width:100%;box-sizing:border-box}
 .login-box input:focus{border-color:#4f46e5}
 .login-box button{background:#4f46e5;border:none;border-radius:8px;color:#fff;cursor:pointer;font-size:15px;padding:12px;width:100%}
 .login-box button:hover{background:#4338ca}
-.login-box .error{background:rgba(239,68,68,.15);border:1px solid #ef4444;border-radius:6px;color:#fca5a5;font-size:13px;margin-top:12px;padding:8px;display:none}
-#dashboard{display:none}
-.sidebar{background:#14142a;border-right:1px solid #1e1e3a;height:100vh;left:0;padding:24px;position:fixed;top:0;width:240px}
+.login-box .login-msg{background:rgba(239,68,68,.15);border:1px solid #ef4444;border-radius:6px;color:#fca5a5;font-size:13px;margin-top:12px;padding:8px;display:none}
+#dash{display:none}
+.sidebar{background:#14142a;border-right:1px solid #1e1e3a;height:100vh;left:0;padding:24px;position:fixed;top:0;width:220px}
 .sidebar h2{color:#fff;font-size:16px;margin-bottom:4px}
 .sidebar .sub{color:#666;font-size:11px;margin-bottom:24px}
-.nav-item{color:#888;cursor:pointer;font-size:14px;padding:10px 12px}
-.nav-item:hover,.nav-item.active{background:#1e1e3a;border-radius:6px;color:#fff}
-.main-content{margin-left:240px;padding:32px;min-height:100vh}
-.section{display:none}
-.section.active{display:block}
-.stats{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:24px}
+.sidebar a{color:#888;cursor:pointer;display:block;font-size:14px;padding:10px 12px;text-decoration:none}
+.sidebar a:hover,.sidebar a.active{background:#1e1e3a;border-radius:6px;color:#fff}
+.main{margin-left:220px;padding:32px;min-height:100vh}
+.page{display:none}
+.page.active{display:block}
+.stats{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin-bottom:24px}
 .stat-card{background:#1a1a2e;border-radius:8px;padding:20px}
-.stat-card .label{color:#888;font-size:12px;margin-bottom:4px}
-.stat-card .value{color:#fff;font-size:28px;font-weight:700}
-table{background:#1a1a2e;border-collapse:collapse;border-radius:8px;overflow:hidden;width:100%}
-th{background:#14142a;color:#888;font-size:12px;padding:12px 16px;text-align:left}
-td{border-bottom:1px solid #1e1e3a;color:#c0c0c0;font-size:13px;padding:12px 16px}
-.badge{background:#252540;border-radius:12px;font-size:11px;padding:3px 8px}
-.badge.active{background:rgba(34,197,94,.15);color:#4ade80}
-.badge.inactive{background:rgba(239,68,68,.15);color:#f87171}
-.form-card{background:#1a1a2e;border-radius:8px;margin-bottom:16px;padding:20px}
-.form-card h3{color:#fff;font-size:15px;margin-bottom:12px}
-.form-row{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:12px}
-.form-row label{color:#888;display:block;font-size:12px;margin-bottom:4px}
-input,select{background:#252540;border:1px solid #333;border-radius:6px;color:#fff;font-size:13px;outline:none;padding:10px 12px;width:100%}
-input:focus{border-color:#4f46e5}
-.btn{background:#252540;border:none;border-radius:6px;color:#c0c0c0;cursor:pointer;font-size:13px;padding:10px 16px}
-.btn:hover{background:#333}
-.btn-primary{background:#4f46e5;color:#fff}.btn-primary:hover{background:#4338ca}
-.btn-success{background:#16a34a;color:#fff}.btn-success:hover{background:#15803d}
-.btn-warning{background:#d97706;color:#fff}.btn-warning:hover{background:#b45309}
-.btn-sm{font-size:12px;padding:6px 10px}
+.stat-card .l{color:#888;font-size:12px;margin-bottom:4px}
+.stat-card .v{color:#fff;font-size:28px;font-weight:700}
+.card{background:#1a1a2e;border-radius:8px;margin-bottom:16px;padding:20px}
+.card h3{color:#fff;font-size:15px;margin-bottom:12px}
+.card p{color:#888;font-size:13px;margin-bottom:12px}
+label{color:#888;display:block;font-size:12px;margin-bottom:4px}
+.inp{background:#252540;border:1px solid #333;border-radius:6px;color:#fff;font-size:13px;outline:none;padding:10px 12px;width:100%;box-sizing:border-box}
+.inp:focus{border-color:#4f46e5}
+.row{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin-bottom:12px}
+@media(max-width:600px){.row{grid-template-columns:1fr}}
+.btn{background:#252540;border:none;border-radius:6px;color:#c0c0c0;cursor:pointer;font-size:13px;padding:10px 16px;display:inline-block}
+.btn-primary{background:#4f46e5;color:#fff}
+.btn-success{background:#16a34a;color:#fff}
+.btn-warning{background:#d97706;color:#fff}
+table{background:#1a1a2e;border-collapse:collapse;border-radius:8px;overflow:hidden;width:100%;font-size:13px}
+th{background:#14142a;color:#888;font-size:12px;padding:12px 14px;text-align:left}
+td{border-bottom:1px solid #1e1e3a;color:#c0c0c0;padding:12px 14px}
+.key-cell{font-family:monospace;font-size:11px;color:#a5b4fc;word-break:break-all}
+.badge{display:inline-block;padding:3px 8px;border-radius:10px;font-size:11px}
+.badge.on{background:rgba(34,197,94,.15);color:#4ade80}
+.badge.off{background:rgba(239,68,68,.15);color:#f87171}
 .msg{background:rgba(34,197,94,.1);border:1px solid #22c55e;border-radius:6px;color:#86efac;font-size:13px;margin-top:8px;padding:8px 12px;display:none}
-.msg.error{background:rgba(239,68,68,.1);border-color:#ef4444;color:#fca5a5}
-.api-key-cell{font-family:monospace;font-size:12px;color:#a5b4fc;word-break:break-all}
-.copy-btn{background:transparent;border:1px solid #4f46e5;border-radius:4px;color:#818cf8;cursor:pointer;font-size:11px;margin-left:4px;padding:2px 6px}
-.copy-btn:hover{background:#4f46e5;color:#fff}
-.search-input{max-width:300px;display:inline-block;margin-bottom:12px}
-@media(max-width:768px){.sidebar{display:none}.main-content{margin-left:0;padding:16px}}
+.msg.err{background:rgba(239,68,68,.1);border-color:#ef4444;color:#fca5a5}
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0;padding:16px}}
 </style>
 </head>
 <body>
 
-<div id="loginScreen">
+<div id="loginBg">
 <div class="login-box">
 <h1>TokenProxy 管理后台</h1>
-<p>请使用管理员 API Key 登录</p><p style="color:#666;font-size:11px;margin-top:12px">提示：Key 在 Render 日志中 (查看 [Init] Created admin user), 或在 Render Dashboard 设置 ADMIN_API_KEY 环境变量后使用固定 Key</p>
-<input type="password" id="adminKeyInput" placeholder="输入管理员 API Key..." autocomplete="off" />
-<button onclick="login()">登 录</button>
-<div class="error" id="loginError"></div>
+<p>请使用管理员 API Key 登录</p>
+<div class="login-hint">
+提示：Key 在 Render 日志中 (查看 [Init] Created admin user)<br>
+或在 Render Dashboard 设置 <code>ADMIN_API_KEY</code> 环境变量
+</div>
+<input type="password" id="loginKey" placeholder="输入管理员 API Key..." autocomplete="off" />
+<button id="loginBtn">登 录</button>
+<div class="login-msg" id="loginMsg"></div>
 </div>
 </div>
 
-<div id="dashboard">
+<div id="dash">
 <div class="sidebar">
 <h2>TokenProxy</h2>
 <div class="sub">管理中心</div>
-<div class="nav-item active" onclick="switchTab(this,'overview')">概览</div>
-<div class="nav-item" onclick="switchTab(this,'users')">用户管理</div>
-<div class="nav-item" onclick="switchTab(this,'create')">创建用户</div>
-<div class="nav-item" onclick="switchTab(this,'settings')">设置</div>
+<a id="navOverview" class="active" onclick="showPage('overview')">概览</a>
+<a id="navUsers" onclick="showPage('users')">用户管理</a>
+<a id="navCreate" onclick="showPage('create')">创建用户</a>
+<a id="navSettings" onclick="showPage('settings')">设置</a>
 </div>
 
-<div class="main-content">
-<div class="section active" id="sec-overview">
+<div class="main">
+<div class="page active" id="pageOverview">
 <h2 style="font-size:20px;margin-bottom:20px">服务概览</h2>
 <div class="stats">
-<div class="stat-card"><div class="label">用户数</div><div class="value" id="statUsers">-</div></div>
-<div class="stat-card"><div class="label">总余额</div><div class="value" id="statBalance">- 元</div></div>
-<div class="stat-card"><div class="label">服务状态</div><div class="value" id="statStatus">检查中...</div></div>
+<div class="stat-card"><div class="l">用户数</div><div class="v" id="statUsers">-</div></div>
+<div class="stat-card"><div class="l">总余额</div><div class="v" id="statBalance">- 元</div></div>
+<div class="stat-card"><div class="l">服务状态</div><div class="v" id="statStatus">检查中...</div></div>
 </div>
 </div>
 
-<div class="section" id="sec-users">
-<h2 style="font-size:20px;margin-bottom:20px">用户管理</h2>
-<input type="text" class="search-input" id="userSearch" placeholder="搜索用户名或 Key..." oninput="renderUserTable()" />
-<div id="userTable"></div>
+<div class="page" id="pageUsers">
+<h2 style="font-size:20px;margin-bottom:16px">用户管理</h2>
+<input type="text" class="inp" id="searchInput" placeholder="搜索用户名或 Key..." style="max-width:300px;margin-bottom:12px" />
+<div id="userList"></div>
 </div>
 
-<div class="section" id="sec-create">
-<h2 style="font-size:20px;margin-bottom:20px">创建用户</h2>
-<div class="form-card">
-<div class="form-row">
-<div><label>用户名</label><input type="text" id="newUserName" placeholder="例如：张三" /></div>
-<div><label>初始余额（元）</label><input type="number" id="newUserBalance" value="1.0" step="0.1" min="0" /></div>
+<div class="page" id="pageCreate">
+<h2 style="font-size:20px;margin-bottom:16px">创建用户</h2>
+<div class="card">
+<div class="row">
+<div><label>用户名</label><input type="text" class="inp" id="newName" placeholder="例如：张三" /></div>
+<div><label>初始余额（元）</label><input type="number" class="inp" id="newBal" value="1.0" step="0.1" /></div>
 </div>
-<button class="btn btn-success" onclick="createUser()">创建用户</button>
+<button class="btn btn-success" id="createBtn">创建用户</button>
 <div class="msg" id="createMsg"></div>
 </div>
 </div>
 
-<div class="section" id="sec-settings">
-<h2 style="font-size:20px;margin-bottom:20px">设置</h2>
-<div class="form-card">
+<div class="page" id="pageSettings">
+<h2 style="font-size:20px;margin-bottom:16px">设置</h2>
+<div class="card">
 <h3>管理员信息</h3>
-<p style="color:#888;font-size:13px;margin-bottom:12px">你的管理员 API Key：</p>
-<div style="background:#252540;border-radius:6px;display:flex;font-family:monospace;font-size:13px;padding:10px 14px">
+<p>你的管理员 API Key：</p>
+<div style="background:#252540;border-radius:6px;display:flex;padding:10px 14px;font-family:monospace;font-size:13px">
 <span id="adminKeyDisplay" style="color:#a5b4fc;flex:1;word-break:break-all">-</span>
-<button class="copy-btn" onclick="copyAdminKey()" style="margin-left:8px;padding:4px 10px">复制</button>
+<button class="btn" onclick="copyText(adminKeyDisplay.textContent)" style="margin-left:8px;padding:4px 10px;font-size:11px">复制</button>
 </div>
 </div>
-<div class="form-card">
+<div class="card">
 <h3>充值操作</h3>
-<div class="form-row">
-<div><label>用户 API Key</label><input type="text" id="topupKey" placeholder="要充值的用户的 API Key" /></div>
-<div><label>充值金额（元）</label><input type="number" id="topupAmount" value="10" step="1" min="0" /></div>
+<div class="row">
+<div><label>用户 API Key</label><input type="text" class="inp" id="topKey" placeholder="输入用户 API Key" /></div>
+<div><label>充值金额（元）</label><input type="number" class="inp" id="topAmt" value="10" step="1" /></div>
 </div>
-<button class="btn btn-primary" onclick="topupUser()">充值</button>
-<div class="msg" id="topupMsg"></div>
+<button class="btn btn-primary" id="topBtn">充值</button>
+<div class="msg" id="topMsg"></div>
 </div>
 </div>
 </div>
@@ -131,175 +134,159 @@ input:focus{border-color:#4f46e5}
 
 <script>
 var ADMIN_KEY = "";
+var allUsers = [];
 
-function login() {
-    var key = document.getElementById("adminKeyInput").value.trim();
-    var err = document.getElementById("loginError");
-    if (!key) { err.textContent = "请输入管理员 API Key"; err.style.display = "block"; return; }
+function $(id) { return document.getElementById(id); }
+function api(path, method, body) {
+    var opts = {headers: {"Authorization": "Bearer " + ADMIN_KEY}};
+    if (method) opts.method = method;
+    if (body) { opts.method = "POST"; opts.body = JSON.stringify(body); opts.headers["Content-Type"] = "application/json"; }
+    return fetch(window.location.origin + path, opts).then(function(r){ return r.json(); });
+}
+
+// Login
+$("loginBtn").onclick = function() {
+    var key = $("loginKey").value.trim();
+    var msg = $("loginMsg");
+    if (!key) { msg.textContent = "请输入管理员 API Key"; msg.style.display = "block"; return; }
     ADMIN_KEY = key;
-    fetch(window.location.origin + "/v1/admin/verify", {
-        method: "POST",
-        headers: {"Authorization": "Bearer " + key}
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
+    api("/v1/admin/verify").then(function(d){
         if (d.status === "ok") {
-            document.getElementById("loginScreen").style.display = "none";
-            document.getElementById("dashboard").style.display = "block";
-            document.getElementById("adminKeyDisplay").textContent = key;
-            loadDashboard();
+            $("loginBg").style.display = "none";
+            $("dash").style.display = "block";
+            $("adminKeyDisplay").textContent = key;
+            loadOverview();
         } else {
-            err.textContent = d.error || "验证失败";
-            err.style.display = "block";
+            msg.textContent = d.error || "验证失败";
+            msg.style.display = "block";
         }
-    })
-    .catch(function(e){ err.textContent = "网络错误：" + e.message; err.style.display = "block"; });
+    }).catch(function(e){
+        msg.textContent = "网络错误：" + e.message;
+        msg.style.display = "block";
+    });
+};
+$("loginKey").onkeydown = function(e) { if (e.key === "Enter") $("loginBtn").click(); };
+
+// Navigation
+function showPage(name) {
+    document.querySelectorAll(".sidebar a").forEach(function(a){ a.classList.remove("active"); });
+    document.getElementById("navOverview").classList.remove("active");
+    document.getElementById("navUsers").classList.remove("active");
+    document.getElementById("navCreate").classList.remove("active");
+    document.getElementById("navSettings").classList.remove("active");
+    if (name === "overview") document.getElementById("navOverview").classList.add("active");
+    if (name === "users") document.getElementById("navUsers").classList.add("active");
+    if (name === "create") document.getElementById("navCreate").classList.add("active");
+    if (name === "settings") document.getElementById("navSettings").classList.add("active");
+    document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+    $("page" + name.charAt(0).toUpperCase() + name.slice(1)).classList.add("active");
+    if (name === "overview") loadOverview();
+    if (name === "users") loadUsers();
 }
 
-function switchTab(el, tab) {
-    var items = document.querySelectorAll(".nav-item");
-    for (var i = 0; i < items.length; i++) { items[i].classList.remove("active"); }
-    el.classList.add("active");
-    var sections = document.querySelectorAll(".section");
-    for (var i = 0; i < sections.length; i++) { sections[i].classList.remove("active"); }
-    document.getElementById("sec-" + tab).classList.add("active");
-    if (tab === "users") loadUsers();
-}
-
-function loadDashboard() {
-    fetch(window.location.origin + "/v1/admin/verify", {
-        headers: {"Authorization": "Bearer " + ADMIN_KEY}
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-        document.getElementById("statUsers").textContent = d.user_count;
-        document.getElementById("statBalance").textContent = d.total_balance.toFixed(2) + " 元";
-        document.getElementById("statStatus").textContent = "正常";
-        document.getElementById("statStatus").style.color = "#4ade80";
-    })
-    .catch(function(e){
-        document.getElementById("statStatus").textContent = "连接失败";
-        document.getElementById("statStatus").style.color = "#f87171";
+// Overview
+function loadOverview() {
+    api("/v1/admin/verify").then(function(d){
+        $("statUsers").textContent = d.user_count;
+        $("statBalance").textContent = d.total_balance.toFixed(2) + " 元";
+        $("statStatus").textContent = "正常";
+        $("statStatus").style.color = "#4ade80";
+    }).catch(function(e){
+        $("statStatus").textContent = "连接失败";
+        $("statStatus").style.color = "#f87171";
     });
 }
 
-var allUsers = [];
-
+// Users
 function loadUsers() {
-    fetch(window.location.origin + "/v1/admin/users", {
-        headers: {"Authorization": "Bearer " + ADMIN_KEY}
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-        if (d.users) { allUsers = d.users; renderUserTable(); }
-    })
-    .catch(function(e){ document.getElementById("userTable").innerHTML = '<p style="color:#f87171">加载失败</p>'; });
+    api("/v1/admin/users").then(function(d){
+        if (d.users) { allUsers = d.users; renderUsers(); }
+    }).catch(function(){});
 }
 
-function renderUserTable() {
-    var q = (document.getElementById("userSearch")||{}).value||"";
-    var filtered = q ? allUsers.filter(function(u){
-        return u.name.indexOf(q) !== -1 || u.api_key.indexOf(q) !== -1;
-    }) : allUsers;
+function renderUsers() {
+    var q = $("searchInput").value || "";
+    var filtered = q ? allUsers.filter(function(u){ return u.name.indexOf(q) !== -1 || u.api_key.indexOf(q) !== -1; }) : allUsers;
     if (filtered.length === 0) {
-        document.getElementById("userTable").innerHTML = '<p style="color:#888;padding:20px;text-align:center">暂无用户</p>';
+        $("userList").innerHTML = '<p style="color:#888;text-align:center;padding:20px">暂无用户</p>';
         return;
     }
-    var h = '<table><thead><tr><th>用户名</th><th>API Key</th><th>余额</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead><tbody>';
+    var h = "<table><thead><tr><th>用户名</th><th>API Key</th><th>余额</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead><tbody>";
     for (var i = 0; i < filtered.length; i++) {
         var u = filtered[i];
-        var badge = u.is_active ? '<span class="badge active">启用</span>' : '<span class="badge inactive">禁用</span>';
-        var keyShort = u.api_key.substring(0,20) + '...';
-        h += '<tr><td>' + u.name + '</td>';
-        h += '<td class="api-key-cell">' + keyShort + ' <button class="copy-btn" onclick="copyText('' + u.api_key + '')">复制</button></td>';
-        h += '<td>' + u.balance.toFixed(2) + ' 元</td>';
-        h += '<td>' + badge + '</td>';
-        h += '<td style="font-size:12px;color:#666">' + (u.created_at||"-").substring(0,10) + '</td>';
+        var badge = u.is_active ? '<span class="badge on">启用</span>' : '<span class="badge off">禁用</span>';
+        h += "<tr><td>" + u.name + "</td>";
+        h += '<td class="key-cell">' + u.api_key.substring(0,20) + '... <button class="btn" style="padding:2px 6px;font-size:11px" onclick="copyKey('' + u.api_key + '')">复制</button></td>';
+        h += "<td>" + u.balance.toFixed(2) + " 元</td>";
+        h += "<td>" + badge + "</td>";
+        h += '<td style="font-size:12px;color:#666">' + (u.created_at||"-").substring(0,10) + "</td>";
         var toggTxt = u.is_active ? "禁用" : "启用";
         var toggCls = u.is_active ? "btn-warning" : "btn-success";
-        h += '<td><button class="btn ' + toggCls + ' btn-sm" onclick="toggleUser('' + u.api_key + '')">' + toggTxt + '</button></td>';
-        h += '</tr>';
+        h += '<td><button class="btn ' + toggCls + '" style="padding:4px 10px;font-size:12px" onclick="togUser('' + u.api_key + '')">' + toggTxt + "</button></td>";
+        h += "</tr>";
     }
-    h += '</tbody></table>';
-    document.getElementById("userTable").innerHTML = h;
+    h += "</tbody></table>";
+    $("userList").innerHTML = h;
+}
+$("searchInput").onkeyup = function(){ renderUsers(); };
+
+function copyKey(k) {
+    if (navigator.clipboard) navigator.clipboard.writeText(k);
+    showToast("已复制");
 }
 
-function createUser() {
-    var name = document.getElementById("newUserName").value.trim();
-    var balance = parseFloat(document.getElementById("newUserBalance").value) || 1.0;
-    var msg = document.getElementById("createMsg");
-    if (!name) { msg.textContent = "请输入用户名"; msg.className = "msg error"; msg.style.display = "block"; return; }
-    fetch(window.location.origin + "/v1/admin/users", {
-        method: "POST",
-        headers: {"Authorization": "Bearer " + ADMIN_KEY, "Content-Type": "application/json"},
-        body: JSON.stringify({name: name, balance: balance})
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-        if (d.api_key) {
-            msg.innerHTML = '用户 <strong>' + d.name + '</strong> 创建成功！<br>API Key: <code style="color:#a5b4fc">' + d.api_key + '</code>';
-            msg.className = "msg"; msg.style.display = "block";
-            document.getElementById("newUserName").value = "";
-            loadDashboard(); loadUsers();
-        } else {
-            msg.textContent = d.error || "创建失败";
-            msg.className = "msg error"; msg.style.display = "block";
-        }
-    })
-    .catch(function(e){ msg.textContent = "网络错误：" + e.message; msg.className = "msg error"; msg.style.display = "block"; });
-}
-
-function topupUser() {
-    var key = document.getElementById("topupKey").value.trim();
-    var amount = parseFloat(document.getElementById("topupAmount").value) || 0;
-    var msg = document.getElementById("topupMsg");
-    if (!key) { msg.textContent = "请输入用户 API Key"; msg.className = "msg error"; msg.style.display = "block"; return; }
-    if (amount <= 0) { msg.textContent = "充值金额必须大于 0"; msg.className = "msg error"; msg.style.display = "block"; return; }
-    fetch(window.location.origin + "/v1/admin/users/topup", {
-        method: "POST",
-        headers: {"Authorization": "Bearer " + ADMIN_KEY, "Content-Type": "application/json"},
-        body: JSON.stringify({api_key: key, amount: amount})
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-        if (d.balance !== undefined) {
-            msg.innerHTML = '充值成功！<strong>' + d.name + '</strong> 当前余额：<strong>' + d.balance.toFixed(2) + '</strong> 元';
-            msg.className = "msg"; msg.style.display = "block";
-            document.getElementById("topupKey").value = "";
-            loadDashboard(); loadUsers();
-        } else {
-            msg.textContent = d.error || "充值失败";
-            msg.className = "msg error"; msg.style.display = "block";
-        }
-    })
-    .catch(function(e){ msg.textContent = "网络错误：" + e.message; msg.className = "msg error"; msg.style.display = "block"; });
-}
-
-function toggleUser(userKey) {
-    fetch(window.location.origin + "/v1/admin/users/toggle", {
-        method: "POST",
-        headers: {"Authorization": "Bearer " + ADMIN_KEY, "Content-Type": "application/json"},
-        body: JSON.stringify({api_key: userKey})
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(d){ if (d.name) loadUsers(); })
-    .catch(function(e){});
-}
-
-function copyText(t) {
-    if (navigator.clipboard) navigator.clipboard.writeText(t);
+function showToast(msg) {
     var el = document.createElement("div");
-    el.style.cssText = "background:#16a34a;color:#fff;padding:8px 16px;border-radius:6px;position:fixed;bottom:24px;right:24px;z-index:999;font-size:13px";
-    el.textContent = "已复制";
+    el.style.cssText = "position:fixed;bottom:24px;right:24px;background:#16a34a;color:#fff;padding:10px 18px;border-radius:6px;z-index:9999;font-size:14px";
+    el.textContent = msg;
     document.body.appendChild(el);
     setTimeout(function(){ el.remove(); }, 1500);
 }
 
-function copyAdminKey() { copyText(document.getElementById("adminKeyDisplay").textContent); }
+function togUser(k) {
+    api("/v1/admin/users/toggle", "POST", {api_key: k}).then(function(d){
+        if (d.name) loadUsers();
+    }).catch(function(){});
+}
 
-document.getElementById("adminKeyInput").addEventListener("keydown", function(e){
-    if (e.key === "Enter") login();
-});
+// Create user
+$("createBtn").onclick = function() {
+    var name = $("newName").value.trim();
+    var bal = parseFloat($("newBal").value) || 1.0;
+    var msg = $("createMsg");
+    if (!name) { msg.textContent = "请输入用户名"; msg.className = "msg err"; msg.style.display = "block"; return; }
+    api("/v1/admin/users", "POST", {name: name, balance: bal}).then(function(d){
+        if (d.api_key) {
+            msg.innerHTML = '用户 <b>' + d.name + '</b> 创建成功！<br>API Key: <code style="color:#a5b4fc">' + d.api_key + "</code>";
+            msg.className = "msg"; msg.style.display = "block";
+            $("newName").value = "";
+            loadOverview(); loadUsers();
+        } else {
+            msg.textContent = d.error || "创建失败";
+            msg.className = "msg err"; msg.style.display = "block";
+        }
+    }).catch(function(e){ msg.textContent = "网络错误：" + e.message; msg.className = "msg err"; msg.style.display = "block"; });
+};
+
+// Topup
+$("topBtn").onclick = function() {
+    var key = $("topKey").value.trim();
+    var amt = parseFloat($("topAmt").value) || 0;
+    var msg = $("topMsg");
+    if (!key) { msg.textContent = "请输入用户 API Key"; msg.className = "msg err"; msg.style.display = "block"; return; }
+    if (amt <= 0) { msg.textContent = "充值金额必须大于 0"; msg.className = "msg err"; msg.style.display = "block"; return; }
+    api("/v1/admin/users/topup", "POST", {api_key: key, amount: amt}).then(function(d){
+        if (d.balance !== undefined) {
+            msg.innerHTML = '充值成功！<b>' + d.name + "</b> 当前余额：<b>" + d.balance.toFixed(2) + "</b> 元";
+            msg.className = "msg"; msg.style.display = "block";
+            $("topKey").value = "";
+            loadOverview(); loadUsers();
+        } else {
+            msg.textContent = d.error || "充值失败";
+            msg.className = "msg err"; msg.style.display = "block";
+        }
+    }).catch(function(e){ msg.textContent = "网络错误：" + e.message; msg.className = "msg err"; msg.style.display = "block"; });
+};
 </script>
 </body>
 </html>
