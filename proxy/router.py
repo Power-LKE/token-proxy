@@ -185,3 +185,12 @@ async def admin_toggle_user(request: Request):
     user.is_active = not user.is_active
     user_manager._save()
     return {"name": user.name, "is_active": user.is_active}
+
+@router.get("/v1/admin/init", summary="获取管理员 Key", tags=["管理"])
+async def admin_init():
+    """获取当前管理员 API Key（无需认证）"""
+    key = user_manager.admin_api_key
+    if not key:
+        return JSONResponse(status_code=404, content={"error": "没有管理员用户"})
+    return {"admin_key": key, "message": "请立即保存此 Key"}
+
