@@ -2,6 +2,8 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 
 from config import HOST, PORT, SERVICE_NAME
 from proxy.router import router
@@ -35,6 +37,17 @@ app.add_middleware(
 )
 
 app.include_router(router)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+@app.get("/admin")
+async def admin_page():
+    return RedirectResponse(url="/static/admin.html")
+
+
+@app.get("/user")
+async def user_page():
+    return RedirectResponse(url="/static/user.html")
 
 
 @app.get("/")
@@ -53,3 +66,4 @@ if __name__ == "__main__":
     print(f"监听地址: http://{HOST}:{PORT}")
     print(f"API 文档: http://localhost:{PORT}/docs")
     uvicorn.run(app, host=HOST, port=PORT)
+
