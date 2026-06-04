@@ -61,7 +61,7 @@ input:focus{border-color:#4f46e5}
 <div id="loginScreen">
 <div class="login-box">
 <h1>TokenProxy 管理后台</h1>
-<p>请使用管理员 API Key 登录</p>
+<p>请使用管理员 API Key 登录</p><p style="color:#666;font-size:11px;margin-top:12px">提示：Key 在 Render 日志中 (查看 [Init] Created admin user), 或在 Render Dashboard 设置 ADMIN_API_KEY 环境变量后使用固定 Key</p>
 <input type="password" id="adminKeyInput" placeholder="输入管理员 API Key..." autocomplete="off" />
 <button onclick="login()">登 录</button>
 <div class="error" id="loginError"></div>
