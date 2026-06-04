@@ -216,13 +216,13 @@ function renderUsers() {
         var u = filtered[i];
         var badge = u.is_active ? '<span class="badge on">启用</span>' : '<span class="badge off">禁用</span>';
         h += "<tr><td>" + u.name + "</td>";
-        h += '<td class="key-cell">' + u.api_key.substring(0,20) + '... <button class="btn" style="padding:2px 6px;font-size:11px" onclick="copyKey('' + u.api_key + '')">复制</button></td>';
+        h += '<td class="key-cell">' + u.api_key.substring(0,20) + '... <button class="btn" style="padding:2px 6px;font-size:11px" onclick="copyKey(\' + u.api_key + \')">复制</button></td>';
         h += "<td>" + u.balance.toFixed(2) + " 元</td>";
         h += "<td>" + badge + "</td>";
         h += '<td style="font-size:12px;color:#666">' + (u.created_at||"-").substring(0,10) + "</td>";
         var toggTxt = u.is_active ? "禁用" : "启用";
         var toggCls = u.is_active ? "btn-warning" : "btn-success";
-        h += '<td><button class="btn ' + toggCls + '" style="padding:4px 10px;font-size:12px" onclick="togUser('' + u.api_key + '')">' + toggTxt + "</button></td>";
+        h += '<td><button class="btn ' + toggCls + '" style="padding:4px 10px;font-size:12px" onclick="togUser(\' + u.api_key + \')">' + toggTxt + "</button></td>";
         h += "</tr>";
     }
     h += "</tbody></table>";
