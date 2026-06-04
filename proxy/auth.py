@@ -27,7 +27,9 @@ class UserManager:
                     u = UserInfo(**item)
                     self._users[u.api_key] = u
         except (FileNotFoundError, json.JSONDecodeError):
-            admin_key = self._generate_key("admin")
+            import os as _os2
+            admin_key_env = _os2.environ.get("ADMIN_API_KEY", "").strip()
+            admin_key = admin_key_env if admin_key_env else self._generate_key("admin")
             admin = UserInfo(
                 api_key=admin_key,
                 name="admin",
