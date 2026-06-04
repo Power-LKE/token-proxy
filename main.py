@@ -40,9 +40,18 @@ app.include_router(router)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-@app.get("/admin")
+from fastapi.responses import HTMLResponse
+
+@app.get("/admin", response_class=HTMLResponse)
 async def admin_page():
-    return RedirectResponse(url="/static/admin.html")
+    from fastapi.responses import HTMLResponse
+    import pathlib as _p
+    admin_html_path = _p.Path(__file__).parent / "static" / "admin.html"
+    if admin_html_path.exists():
+        content = admin_html_path.read_text(encoding="utf-8")
+        from fastapi.responses import Response
+        return Response(content=content, media_type="text/html", headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache", "Expires": "0"})
+    return HTMLResponse("<h1>Admin page not found</h1>", status_code=404)
 
 
 @app.get("/user")
@@ -66,4 +75,4 @@ if __name__ == "__main__":
     print(f"监听地址: http://{HOST}:{PORT}")
     print(f"API 文档: http://localhost:{PORT}/docs")
     uvicorn.run(app, host=HOST, port=PORT)
-# Admin UI: /admin /user
+
