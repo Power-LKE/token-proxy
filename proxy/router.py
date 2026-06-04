@@ -103,14 +103,16 @@ async def chat_completions(request: Request, body: ChatCompletionRequest):
     return resp_data
 
 
-@router.post("/v1/admin/users", summary="创建用户", description="管理员创建新用户并分配额度（需用 Admin Key 认证）")
-async def admin_create_user(request: Request, name: str = "user", balance: float = 10.0):
+@router.post("/v1/admin/users", summary="创建用户", description="管理员创建新用户并分配额度（需用 Admin Key 认证，传入 JSON body: {\"name\": \"xxx\", \"balance\": 10.0}）")
+async def admin_create_user(request: Request):
     api_key = _get_api_key(request)
     if api_key != user_manager.admin_key:
         return JSONResponse(status_code=403, content={"error": "仅管理员可操作"})
+    body = await request.json()
+    name = body.get("name", "user")
+    balance = float(body.get("balance", 10.0))
     user = user_manager.create_user(name=name, balance=balance)
     return {"api_key": user.api_key, "name": user.name, "balance": user.balance}
-
 
 @router.get("/v1/admin/users", summary="用户列表", description="管理员查看所有用户及其余额（需用 Admin Key 认证）")
 async def admin_list_users(request: Request):
