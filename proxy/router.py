@@ -1,12 +1,12 @@
 ﻿"""API 路由 — 中文标签"""
 import time
+import os
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
-from config import UPSTREAM_PROVIDERS, SERVICE_NAME
+from config import UPSTREAM_PROVIDERS, SERVICE_NAME, DEFAULT_BALANCE
 from proxy.models import ChatCompletionRequest
 from proxy.auth import user_manager
 from proxy.upstream import _detect_provider, forward_chat_completion
-import os
 
 router = APIRouter(tags=["代理服务"])
 
@@ -103,21 +103,85 @@ async def chat_completions(request: Request, body: ChatCompletionRequest):
     return resp_data
 
 
-@router.post("/v1/admin/users", summary="创建用户", description="管理员创建新用户并分配额度（需用 Admin Key 认证，传入 JSON body: {\"name\": \"xxx\", \"balance\": 10.0}）")
-async def admin_create_user(request: Request):
-    api_key = _get_api_key(request)
-    if api_key != user_manager.admin_key:
-        return JSONResponse(status_code=403, content={"error": "仅管理员可操作"})
-    body = await request.json()
-    name = body.get("name", "user")
-    balance = float(body.get("balance", 10.0))
-    user = user_manager.create_user(name=name, balance=balance)
-    return {"api_key": user.api_key, "name": user.name, "balance": user.balance}
+# === 管理后台 API ===
 
-@router.get("/v1/admin/users", summary="用户列表", description="管理员查看所有用户及其余额（需用 Admin Key 认证）")
+@router.post("/v1/admin/verify", summary="管理员验证", tags=["管理"])
+async def admin_verify(request: Request):
+    api_key = _get_api_key(request)
+    if not api_key or not user_manager.is_admin_key(api_key):
+        return JSONResponse(status_code=401, content={"error": "无效的管理员 Key"})
+    users = user_manager.list_users()
+    total_balance = sum(u.balance for u in users)
+    return {
+        "status": "ok",
+        "admin_key": api_key,
+        "user_count": len(users),
+        "total_balance": round(total_balance, 4),
+    }
+
+
+@router.get("/v1/admin/users", summary="用户列表", tags=["管理"])
 async def admin_list_users(request: Request):
     api_key = _get_api_key(request)
-    if api_key != user_manager.admin_key:
-        return JSONResponse(status_code=403, content={"error": "仅管理员可操作"})
+    if not api_key or not user_manager.is_admin_key(api_key):
+        return JSONResponse(status_code=401, content={"error": "未授权"})
     users = user_manager.list_users()
-    return {"users": [{"name": u.name, "balance": u.balance, "is_active": u.is_active, "created_at": u.created_at, "api_key": u.api_key} for u in users]}
+    return {
+        "users": [
+            {
+                "name": u.name,
+                "api_key": u.api_key,
+                "balance": u.balance,
+                "is_active": u.is_active,
+                "created_at": u.created_at,
+            }
+            for u in users
+        ]
+    }
+
+
+@router.post("/v1/admin/users", summary="创建用户", tags=["管理"])
+async def admin_create_user(request: Request):
+    api_key = _get_api_key(request)
+    if not api_key or not user_manager.is_admin_key(api_key):
+        return JSONResponse(status_code=401, content={"error": "未授权"})
+    body = await request.json()
+    name = body.get("name", "").strip()
+    balance = float(body.get("balance", DEFAULT_BALANCE))
+    if not name:
+        return JSONResponse(status_code=400, content={"error": "请提供用户名"})
+    user = user_manager.create_user(name, balance)
+    return {"api_key": user.api_key, "name": user.name, "balance": user.balance}
+
+
+@router.post("/v1/admin/users/topup", summary="用户充值", tags=["管理"])
+async def admin_topup(request: Request):
+    api_key = _get_api_key(request)
+    if not api_key or not user_manager.is_admin_key(api_key):
+        return JSONResponse(status_code=401, content={"error": "未授权"})
+    body = await request.json()
+    user_key = body.get("api_key", "").strip()
+    amount = float(body.get("amount", 0))
+    if amount <= 0:
+        return JSONResponse(status_code=400, content={"error": "充值金额必须大于 0"})
+    user = user_manager.get_user(user_key)
+    if not user:
+        return JSONResponse(status_code=404, content={"error": "用户不存在"})
+    user.balance += amount
+    user_manager._save()
+    return {"name": user.name, "balance": user.balance}
+
+
+@router.post("/v1/admin/users/toggle", summary="启用/禁用用户", tags=["管理"])
+async def admin_toggle_user(request: Request):
+    api_key = _get_api_key(request)
+    if not api_key or not user_manager.is_admin_key(api_key):
+        return JSONResponse(status_code=401, content={"error": "未授权"})
+    body = await request.json()
+    user_key = body.get("api_key", "").strip()
+    user = user_manager.get_user(user_key)
+    if not user:
+        return JSONResponse(status_code=404, content={"error": "用户不存在"})
+    user.is_active = not user.is_active
+    user_manager._save()
+    return {"name": user.name, "is_active": user.is_active}
