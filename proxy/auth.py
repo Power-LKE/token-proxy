@@ -77,4 +77,12 @@ class UserManager:
         return list(self._users.values())
 
 
+    @property
+    def admin_key(self) -> Optional[str]:
+        for user in self._users.values():
+            if user.name == "admin":
+                return user.api_key
+        return None
+
+
 user_manager = UserManager()
