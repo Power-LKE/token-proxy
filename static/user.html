@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TokenProxy - AI API ??</title>
+<title>TokenProxy - AI API 服务</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
 body{background:#f5f5f5;color:#333}
@@ -28,18 +28,17 @@ pre .comment{color:#6a9955}
 <body>
 <header>
   <h1>TokenProxy AI API</h1>
-  <p>OpenAI ???? ? ?????</p>
+  <p>OpenAI 兼容接口 · 多模型支持</p>
 </header>
 <main>
   <div class="card">
-    <h2>API ??</h2>
+    <h2>API 地址</h2>
     <div class="url-box">
-      ?? API ??: <strong id="apiUrl">???...</strong>
+      你的 API 地址: <strong id="apiUrl">加载中...</strong>
     </div>
   </div>
-
   <div class="card">
-    <h2>????</h2>
+    <h2>支持模型</h2>
     <div id="models">
       <span class="model-tag">deepseek-chat</span>
       <span class="model-tag">deepseek-reasoner</span>
@@ -47,62 +46,60 @@ pre .comment{color:#6a9955}
       <span class="model-tag">glm-4-flash</span>
     </div>
   </div>
-
   <div class="card">
-    <h2>????</h2>
+    <h2>余额查询</h2>
     <div class="balance-box">
-      <p>???? API Key ????</p>
+      <p>输入你的 API Key 查询余额</p>
       <input type="text" id="balanceKey" placeholder="sk-xxx..." />
       <br/><br/>
-      <button class="copy-btn" onclick="checkBalance()" style="padding:8px 20px">??</button>
+      <button class="copy-btn" onclick="checkBalance()" style="padding:8px 20px">查询</button>
       <div id="balanceResult" style="margin-top:8px;font-size:13px;color:#666"></div>
     </div>
   </div>
-
   <div class="card">
-    <h2>????</h2>
-    <h3>????curl</h3>
-    <pre id="curlExample">curl <span id="curlUrl">??API??</span>/v1/chat/completions \<br>  -H "Authorization: Bearer <span style="color:#ce9178">??API Key</span>" \<br>  -H "Content-Type: application/json" \<br>  -d '{"model":"deepseek-chat","messages":[{"role":"user","content":"??"}]}'</pre>
-    <h3>????Python</h3>
+    <h2>使用示例</h2>
+    <h3>方式一：curl</h3>
+    <pre>curl <span id="curlUrl">你的API地址</span>/v1/chat/completions \
+  -H "Authorization: Bearer <span style="color:#ce9178">你的API Key</span>" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"deepseek-chat","messages":[{"role":"user","content":"你好"}]}'</pre>
+    <h3>方式二：Python</h3>
 <pre><span class="comment"># pip install openai</span>
 from openai import OpenAI
-
 client = OpenAI(
-    api_key="<span style="color:#ce9178">??API Key</span>",
-    base_url="<span id="pythonUrl">??API??</span>"
+    api_key="<span style="color:#ce9178">你的API Key</span>",
+    base_url="<span id="pythonUrl">你的API地址</span>"
 )
-
 response = client.chat.completions.create(
     model="deepseek-chat",
-    messages=[{"role":"user","content":"??"}]
+    messages=[{"role":"user","content":"你好"}]
 )
 print(response.choices[0].message.content)</pre>
-    <h3>????Chatbox / NextChat ????</h3>
-    <p>???? Chatbox????chatboxai.app???????</p>
+    <h3>方式三：Chatbox / NextChat 客户端</h3>
+    <p>推荐使用 Chatbox（下载：chatboxai.app），设置如下：</p>
     <ul style="padding-left:20px;line-height:2;font-size:14px">
-      <li><strong>API ???</strong> <code id="chatboxApiUrl">??API??</code></li>
-      <li><strong>API Key?</strong> <code>?? API Key</code></li>
-      <li><strong>???</strong> <code>deepseek-chat</code></li>
+      <li><strong>API 地址：</strong> <code id="chatboxApiUrl">你的API地址</code></li>
+      <li><strong>API Key：</strong> <code>你的 API Key</code></li>
+      <li><strong>模型：</strong> <code>deepseek-chat</code></li>
     </ul>
   </div>
 </main>
 <script>
-// Auto-detect the API URL
 var origin = window.location.origin;
 document.getElementById("apiUrl").textContent = origin;
 document.getElementById("curlUrl").textContent = origin;
 document.getElementById("pythonUrl").textContent = origin;
 document.getElementById("chatboxApiUrl").textContent = origin;
-
 function checkBalance() {
-  let key = document.getElementById("balanceKey").value.trim();
-  let el = document.getElementById("balanceResult");
-  if (!key) { el.textContent = "??? API Key"; return; }
+  var key = document.getElementById("balanceKey").value.trim();
+  var el = document.getElementById("balanceResult");
+  if (!key) { el.textContent = "请输入 API Key"; return; }
   fetch(origin + "/v1/balance", {headers: {"Authorization": "Bearer " + key}})
-    .then(r => r.json()).then(d => {
-      if (d.name) el.innerHTML = '??: <strong>' + d.name + '</strong> | ??: <strong>' + d.balance.toFixed(2) + '</strong> ?';
-      else el.textContent = '??? API Key';
-    }).catch(() => el.textContent = '????');
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.name) el.innerHTML = '用户: <strong>' + d.name + '</strong> | 余额: <strong>' + d.balance.toFixed(2) + '</strong> 元';
+      else el.textContent = '无效的 API Key';
+    }).catch(function(){ el.textContent = '查询失败'; });
 }
 </script>
 </body>
