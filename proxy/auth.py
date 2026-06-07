@@ -29,7 +29,7 @@ class UserManager:
         except (FileNotFoundError, json.JSONDecodeError):
             import os as _os2
             admin_key_env = _os2.environ.get("ADMIN_API_KEY", "").strip()
-            admin_key = "admin-fix-aabbccddee00112233445566778899"
+            admin_key = admin_key_env if admin_key_env else "admin-fix-aabbccddee00112233445566778899"
             admin = UserInfo(
                 api_key=admin_key,
                 name="admin",
