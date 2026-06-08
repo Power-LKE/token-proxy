@@ -1,4 +1,5 @@
 """User authentication and balance management"""
+import hashlib
 import json
 import uuid
 from datetime import datetime
@@ -6,6 +7,17 @@ from typing import Optional, Dict
 from config import DEFAULT_BALANCE
 from proxy.models import UserInfo
 from proxy.storage import create_store, DataStore
+
+
+def _deterministic_admin_key() -> str:
+    import os as _os
+    seed_vars = ["DEEPSEEK_API_KEY", "ZHIPU_API_KEY", "API2D_API_KEY", "OPENAI_API_KEY"]
+    for var in seed_vars:
+        val = _os.environ.get(var, "").strip()
+        if val:
+            digest = hashlib.sha256(val.encode()).hexdigest()[:24]
+            return f"admin-{digest}"
+    return f"admin-{uuid.uuid4().hex}"
 
 
 class UserManager:
@@ -26,10 +38,9 @@ class UserManager:
         except Exception:
             pass
 
-        # No data found or error ? create admin user
         import os as _os
         admin_key_env = _os.environ.get("ADMIN_API_KEY", "").strip()
-        admin_key = admin_key_env if admin_key_env else self._generate_key("admin")
+        admin_key = admin_key_env if admin_key_env else _deterministic_admin_key()
         admin = UserInfo(
             api_key=admin_key,
             name="admin",
@@ -104,3 +115,4 @@ class UserManager:
 
 
 user_manager = UserManager()
+
