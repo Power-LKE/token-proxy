@@ -135,6 +135,10 @@ USER_DATA_PATH = os.getenv("USER_DATA_PATH", "/tmp/users.json")
 MARKUP = float(os.getenv("MARKUP", "1.3"))
 
 
+# Free registration
+DISABLE_REGISTRATION = os.getenv("DISABLE_REGISTRATION", "true").lower() in ("1", "true", "yes")
+
+
 
 
 

@@ -3,7 +3,7 @@ import time
 import os
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
-from config import UPSTREAM_PROVIDERS, SERVICE_NAME, DEFAULT_BALANCE
+from config import UPSTREAM_PROVIDERS, SERVICE_NAME, DEFAULT_BALANCE, DISABLE_REGISTRATION
 from proxy.models import ChatCompletionRequest
 from proxy.auth import user_manager
 from proxy.upstream import _detect_provider, forward_chat_completion
@@ -115,6 +115,8 @@ async def chat_completions(request: Request, body: ChatCompletionRequest):
 
 @router.post("/v1/register", summary="用户注册", tags=["用户"])
 async def register_user(body: dict):
+    if DISABLE_REGISTRATION:
+        return JSONResponse(status_code=403, content={"error": "注册已关闭，请联系管理员开通账号"})
     name = body.get("name", "").strip()
     if not name:
         return JSONResponse(status_code=400, content={"error": "请输入用户名"})
