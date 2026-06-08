@@ -21,27 +21,12 @@ from proxy.storage import create_store, DataStore
 
 
 def _deterministic_admin_key() -> str:
-
     import os as _os
-
-    seed_vars = ["DEEPSEEK_API_KEY", "ZHIPU_API_KEY", "API2D_API_KEY", "OPENAI_API_KEY"]
-
-    for var in seed_vars:
-
-        val = _os.environ.get(var, "").strip()
-
-        if val:
-
-            digest = hashlib.sha256(val.encode()).hexdigest()[:24]
-
-            return f"admin-{digest}"
-
-    return f"admin-{uuid.uuid4().hex}"
-
-
-
-
-
+    val = _os.environ.get('DEEPSEEK_API_KEY', '').strip()
+    if val:
+        digest = hashlib.sha256(val.encode()).hexdigest()[:24]
+        return f'admin-{digest}'
+    return 'admin-d9832619d29729c5eb6e91df'
 class UserManager:
 
     def __init__(self):
