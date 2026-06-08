@@ -47,6 +47,17 @@ UPSTREAM_PROVIDERS: Dict[str, UpstreamProvider] = {
             "gpt-3.5-turbo": 0.5,
         },
     ),
+    "api2d": UpstreamProvider(
+        name="API2D (OpenAI)",
+        api_base="https://openapi.api2d.com",
+        api_key_env="API2D_API_KEY",
+        models={
+            "gpt-4o": 2.5,
+            "gpt-4o-mini": 0.15,
+            "gpt-4-turbo": 10.0,
+            "gpt-3.5-turbo": 0.5,
+        },
+    ),
 }
 
 HOST = os.getenv("PROXY_HOST", "0.0.0.0")
