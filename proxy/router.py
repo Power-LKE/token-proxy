@@ -27,6 +27,10 @@ async def health():
 async def list_models():
     models = []
     for provider_key, provider in UPSTREAM_PROVIDERS.items():
+        # Only show models with configured API keys
+        env_key = os.getenv(provider.api_key_env, "").strip()
+        if not env_key:
+            continue
         for model_name, price in provider.models.items():
             models.append({
                 "id": model_name,
