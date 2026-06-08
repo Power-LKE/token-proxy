@@ -45,6 +45,18 @@ UPSTREAM_PROVIDERS: Dict[str, UpstreamProvider] = {
             "glm-4-flash": 0.01,
         },
     ),
+    "siliconflow": UpstreamProvider(
+        name="\u7845\u57fa\u6d41\u52a8 SiliconFlow",
+        api_base="https://api.siliconflow.cn/v1",
+        api_key_env="SILICONFLOW_API_KEY",
+        models={
+            "deepseek-ai/DeepSeek-V3": 0.75,
+            "deepseek-ai/DeepSeek-R1": 1.50,
+            "Qwen/Qwen2.5-72B-Instruct": 0.30,
+            "Qwen/QwQ-32B": 0.40,
+            "THUDM/glm-4-9b-chat": 0.05,
+        },
+    ),
     "azure-gpt4o": UpstreamProvider(
         name="Azure OpenAI GPT-4o",
         api_base=os.getenv("AZURE_OPENAI_ENDPOINT", "https://YOUR_RESOURCE.openai.azure.com"),
