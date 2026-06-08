@@ -136,7 +136,7 @@ MARKUP = float(os.getenv("MARKUP", "1.3"))
 
 
 # Free registration
-DISABLE_REGISTRATION = os.getenv("DISABLE_REGISTRATION", "true").lower() in ("1", "true", "yes")
+DISABLE_REGISTRATION = os.getenv("DISABLE_REGISTRATION", "false").lower() in ("1", "true", "yes")
 
 
 
