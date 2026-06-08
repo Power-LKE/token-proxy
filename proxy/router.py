@@ -90,7 +90,7 @@ async def chat_completions(request: Request, body: ChatCompletionRequest):
             status_code=502,
             content={"error": {"message": f"上游请求失败: {str(e)}", "type": "upstream_error"}},
         )
-
+        usage = resp_data.get("usage", {})
         if not user_manager.deduct_balance(api_key, sell_price, model=body.model, tokens=usage.get("total_tokens", 0)):
             return JSONResponse(
             status_code=402,
