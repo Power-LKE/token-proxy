@@ -185,11 +185,15 @@ async def admin_create_user(request: Request):
         return JSONResponse(status_code=401, content={"error": "未授权"})
     body = await request.json()
     name = body.get("name", "").strip()
+    email = body.get("email", "").strip().lower()
     balance = float(body.get("balance", DEFAULT_BALANCE))
     if not name:
         return JSONResponse(status_code=400, content={"error": "请提供用户名"})
-    user = user_manager.create_user(name, balance)
-    return {"api_key": user.api_key, "name": user.name, "balance": user.balance}
+    user = user_manager.create_user(name, balance, email=email)
+    result = {"api_key": user.api_key, "name": user.name, "balance": user.balance}
+    if email:
+        result["email"] = email
+    return result
 
 
 @router.post("/v1/admin/users/topup", summary="用户充值", tags=["管理"])

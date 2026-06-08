@@ -108,6 +108,7 @@ tr:hover{background:#14142a}
         <p>创建一个新的 API 用户，系统将自动生成 API Key。</p>
         <div class="row">
           <div><label>用户名</label><input type="text" class="inp" id="newName" placeholder="例如：客户A" /></div>
+          <div><label>邮箱（可选）</label><input type="email" class="inp" id="newEmail" placeholder="user@example.com" /></div>
           <div><label>初始余额（元）</label><input type="number" class="inp" id="newBal" value="1.0" step="0.1" /></div>
         </div>
         <button class="btn btn-success" id="createBtn">创建用户</button>
@@ -185,10 +186,10 @@ function renderUsers(){
 $("searchInput").onkeyup=function(){renderUsers();};
 function togUser(k){api("/v1/admin/users/toggle","POST",{api_key:k}).then(function(d){if(d.name)loadUsers();}).catch(function(){});}
 $("createBtn").onclick=function(){
-  var n=$("newName").value.trim();var b=parseFloat($("newBal").value)||1.0;var m=$("createMsg");
+  var n=$("newName").value.trim();var e=$("newEmail").value.trim().toLowerCase();var b=parseFloat($("newBal").value)||1.0;var m=$("createMsg");
   if(!n){m.textContent="请输入用户名";m.className="msg err";m.style.display="block";return;}
-  api("/v1/admin/users","POST",{name:n,balance:b}).then(function(d){
-    if(d.api_key){m.innerHTML='已创建用户 <b>'+d.name+'</b>，初始余额 '+d.balance.toFixed(2)+' 元<br>API Key: <code style="color:#a5b4fc">'+d.api_key+"</code>";m.className="msg";m.style.display="block";$("newName").value="";loadOverview();loadUsers();}
+  api("/v1/admin/users","POST",{name:n,email:e,balance:b}).then(function(d){
+    if(d.api_key){m.innerHTML='已创建用户 <b>'+d.name+'</b>'+(d.email?' (<b>'+d.email+'</b>)':'')+'，初始余额 '+d.balance.toFixed(2)+' 元<br>API Key: <code style="color:#a5b4fc">'+d.api_key+"</code>";m.className="msg";m.style.display="block";$("newName").value="";loadOverview();loadUsers();}
     else{m.textContent=d.error||"创建失败";m.className="msg err";m.style.display="block";}
   }).catch(function(e){m.textContent="请求失败: "+e.message;m.className="msg err";m.style.display="block";});
 };
