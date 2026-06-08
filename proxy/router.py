@@ -90,9 +90,10 @@ async def chat_completions(request: Request, body: ChatCompletionRequest):
             status_code=502,
             content={"error": {"message": f"上游请求失败: {str(e)}", "type": "upstream_error"}},
         )
-        usage = resp_data.get("usage", {})
-        if not user_manager.deduct_balance(api_key, sell_price, model=body.model, tokens=usage.get("total_tokens", 0)):
-            return JSONResponse(
+
+    usage = resp_data.get("usage", {})
+    if not user_manager.deduct_balance(api_key, sell_price, model=body.model, tokens=usage.get("total_tokens", 0)):
+        return JSONResponse(
             status_code=402,
             content={"error": {"message": "余额不足", "type": "insufficient_balance"}},
         )
@@ -103,9 +104,34 @@ async def chat_completions(request: Request, body: ChatCompletionRequest):
     return resp_data
 
 
+# === 用户自助注册 ===
+
+@router.post("/v1/register", summary="用户注册", tags=["用户"])
+async def register_user(body: dict):
+    name = body.get("name", "").strip()
+    if not name:
+        return JSONResponse(status_code=400, content={"error": "请输入用户名"})
+    if len(name) > 50:
+        return JSONResponse(status_code=400, content={"error": "用户名过长"})
+    user = user_manager.register(name)
+    if not user:
+        return JSONResponse(status_code=409, content={"error": "用户名已被使用"})
+    return {"api_key": user.api_key, "name": user.name, "balance": user.balance, "message": "注册成功，赠送启动余额"}
+
+
+@router.post("/v1/user/query", summary="用户面板", tags=["用户"])
+async def user_query(request: Request):
+    api_key = request.headers.get("Authorization", "").replace("Bearer ", "").strip()
+    if not api_key:
+        return JSONResponse(status_code=401, content={"error": "请提供 API Key"})
+    user = user_manager.get_user(api_key)
+    if not user:
+        return JSONResponse(status_code=401, content={"error": "无效的 API Key"})
+    return {"name": user.name, "balance": user.balance, "is_active": user.is_active, "created_at": user.created_at, "transactions": user.transactions[-20:][::-1]}
+
 # === 管理后台 API ===
 
-@router.api_route("/v1/admin/verify", methods=["GET", "POST"], summary="?????", tags=["??"])
+@router.api_route("/v1/admin/verify", methods=["GET", "POST"], summary="验证管理员", tags=["管理"])
 async def admin_verify(request: Request):
     api_key = _get_api_key(request)
     if not api_key or not user_manager.is_admin_key(api_key):
@@ -193,4 +219,3 @@ async def admin_init():
     if not key:
         return JSONResponse(status_code=404, content={"error": "没有管理员用户"})
     return {"admin_key": key, "message": "请立即保存此 Key"}
-
