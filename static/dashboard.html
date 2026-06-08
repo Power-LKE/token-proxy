@@ -154,14 +154,16 @@ function switchTab(name) {
 
 function register() {
   var name = document.getElementById("regName").value.trim();
+  var email = document.getElementById("regEmail").value.trim();
   var msg = document.getElementById("regMsg");
   if(!name) { msg.textContent = "请输入用户名"; msg.className = "msg err"; return; }
+  if(!email || email.indexOf("@") === -1) { msg.textContent = "请输入有效的邮箱地址"; msg.className = "msg err"; return; }
   document.getElementById("regBtn").disabled = true;
   document.getElementById("regBtn").textContent = "注册中...";
   fetch(origin + "/v1/register", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({name: name})
+    body: JSON.stringify({name: name, email: email})
   }).then(function(r){ return r.json(); }).then(function(d){
     if(d.api_key) {
       CURRENT_KEY = d.api_key;
