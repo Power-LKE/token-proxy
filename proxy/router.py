@@ -251,7 +251,7 @@ async def admin_stats(request: Request):
         for tx in u.transactions:
             ttype = tx.get("type", "")
             ttime = tx.get("time", "")
-            if ttype in ("manual_create",) and tx.get("amount", 0) > 0:
+            if ttype in ("manual_create", "manual_topup") and tx.get("amount", 0) > 0:
                 total_topup += tx["amount"]
             if ttype == "registration_bonus":
                 total_topup += tx.get("amount", 0)
@@ -274,8 +274,8 @@ async def admin_stats(request: Request):
         "total_users": len(users),
         "active_users": active_users,
         "total_balance": round(total_balance, 4),
-        "total_topup": round(total_topup, 4),
-        "today_revenue": round(today_revenue, 4),
+        "total_topup": round(total_topup, 6),
+        "today_revenue": round(today_revenue, 6),
         "today_tokens": today_tokens,
         "recent_transactions": all_txns[:200],
     }
