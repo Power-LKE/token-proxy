@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -341,7 +341,7 @@ function renderUsers(){
     h += "<td>"+badge+"</td>";
     h += '<td style="font-size:12px;color:#666">'+(u.created_at||"-").substring(0,10)+"</td>";
     var tt = u.is_active ? "禁用" : "启用"; var tc = u.is_active ? "btn-warning" : "btn-success";
-    h += '<td><button class="btn '+tc+' btn-sm" onclick="event.stopPropagation();togUser(\''+u.api_key+'\')">'+tt+'</button></td>';
+    h += '<td><button class="btn '+tc+' btn-sm" onclick="event.stopPropagation() <button class="btn btn-sm" style="background:#dc2626;color:#fff" onclick="event.stopPropagation();delUser(''+u.api_key+'')">删除</button>;togUser(\''+u.api_key+'\')">'+tt+'</button></td>';
     h += "</tr>";
   }
   h += "</tbody></table>";
@@ -352,6 +352,14 @@ $("searchInput").onkeyup = function(){renderUsers();};
 
 function togUser(k){
   api("/v1/admin/users/toggle","POST",{api_key:k}).then(function(d){if(d.name)loadUsers();}).catch(function(){});
+}
+
+function delUser(k){
+  if(!confirm("确定要删除此用户吗？此操作不可恢复。")) return;
+  api("/v1/admin/users/delete","POST",{api_key:k}).then(function(d){
+    if(d.status==="ok"){loadUsers();loadOverview();}
+    else{alert(d.error||"删除失败");}
+  }).catch(function(){alert("请求失败");});
 }
 
 function copyKey(k){

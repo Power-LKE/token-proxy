@@ -110,6 +110,13 @@ class UserManager:
     def get_user(self, api_key):
         return self._users.get(api_key)
 
+    def delete_user(self, api_key):
+        user = self._users.pop(api_key, None)
+        if user:
+            self._save()
+            return True
+        return False
+
     def filter_by_parent(self, parent_key):
         return [u for u in self._users.values() if u.parent_key == parent_key]
 
