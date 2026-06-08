@@ -92,7 +92,7 @@ class UserManager:
                 return None
         return self.create_user(name, note="registration_bonus", email=email)
 
-    def create_user(self, name, balance=None, note="", email=""):
+    def create_user(self, name, balance=None, note="", email="", parent_key=""):
         api_key = self._generate_key()
         user = UserInfo(
             api_key=api_key, name=name,
