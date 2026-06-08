@@ -329,7 +329,15 @@ async def admin_topup(request: Request):
     user = user_manager.get_user(user_key)
     if not user:
         return JSONResponse(status_code=404, content={"error": "用户不存在"})
+    before = user.balance
     user.balance += amount
+    user.transactions.append({
+        "time": datetime.now().isoformat(),
+        "type": "manual_topup",
+        "amount": amount,
+        "balance_before": before,
+        "balance_after": user.balance,
+    })
     user_manager._save()
     return {"name": user.name, "balance": user.balance}
 

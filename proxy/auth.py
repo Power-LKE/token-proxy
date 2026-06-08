@@ -57,9 +57,9 @@ class UserManager:
         return prefix + "-" + uuid.uuid4().hex
 
     def is_admin_key(self, api_key):
-        for key, user in self._users.items():
-            if user.name == "admin":
-                return key
+        user = self._users.get(api_key)
+        if user and user.name == "admin":
+            return api_key
         return None
 
     def is_reseller_key(self, api_key):

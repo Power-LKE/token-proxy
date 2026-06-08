@@ -204,11 +204,7 @@ tbody tr:hover{background:#14142a}
         </div>
         <div id="txnList"><div class="empty-state">加载中...</div></div>
       </div>
-    </div>
-  </div>
-</div>
-
-    <div class="page" id="pageReseller">
+<div class="page" id="pageReseller">
       <h2 style="font-size:18px;margin-bottom:16px">代理管理</h2>
       <div class="card">
         <h3>创建代理</h3>
@@ -222,6 +218,8 @@ tbody tr:hover{background:#14142a}
         <div id="resellerList"><p style="color:#888;text-align:center;padding:20px">加载中...</p></div>
       </div>
     </div>
+    </div>
+  </div>
 
 <!-- User Detail Modal -->
 <div class="modal-overlay" id="userModal" onclick="if(event.target===this)closeModal()">
@@ -273,6 +271,7 @@ function showPage(n){
   if(n==="overview") loadOverview();
   if(n==="users") loadUsers();
   if(n==="txns") loadTxns();
+  if(n==="reseller") loadResellers();
 }
 
 // Overview
@@ -464,33 +463,11 @@ function renderResellers(resellers){
   h+="</table>";document.getElementById("resellerList").innerHTML=h;
 }
 
-function renderResellers(resellers){
-  if(!resellers.length){document.getElementById("resellerList").innerHTML='<p style="color:#888;text-align:center;padding:20px">暂无代理</p>';return;}
-  var h="<table><tr><th>名称</th><th>API Key</th><th>用户数</th><th>用户总余额</th><th>创建时间</th></tr>";
-  for(var i=0;i<resellers.length;i++){var r=resellers[i];
-    h+="<tr><td>"+r.name+"</td><td class='key-cell'>"+r.api_key.substring(0,20)+"...</td><td>"+r.user_count+"</td><td>"+r.total_balance.toFixed(2)+" 元</td><td style='font-size:12px;color:#666'>"+(r.created_at||"-").substring(0,10)+"</td></tr>";}
-  h+="</table>";document.getElementById("resellerList").innerHTML=h;
-}
-
-function renderResellers(resellers){
-  if(!resellers.length){document.getElementById("resellerList").innerHTML='<p style="color:#888;text-align:center;padding:20px">暂无代理</p>';return;}
-  var h="<table><tr><th>名称</th><th>API Key</th><th>用户数</th><th>用户总余额</th><th>创建时间</th></tr>";
-  for(var i=0;i<resellers.length;i++){var r=resellers[i];
-    h+="<tr><td>"+r.name+"</td><td class='key-cell'>"+r.api_key.substring(0,20)+"...</td><td>"+r.user_count+"</td><td>"+r.total_balance.toFixed(2)+" 元</td><td style='font-size:12px;color:#666'>"+(r.created_at||"-").substring(0,10)+"</td></tr>";}
-  h+="</table>";document.getElementById("resellerList").innerHTML=h;
-}
-
 function loadResellers(){
   api("/v1/admin/resellers").then(function(d){
     if(d.resellers){renderResellers(d.resellers);}
   }).catch(function(){});
 }
-function renderResellers(resellers){
-  if(!resellers.length){document.getElementById("resellerList").innerHTML='<p style="color:#888;text-align:center;padding:20px">暂无代理</p>';return;}
-  var h="<table><tr><th>名称</th><th>API Key</th><th>用户数</th><th>用户总余额</th><th>创建时间</th></tr>";
-  for(var i=0;i<resellers.length;i++){var r=resellers[i];
-    h+="<tr><td>"+r.name+"</td><td class='key-cell'>"+r.api_key.substring(0,20)+"...</td><td>"+r.user_count+"</td><td>"+r.total_balance.toFixed(2)+" 元</td><td style='font-size:12px;color:#666'>"+(r.created_at||"-").substring(0,10)+"</td></tr>";}
-  h+="</table>";document.getElementById("resellerList").innerHTML=h;
 }
 
 function loadTxns(){
