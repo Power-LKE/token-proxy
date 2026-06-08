@@ -66,8 +66,6 @@ UPSTREAM_PROVIDERS: Dict[str, UpstreamProvider] = {
 
         models={
 
-            "deepseek-v4": 2.0,
-
             "deepseek-v4-flash": 1.0,
 
             "deepseek-chat": 1.0,
