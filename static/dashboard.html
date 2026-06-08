@@ -61,11 +61,22 @@ pre .comment{color:#6a9955}
   <div class="card" id="loginSection">
     <h2>登录 / 注册</h2>
     <div class="tabs">
+      <button class="tab" onclick="switchTab('register')">注册新用户</button>
       <button class="tab active" onclick="switchTab('login')">已有 API Key</button>
     </div>
 
+    <div class="tab-content" id="tabRegister">
+      <p style="color:#888;font-size:13px;margin-bottom:12px">填写信息免费注册，一个邮箱只能注册一个账号。</p>
+      <div class="row">
+        <div><input type="text" class="inp" id="regName" placeholder="用户名" /></div>
+        <div><input type="email" class="inp" id="regEmail" placeholder="邮箱地址" /></div>
+      </div>
+      <div style="margin-top:8px"><button class="btn" id="regBtn" onclick="register()">免费注册</button></div>
+      <div class="msg" id="regMsg"></div>
+    </div>
+
     <div class="tab-content active" id="tabLogin">
-      <p style="color:#888;font-size:13px;margin-bottom:12px">注册已关闭。如果你需要账号，请联系管理员。</p>
+      <p style="color:#888;font-size:13px;margin-bottom:12px">已有账号？输入你的 API Key 查询余额。</p>
       <div class="row">
         <div><input type="password" class="inp" id="loginKey" placeholder="输入你的 API Key" /></div>
         <div><button class="btn" onclick="queryUser()">查询</button></div>
