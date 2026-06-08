@@ -3,7 +3,8 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
+import pathlib as _p
 
 from config import HOST, PORT, SERVICE_NAME
 from proxy.router import router
@@ -12,20 +13,6 @@ app = FastAPI(
     title=f"{SERVICE_NAME} - AI API 代理服务",
     description="将 OpenAI 兼容格式的请求转发到 DeepSeek / 智谱等上游 AI 供应商，支持鉴权、计费、多供应商管理。",
     version="1.0.0",
-    swagger_ui_parameters={
-        "locale": "zh-cn",
-        "defaultModelsExpandDepth": -1,
-        "docExpansion": "list",
-        "filter": True,
-        "syntaxHighlight.theme": "monokai",
-    },
-    contact={
-        "name": "管理员",
-        "url": "http://localhost:8000",
-    },
-    license_info={
-        "name": "MIT",
-    },
 )
 
 app.add_middleware(
@@ -40,18 +27,35 @@ app.include_router(router)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-from fastapi.responses import HTMLResponse
+def _serve_html(file_name: str) -> Response:
+    file_path = _p.Path(__file__).parent / "static" / file_name
+    if file_path.exists():
+        content = file_path.read_text(encoding="utf-8")
+        return Response(
+            content=content,
+            media_type="text/html; charset=utf-8",
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate"},
+        )
+    return Response(
+        content=f"<h1>{file_name} not found</h1>",
+        media_type="text/html",
+        status_code=404,
+    )
 
-@app.get("/admin", response_class=HTMLResponse)
+
+@app.get("/")
+async def root():
+    return _serve_html("index.html")
+
+
+@app.get("/dashboard")
+async def dashboard():
+    return _serve_html("dashboard.html")
+
+
+@app.get("/admin")
 async def admin_page():
-    from fastapi.responses import HTMLResponse
-    import pathlib as _p
-    admin_html_path = _p.Path(__file__).parent / "static" / "admin.html"
-    if admin_html_path.exists():
-        content = admin_html_path.read_text(encoding="utf-8")
-        from fastapi.responses import Response
-        return Response(content=content, media_type="text/html", headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache", "Expires": "0"})
-    return HTMLResponse("<h1>Admin page not found</h1>", status_code=404)
+    return _serve_html("admin.html")
 
 
 @app.get("/user")
@@ -59,20 +63,8 @@ async def user_page():
     return RedirectResponse(url="/static/user.html")
 
 
-@app.get("/")
-async def root():
-    return {
-        "service": SERVICE_NAME,
-        "version": "1.0.0",
-        "docs": "/docs (API 文档)",
-        "health": "/v1/health (健康检查)",
-        "models": "/v1/models (模型列表)",
-    }
-
-
 if __name__ == "__main__":
     print(f"正在启动 {SERVICE_NAME}...")
     print(f"监听地址: http://{HOST}:{PORT}")
     print(f"API 文档: http://localhost:{PORT}/docs")
     uvicorn.run(app, host=HOST, port=PORT)
-

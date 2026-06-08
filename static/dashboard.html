@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TokenProxy - 用户面板</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{background:#f5f5f5;color:#333}
+nav{background:#1a1a2e;color:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
+nav .logo{font-size:18px;font-weight:700}
+nav .logo span{color:#818cf8}
+nav a{color:#aaa;text-decoration:none;font-size:14px}
+nav a:hover{color:#fff}
+main{max-width:800px;margin:32px auto;padding:0 16px}
+.card{background:#fff;border-radius:10px;padding:24px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card h2{font-size:16px;margin-bottom:16px;color:#1a1a2e}
+.inp{background:#fff;border:1px solid #ddd;border-radius:6px;font-size:14px;outline:none;padding:10px 14px;width:100%;box-sizing:border-box}
+.inp:focus{border-color:#4f46e5}
+.btn{background:#4f46e5;border:none;border-radius:6px;color:#fff;cursor:pointer;font-size:14px;padding:10px 20px}
+.btn:hover{background:#4338ca}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{background:#e5e7eb;color:#374151}
+.btn-secondary:hover{background:#d1d5db}
+.balance-display{font-size:36px;font-weight:700;color:#1a1a2e}
+.balance-display .unit{font-size:16px;color:#888;font-weight:400}
+.key-box{background:#f0f0f5;border-radius:6px;padding:12px;font-family:monospace;font-size:13px;word-break:break-all;margin-top:8px;display:flex;align-items:center;gap:8px}
+.key-box code{flex:1;color:#4f46e5}
+.copy-btn{padding:4px 10px;background:#4f46e5;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px}
+.tx-table{width:100%;border-collapse:collapse;font-size:13px}
+.tx-table th{text-align:left;color:#888;padding:8px 12px;border-bottom:1px solid #eef0f5;font-weight:500}
+.tx-table td{padding:8px 12px;border-bottom:1px solid #f0f0f5}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px}
+.tag-credit{background:#d1fae5;color:#065f46}
+.tag-debit{background:#fee2e2;color:#991b1b}
+.tag-reg{background:#dbeafe;color:#1e40af}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{background:transparent;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:14px;color:#666}
+.tab.active{background:#4f46e5;color:#fff}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.status-active{background:#16a34a}
+.status-inactive{background:#ef4444}
+.msg{font-size:13px;color:#666;margin-top:8px}
+.msg.err{color:#ef4444}
+.msg.ok{color:#16a34a}
+.row{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin-bottom:12px}
+pre{background:#1a1a2e;color:#e0e0e0;padding:16px;border-radius:8px;overflow-x:auto;font-size:13px;line-height:1.6;margin:12px 0}
+pre .comment{color:#6a9955}
+@media(max-width:600px){.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo"><span>Token</span>Proxy</div>
+  <a href="/">返回首页</a>
+</nav>
+<main>
+  <!-- Registration / Login -->
+  <div class="card" id="loginSection">
+    <h2>登录 / 注册</h2>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('register')">注册新用户</button>
+      <button class="tab" onclick="switchTab('login')">已有 API Key</button>
+    </div>
+
+    <div class="tab-content active" id="tabRegister">
+      <p style="color:#888;font-size:13px;margin-bottom:12px">输入用户名即可免费注册，获赠启动余额。</p>
+      <div class="row">
+        <div><input type="text" class="inp" id="regName" placeholder="输入用户名" /></div>
+        <div><button class="btn" id="regBtn" onclick="register()">免费注册</button></div>
+      </div>
+      <div class="msg" id="regMsg"></div>
+    </div>
+
+    <div class="tab-content" id="tabLogin">
+      <div class="row">
+        <div><input type="password" class="inp" id="loginKey" placeholder="输入你的 API Key" /></div>
+        <div><button class="btn" onclick="queryUser()">查询</button></div>
+      </div>
+      <div class="msg" id="loginMsg"></div>
+    </div>
+  </div>
+
+  <!-- Dashboard Panel -->
+  <div id="dashPanel" style="display:none">
+    <div class="card">
+      <div class="row">
+        <div>
+          <p style="color:#888;font-size:12px;margin-bottom:4px">当前余额</p>
+          <div class="balance-display"><span id="dashBalance">0.00</span><span class="unit"> 元</span></div>
+        </div>
+        <div>
+          <p style="color:#888;font-size:12px;margin-bottom:4px">账户状态</p>
+          <div style="font-size:18px;font-weight:600;margin-top:8px">
+            <span class="status-dot status-active" id="dashStatusDot"></span>
+            <span id="dashStatus">正常</span>
+          </div>
+          <p style="color:#888;font-size:12px;margin-top:4px">用户: <strong id="dashName">-</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>API Key</h2>
+      <div class="key-box">
+        <code id="dashKey">-</code>
+        <button class="copy-btn" onclick="copyKey()">复制</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>交易记录</h2>
+      <div id="txList"><p style="color:#888;text-align:center;padding:12px">暂无记录</p></div>
+    </div>
+
+    <div class="card">
+      <h2>快速使用</h2>
+      <p style="color:#888;font-size:13px;margin-bottom:8px">调用地址：</p>
+      <div class="key-box"><code id="dashApiUrl">-</code><button class="copy-btn" onclick="copyUrl()">复制</button></div>
+      <pre><span class="comment"># Python 示例</span>
+from openai import OpenAI
+client = OpenAI(
+    api_key="<span style="color:#ce9178" id="codeKey">你的 Key</span>",
+    base_url="<span style="color:#4f46e5" id="codeUrl">你的地址</span>"
+)
+response = client.chat.completions.create(
+    model="deepseek-chat",
+    messages=[{"role":"user","content":"你好"}]
+)
+print(response.choices[0].message.content)</pre>
+    </div>
+  </div>
+</main>
+
+<script>
+var CURRENT_KEY = "";
+var origin = window.location.origin;
+
+function switchTab(name) {
+  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.querySelectorAll(".tab-content").forEach(function(t){ t.classList.remove("active"); });
+  if(name === "register") {
+    document.querySelectorAll(".tab")[0].classList.add("active");
+    document.getElementById("tabRegister").classList.add("active");
+  } else {
+    document.querySelectorAll(".tab")[1].classList.add("active");
+    document.getElementById("tabLogin").classList.add("active");
+  }
+}
+
+function register() {
+  var name = document.getElementById("regName").value.trim();
+  var msg = document.getElementById("regMsg");
+  if(!name) { msg.textContent = "请输入用户名"; msg.className = "msg err"; return; }
+  document.getElementById("regBtn").disabled = true;
+  document.getElementById("regBtn").textContent = "注册中...";
+  fetch(origin + "/v1/register", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({name: name})
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if(d.api_key) {
+      CURRENT_KEY = d.api_key;
+      msg.innerHTML = "注册成功！Key: <code style='color:#4f46e5'>" + d.api_key + "</code>";
+      msg.className = "msg ok";
+      showDashboard(d);
+    } else {
+      msg.textContent = d.error || "注册失败";
+      msg.className = "msg err";
+    }
+    document.getElementById("regBtn").disabled = false;
+    document.getElementById("regBtn").textContent = "免费注册";
+  }).catch(function(e){
+    msg.textContent = "请求失败: " + e.message;
+    msg.className = "msg err";
+    document.getElementById("regBtn").disabled = false;
+    document.getElementById("regBtn").textContent = "免费注册";
+  });
+}
+
+function queryUser() {
+  var key = document.getElementById("loginKey").value.trim();
+  var msg = document.getElementById("loginMsg");
+  if(!key) { msg.textContent = "请输入 API Key"; msg.className = "msg err"; return; }
+  CURRENT_KEY = key;
+  msg.textContent = "查询中...";
+  msg.className = "msg";
+  fetch(origin + "/v1/user/query", {
+    method: "POST",
+    headers: {"Authorization": "Bearer " + key}
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if(d.name) {
+      msg.textContent = "";
+      msg.className = "msg";
+      showDashboard(d);
+    } else {
+      msg.textContent = d.error || "无效的 Key";
+      msg.className = "msg err";
+    }
+  }).catch(function(e){
+    msg.textContent = "请求失败: " + e.message;
+    msg.className = "msg err";
+  });
+}
+
+function showDashboard(data) {
+  document.getElementById("loginSection").style.display = "none";
+  document.getElementById("dashPanel").style.display = "block";
+  document.getElementById("dashBalance").textContent = data.balance.toFixed(2);
+  document.getElementById("dashName").textContent = data.name;
+  document.getElementById("dashKey").textContent = CURRENT_KEY;
+  document.getElementById("dashApiUrl").textContent = origin;
+  document.getElementById("codeKey").textContent = CURRENT_KEY;
+  document.getElementById("codeUrl").textContent = origin;
+
+  if(data.is_active === false) {
+    document.getElementById("dashStatus").textContent = "已禁用";
+    document.getElementById("dashStatusDot").className = "status-dot status-inactive";
+  }
+
+  // Transactions
+  var txHtml = "";
+  if(data.transactions && data.transactions.length > 0) {
+    txHtml = "<table class='tx-table'><thead><tr><th>时间</th><th>类型</th><th>金额</th><th>余额</th><th>说明</th></tr></thead><tbody>";
+    data.transactions.forEach(function(tx){
+      var tagCls = "tag-debit";
+      var typeLabel = "消费";
+      if(tx.amount > 0) { tagCls = "tag-credit"; typeLabel = "充值"; }
+      if(tx.type === "registration_bonus") { tagCls = "tag-reg"; typeLabel = "注册赠送"; }
+      if(tx.type === "manual_create") { tagCls = "tag-reg"; typeLabel = "创建赠送"; }
+      var timeStr = (tx.time || "").substring(0, 19).replace("T", " ");
+      var note = "";
+      if(tx.model) note = tx.model;
+      if(tx.tokens) note += " (" + tx.tokens + " tokens)";
+      txHtml += "<tr><td style='font-size:12px;color:#888'>" + timeStr + "</td>";
+      txHtml += "<td><span class='tag " + tagCls + "'>" + typeLabel + "</span></td>";
+      txHtml += "<td style='font-weight:600'>" + (tx.amount > 0 ? "+" : "") + tx.amount.toFixed(2) + "</td>";
+      txHtml += "<td>" + tx.balance_after.toFixed(2) + "</td>";
+      txHtml += "<td style='font-size:12px;color:#888'>" + note + "</td></tr>";
+    });
+    txHtml += "</tbody></table>";
+  } else {
+    txHtml = "<p style='color:#888;text-align:center;padding:12px'>暂无交易记录</p>";
+  }
+  document.getElementById("txList").innerHTML = txHtml;
+}
+
+function copyKey() {
+  if(navigator.clipboard) navigator.clipboard.writeText(CURRENT_KEY);
+  showToast("API Key 已复制");
+}
+function copyUrl() {
+  if(navigator.clipboard) navigator.clipboard.writeText(origin);
+  showToast("API 地址已复制");
+}
+function showToast(msg) {
+  var el = document.createElement("div");
+  el.style.cssText = "position:fixed;bottom:24px;right:24px;background:#16a34a;color:#fff;padding:10px 18px;border-radius:6px;z-index:9999;font-size:14px";
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(function(){ el.remove(); }, 1500);
+}
+</script>
+</body>
+</html>
