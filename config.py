@@ -1,4 +1,4 @@
-﻿"""Configuration - Edit upstream API keys and pricing here"""
+"""Configuration - Edit upstream API keys and pricing here"""
 import os
 from dataclasses import dataclass, field
 from typing import Dict, Optional
@@ -36,35 +36,15 @@ UPSTREAM_PROVIDERS: Dict[str, UpstreamProvider] = {
             "deepseek-reasoner": 4.0,
         },
     ),
-    "zhipu": UpstreamProvider(
-        name="Zhipu GLM",
-        api_base="https://open.bigmodel.cn/api/paas/v4",
-        api_key_env="ZHIPU_API_KEY",
-        models={
-            "glm-4": 0.1,
-            "glm-4-flash": 0.01,
-        },
-    ),
-    "siliconflow": UpstreamProvider(
-        name="\u7845\u57fa\u6d41\u52a8 SiliconFlow",
-        api_base="https://api.siliconflow.cn/v1",
-        api_key_env="SILICONFLOW_API_KEY",
-        models={
-            "deepseek-ai/DeepSeek-V3": 0.75,
-            "deepseek-ai/DeepSeek-R1": 1.50,
-            "Qwen/Qwen2.5-72B-Instruct": 0.30,
-            "Qwen/QwQ-32B": 0.40,
-            "THUDM/glm-4-9b-chat": 0.05,
-        },
-    ),
-    "azure-gpt4o": UpstreamProvider(
-        name="Azure OpenAI GPT-4o",
-        api_base=os.getenv("AZURE_OPENAI_ENDPOINT", "https://YOUR_RESOURCE.openai.azure.com"),
-        api_key_env="AZURE_OPENAI_API_KEY",
-        azure_deployment=os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4o"),
+    "openai": UpstreamProvider(
+        name="OpenAI",
+        api_base="https://api.openai.com",
+        api_key_env="OPENAI_API_KEY",
         models={
             "gpt-4o": 2.5,
             "gpt-4o-mini": 0.15,
+            "gpt-4-turbo": 10.0,
+            "gpt-3.5-turbo": 0.5,
         },
     ),
 }
