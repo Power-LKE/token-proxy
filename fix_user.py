@@ -1,5 +1,0 @@
-﻿content = open(r'C:\Users\QQ136\Documents\New project\token-proxy-git\static\user.html', encoding="utf-8").read()
-content = content.replace("\u514d\u8d39\u8bd5\u7528", "\u8054\u7cfb\u7ba1\u7406\u5458")
-content = content.replace('<a href="/dashboard" class="btn">\u8fdb\u5165\u7528\u6237\u9762\u677f \u2192</a>', '<span style="color:#888;font-size:13px">\u6ce8\u518c\u5df2\u5173\u95ed\uff0c\u8bf7\u8054\u7cfb\u7ba1\u7406\u5458\u83b7\u53d6\u8d26\u53f7</span>')
-open(r'C:\Users\QQ136\Documents\New project\token-proxy-git\static\user.html', 'w', encoding='utf-8').write(content)
-print('OK')
