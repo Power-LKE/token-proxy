@@ -1,46 +1,25 @@
-"""User authentication and balance management"""
-
-import hashlib
-
-import json
-
-import uuid
-
+import hashlib, json, uuid
 from datetime import datetime
-
 from typing import Optional, Dict
-
 from config import DEFAULT_BALANCE
-
 from proxy.models import UserInfo
-
 from proxy.storage import create_store, DataStore
-
-
-
-
 
 def _deterministic_admin_key() -> str:
     import os as _os
-    val = _os.environ.get('DEEPSEEK_API_KEY', '').strip()
+    val = _os.environ.get("DEEPSEEK_API_KEY", "").strip()
     if val:
         digest = hashlib.sha256(val.encode()).hexdigest()[:24]
-        return f'admin-{digest}'
-    return 'admin-d9832619d29729c5eb6e91df'
+        return "admin-" + digest
+    return "admin-d9832619d29729c5eb6e91df"
+
 class UserManager:
-
     def __init__(self):
-
-        self._store: DataStore = create_store()
-
-        self._users: Dict[str, UserInfo] = {}
-
+        self._store = create_store()
+        self._users = {}
         self._load()
 
-
-
     def _load(self):
-        loaded = False
         try:
             raw_bytes = self._store.load()
             if raw_bytes:
@@ -48,7 +27,6 @@ class UserManager:
                 for item in raw:
                     u = UserInfo(**item)
                     self._users[u.api_key] = u
-                loaded = True
         except Exception:
             pass
 
@@ -56,160 +34,78 @@ class UserManager:
         admin_key_env = _os.environ.get("ADMIN_API_KEY", "").strip()
         expected = admin_key_env if admin_key_env else _deterministic_admin_key()
 
-        existing = None
-        exist_key = None
-        for k, u in self._users.items():
-            if u.name == "admin":
-                existing = u
-                exist_key = k
-                break
+        # Force admin key to deterministic value
+        for k in list(self._users.keys()):
+            if self._users[k].name == "admin" and k != expected:
+                del self._users[k]
 
-        if existing and exist_key != expected:
-            existing.api_key = expected
-            del self._users[exist_key]
-            self._users[expected] = existing
-            self._save()
-            print(f"[Migrate] Admin key -> {expected}")
-
-        if not existing:
+        if expected not in self._users:
             admin = UserInfo(
-                api_key=expected,
-                name="admin",
-                balance=100.0,
-                is_active=True,
+                api_key=expected, name="admin", balance=100.0, is_active=True,
                 created_at=datetime.now().isoformat(),
             )
             self._users[expected] = admin
+            print(f"[Init] Admin ready, API Key: {expected}")
             self._save()
-            print(f"[Init] Created admin user, API Key: {expected}")
-
-
 
     def _save(self):
-
         raw = [u.model_dump() for u in self._users.values()]
-
         data = json.dumps(raw, ensure_ascii=False, indent=2).encode("utf-8")
-
         self._store.save(data)
 
+    def _generate_key(self, prefix="sk"):
+        return prefix + "-" + uuid.uuid4().hex
 
-
-    def _generate_key(self, prefix: str = "sk") -> str:
-
-        return f"{prefix}-{uuid.uuid4().hex}"
-
-
-
-    def is_admin_key(self, api_key: str) -> bool:
-
+    def is_admin_key(self, api_key):
         user = self._users.get(api_key)
-
         return user is not None and user.name == "admin"
 
-
-
     @property
-
-    def admin_api_key(self) -> Optional[str]:
-
+    def admin_api_key(self):
         for key, user in self._users.items():
-
             if user.name == "admin":
-
                 return key
-
         return None
 
-
-
-    def authenticate(self, api_key: str) -> Optional[UserInfo]:
-
+    def authenticate(self, api_key):
         user = self._users.get(api_key)
-
         if user and user.is_active and user.balance > 0:
-
             return user
-
         return None
 
-
-
-    def deduct_balance(self, api_key: str, amount: float, model: str = "", tokens: int = 0) -> bool:
-
+    def deduct_balance(self, api_key, amount, model="", tokens=0):
         user = self._users.get(api_key)
-
         if user and user.balance >= amount:
-
             before = user.balance
-
             user.balance -= amount
-
             tx = {"time": datetime.now().isoformat(), "type": "usage", "amount": -amount, "balance_before": before, "balance_after": user.balance, "model": model, "tokens": tokens}
-
             user.transactions.append(tx)
-
             self._save()
-
             return True
-
         return False
 
-
-
-    def register(self, name: str):
-
+    def register(self, name):
         for u in self._users.values():
-
             if u.name == name:
-
                 return None
-
         return self.create_user(name, note="registration_bonus")
 
-
-
-    def create_user(self, name: str, balance: float = None, note: str = "") -> UserInfo:
-
+    def create_user(self, name, balance=None, note=""):
         api_key = self._generate_key()
-
         user = UserInfo(
-
-            api_key=api_key,
-
-            name=name,
-
+            api_key=api_key, name=name,
             balance=balance if balance is not None else DEFAULT_BALANCE,
-
             created_at=datetime.now().isoformat(),
-
         )
-
-        user.transactions.append({"time": datetime.now().isoformat(), "type": note if note else "manual_create", "amount": user.balance, "balance_before": 0, "balance_after": user.balance})
-
+        user.transactions.append({"time": datetime.now().isoformat(), "type": note or "manual_create", "amount": user.balance, "balance_before": 0, "balance_after": user.balance})
         self._users[api_key] = user
-
         self._save()
-
         return user
 
-
-
-    def get_user(self, api_key: str) -> Optional[UserInfo]:
-
+    def get_user(self, api_key):
         return self._users.get(api_key)
 
-
-
-    def list_users(self) -> list[UserInfo]:
-
+    def list_users(self):
         return list(self._users.values())
 
-
-
-
-
 user_manager = UserManager()
-
-
-
