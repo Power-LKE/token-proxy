@@ -57,19 +57,14 @@ class UserManager:
         return prefix + "-" + uuid.uuid4().hex
 
     def is_admin_key(self, api_key):
-    def is_reseller_key(self, api_key):
-        user = self._users.get(api_key)
-        return user is not None and user.role == 'reseller'
-
-        user = self._users.get(api_key)
-        return user is not None and user.name == "admin"
-
-    @property
-    def admin_api_key(self):
         for key, user in self._users.items():
             if user.name == "admin":
                 return key
         return None
+
+    def is_reseller_key(self, api_key):
+        user = self._users.get(api_key)
+        return user is not None and user.role == "reseller"
 
     def authenticate(self, api_key):
         user = self._users.get(api_key)
@@ -104,7 +99,7 @@ class UserManager:
             balance=balance if balance is not None else DEFAULT_BALANCE,
             created_at=datetime.now().isoformat(),
             email=email,
-            role=note,
+            role="user",
             parent_key=parent_key,
         )
         user.transactions.append({"time": datetime.now().isoformat(), "type": note or "manual_create", "amount": user.balance, "balance_before": 0, "balance_after": user.balance})
