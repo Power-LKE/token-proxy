@@ -8,59 +8,80 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 body{background:#0f0f1a;color:#e0e0e0;min-height:100vh}
 #loginBg{align-items:center;background:#0f0f1a;display:flex;height:100vh;justify-content:center;left:0;position:fixed;top:0;width:100vw;z-index:999}
-.login-box{background:#1a1a2e;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);padding:40px;text-align:center;width:420px;max-width:90vw}
-.login-box h1{color:#fff;font-size:22px;margin-bottom:4px}
-.login-box p{color:#888;font-size:13px;margin-bottom:16px}
-.login-box input{background:#252540;border:1px solid #333;border-radius:8px;color:#fff;font-size:14px;margin-bottom:12px;outline:none;padding:12px 16px;width:100%;box-sizing:border-box}
+.login-box{background:#1a1a2e;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);padding:36px;text-align:center;width:420px;max-width:90vw}
+.login-box h1{color:#fff;font-size:20px;margin-bottom:4px}
+.login-box p{color:#888;font-size:13px;margin-bottom:20px}
+.login-box input{background:#252540;border:1px solid #333;border-radius:8px;color:#fff;font-size:14px;margin-bottom:12px;outline:none;padding:12px 16px;width:100%}
 .login-box input:focus{border-color:#4f46e5}
 .login-box button{background:#4f46e5;border:none;border-radius:8px;color:#fff;cursor:pointer;font-size:15px;padding:12px;width:100%}
 .login-box button:hover{background:#4338ca}
-.login-box button:disabled{opacity:.5;cursor:not-allowed}
+.login-box button:disabled{opacity:.5}
 .login-box .login-msg{background:rgba(239,68,68,.15);border:1px solid #ef4444;border-radius:6px;color:#fca5a5;font-size:13px;margin-top:12px;padding:8px;display:none}
-.key-display{background:#252540;border:1px solid #333;border-radius:8px;padding:10px 14px;margin-bottom:16px;text-align:left;display:none}
-.key-display .label{color:#888;font-size:11px;margin-bottom:4px}
-.key-display .key-row{display:flex;align-items:center;gap:8px}
-.key-display .key-value{color:#a5b4fc;font-family:monospace;font-size:13px;word-break:break-all;flex:1}
-.key-display .copy-btn{background:#4f46e5;border:none;border-radius:4px;color:#fff;cursor:pointer;font-size:11px;padding:4px 10px;white-space:nowrap}
-.key-display .copy-btn:hover{background:#4338ca}
 #dash{display:none}
-.sidebar{background:#14142a;border-right:1px solid #1e1e3a;height:100vh;left:0;padding:24px;position:fixed;top:0;width:220px}
-.sidebar h2{color:#fff;font-size:16px;margin-bottom:4px}
-.sidebar .sub{color:#666;font-size:11px;margin-bottom:24px}
-.sidebar a{color:#888;cursor:pointer;display:block;font-size:14px;padding:10px 12px;text-decoration:none}
-.sidebar a:hover,.sidebar a.active{background:#1e1e3a;border-radius:6px;color:#fff}
-.main{margin-left:220px;padding:32px;min-height:100vh}
+.sidebar{background:#14142a;border-right:1px solid #1e1e3a;height:100vh;left:0;padding:24px;position:fixed;top:0;width:200px;overflow-y:auto}
+.sidebar h2{color:#fff;font-size:15px;margin-bottom:2px}
+.sidebar .sub{color:#555;font-size:11px;margin-bottom:20px}
+.sidebar a{color:#888;cursor:pointer;display:block;font-size:13px;padding:9px 12px;text-decoration:none;border-radius:6px;margin-bottom:2px}
+.sidebar a:hover,.sidebar a.active{background:#1e1e3a;color:#fff}
+.sidebar .section-title{color:#555;font-size:11px;text-transform:uppercase;padding:16px 12px 6px;letter-spacing:1px}
+.main{margin-left:200px;padding:24px 32px}
 .page{display:none}
 .page.active{display:block}
-.stats{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin-bottom:24px}
-.stat-card{background:#1a1a2e;border-radius:8px;padding:20px}
-.stat-card .l{color:#888;font-size:12px;margin-bottom:4px}
-.stat-card .v{color:#fff;font-size:28px;font-weight:700}
+.stats{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:24px}
+.stat-card{background:#1a1a2e;border-radius:8px;padding:16px 18px}
+.stat-card .l{color:#888;font-size:11px;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.stat-card .v{color:#fff;font-size:22px;font-weight:700}
+.stat-card .s{color:#666;font-size:11px;margin-top:4px}
 .card{background:#1a1a2e;border-radius:8px;margin-bottom:16px;padding:20px}
-.card h3{color:#fff;font-size:15px;margin-bottom:12px}
+.card h3{color:#fff;font-size:14px;margin-bottom:12px;font-weight:600}
 .card p{color:#888;font-size:13px;margin-bottom:12px}
 label{color:#888;display:block;font-size:12px;margin-bottom:4px}
-.inp{background:#252540;border:1px solid #333;border-radius:6px;color:#fff;font-size:13px;outline:none;padding:10px 12px;width:100%;box-sizing:border-box}
-.inp:focus{border-color:#4f46e5}
+input{background:#252540;border:1px solid #333;border-radius:6px;color:#fff;font-size:13px;outline:none;padding:10px 12px;width:100%}
+input:focus{border-color:#4f46e5}
 .row{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin-bottom:12px}
 @media(max-width:600px){.row{grid-template-columns:1fr}}
-.btn{background:#252540;border:none;border-radius:6px;color:#c0c0c0;cursor:pointer;font-size:13px;padding:10px 16px;display:inline-block}
+.btn{background:#252540;border:none;border-radius:6px;color:#c0c0c0;cursor:pointer;font-size:12px;padding:8px 14px;display:inline-block;transition:background .15s}
+.btn:hover{background:#333}
 .btn-primary{background:#4f46e5;color:#fff}
+.btn-primary:hover{background:#4338ca!important}
 .btn-warning{background:#b45309;color:#fff}
+.btn-warning:hover{background:#92400e!important}
 .btn-success{background:#16a34a;color:#fff}
+.btn-success:hover{background:#15803d!important}
+.btn-sm{padding:5px 10px;font-size:11px}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;color:#888;padding:10px 12px;border-bottom:1px solid #333;font-weight:400;white-space:nowrap}
-td{padding:10px 12px;border-bottom:1px solid #1e1e3a}
-tr:hover{background:#14142a}
-.key-cell{font-family:monospace;font-size:12px;color:#a5b4fc;max-width:200px;overflow:hidden;text-overflow:ellipsis}
-.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px}
+thead th{text-align:left;color:#888;padding:10px 12px;border-bottom:1px solid #333;font-weight:400;white-space:nowrap;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+tbody td{padding:10px 12px;border-bottom:1px solid #1e1e3a}
+tbody tr:hover{background:#14142a}
+.key-cell{font-family:monospace;font-size:12px;color:#a5b4fc;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.key-cell:hover{color:#818cf8}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
 .badge.on{background:rgba(22,163,74,.15);color:#4ade80}
 .badge.off{background:rgba(239,68,68,.15);color:#f87171}
-.msg{background:rgba(22,163,74,.1);border:1px solid #16a34a;border-radius:6px;color:#86efac;font-size:13px;margin-top:12px;padding:10px 12px;display:none}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;background:#252540;color:#888}
+.tag-credit{background:rgba(22,163,74,.15);color:#4ade80}
+.tag-usage{background:rgba(239,68,68,.15);color:#f87171}
+.msg{background:rgba(22,163,74,.1);border:1px solid #16a34a;border-radius:6px;color:#86efac;font-size:13px;margin-top:12px;padding:10px 12px;display:none;line-height:1.6}
 .msg.err{background:rgba(239,68,68,.15);border-color:#ef4444;color:#fca5a5}
-.search-bar{margin-bottom:12px}
-.search-bar input{background:#252540;border:1px solid #333;border-radius:6px;color:#fff;font-size:13px;outline:none;padding:8px 12px;width:100%;max-width:300px}
-.search-bar input:focus{border-color:#4f46e5}
+.search-bar{margin-bottom:12px;display:flex;gap:8px;align-items:center}
+.search-bar input{max-width:260px}
+.amt-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.amt-btn{background:#252540;border:1px solid #333;border-radius:6px;color:#c0c0c0;cursor:pointer;font-size:13px;padding:8px 18px;transition:all .15s}
+.amt-btn.active,.amt-btn:hover{background:#4f46e5;border-color:#4f46e5;color:#fff}
+/* Modal */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center}
+.modal{background:#1a1a2e;border-radius:12px;padding:24px;max-width:640px;width:90vw;max-height:80vh;overflow-y:auto}
+.modal h2{color:#fff;font-size:16px;margin-bottom:4px}
+.modal .close{float:right;background:none;border:none;color:#888;font-size:22px;cursor:pointer}
+.modal .close:hover{color:#fff}
+.modal .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0}
+.modal .info-item{background:#14142a;padding:10px 14px;border-radius:6px}
+.modal .info-item .l{color:#888;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.modal .info-item .v{color:#e0e0e0;font-size:14px;margin-top:2px;word-break:break-all}
+.empty-state{text-align:center;color:#555;padding:30px;font-size:13px}
+.copy-btn{background:#252540;border:none;border-radius:4px;color:#c0c0c0;cursor:pointer;font-size:11px;padding:4px 8px;margin-left:4px}
+.copy-btn:hover{background:#333;color:#fff}
+.copy-btn.copied{background:#16a34a;color:#fff}
 </style>
 </head>
 <body>
@@ -68,140 +89,379 @@ tr:hover{background:#14142a}
   <div class="login-box">
     <h1>TokenProxy 管理后台</h1>
     <p>请输入管理员 API Key 登录</p>
-    <input type="password" id="loginKey" placeholder="粘贴管理员 API Key..." />
+    <input type="password" id="loginKey" placeholder="粘贴管理员 API Key ...">
     <button id="loginBtn">登录</button>
     <div class="login-msg" id="loginMsg"></div>
   </div>
 </div>
+
 <div id="dash">
   <div class="sidebar">
     <h2>TokenProxy</h2>
     <div class="sub">管理后台</div>
     <a id="navOverview" class="active" onclick="showPage('overview')">概览</a>
+    <div class="section-title">用户</div>
     <a id="navUsers" onclick="showPage('users')">用户管理</a>
     <a id="navCreate" onclick="showPage('create')">创建用户</a>
-    <a id="navSettings" onclick="showPage('settings')">充值管理</a>
+    <div class="section-title">财务</div>
+    <a id="navRecharge" onclick="showPage('recharge')">充值管理</a>
+    <a id="navTxns" onclick="showPage('txns')">交易记录</a>
   </div>
+
   <div class="main">
+    <!-- Overview -->
     <div class="page active" id="pageOverview">
-      <h2 style="font-size:20px;margin-bottom:20px">服务概览</h2>
+      <h2 style="font-size:18px;margin-bottom:20px">服务概览</h2>
       <div class="stats">
-        <div class="stat-card"><div class="l">用户总数</div><div class="v" id="statUsers">-</div></div>
-        <div class="stat-card"><div class="l">总余额</div><div class="v" id="statBalance">-</div></div>
-        <div class="stat-card"><div class="l">服务状态</div><div class="v" id="statStatus">-</div></div>
+        <div class="stat-card"><div class="l">用户总数</div><div class="v" id="statUsers">-</div><div class="s" id="statActiveUsers"></div></div>
+        <div class="stat-card"><div class="l">总余额</div><div class="v" id="statBalance">-</div><div class="s">所有用户余额总和</div></div>
+        <div class="stat-card"><div class="l">总收入</div><div class="v" id="statRevenue">-</div><div class="s">所有充值总和</div></div>
+        <div class="stat-card"><div class="l">今日消耗</div><div class="v" id="statTodayRev">-</div><div class="s" id="statTodayTokens"></div></div>
+        <div class="stat-card"><div class="l">服务状态</div><div class="v" id="statStatus">-</div><div class="s" id="statAdminKey"></div></div>
+      </div>
+      <div class="card">
+        <h3>最近交易</h3>
+        <div id="recentTxns"><div class="empty-state">加载中...</div></div>
       </div>
     </div>
+
+    <!-- Users -->
     <div class="page" id="pageUsers">
-      <h2 style="font-size:20px;margin-bottom:16px">用户管理</h2>
+      <h2 style="font-size:18px;margin-bottom:16px">用户管理</h2>
       <div class="card">
-        <h3>用户列表</h3>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3>用户列表</h3>
+          <span id="userCount" style="color:#888;font-size:12px"></span>
+        </div>
         <div class="search-bar">
-          <input type="text" id="searchInput" placeholder="搜索用户名或 Key..." />
+          <input type="text" id="searchInput" placeholder="搜索用户名、邮箱或 Key ...">
+          <select id="statusFilter" style="background:#252540;border:1px solid #333;border-radius:6px;color:#fff;font-size:13px;padding:10px 12px;outline:none" onchange="renderUsers()">
+            <option value="">全部状态</option>
+            <option value="active">启用</option>
+            <option value="disabled">禁用</option>
+          </select>
         </div>
         <div id="userList"><p style="color:#888;text-align:center;padding:20px">加载中...</p></div>
       </div>
     </div>
+
+    <!-- Create -->
     <div class="page" id="pageCreate">
-      <h2 style="font-size:20px;margin-bottom:16px">创建用户</h2>
+      <h2 style="font-size:18px;margin-bottom:16px">创建用户</h2>
       <div class="card">
         <h3>创建新用户</h3>
         <p>创建一个新的 API 用户，系统将自动生成 API Key。</p>
         <div class="row">
-          <div><label>用户名</label><input type="text" class="inp" id="newName" placeholder="例如：客户A" /></div>
-          <div><label>邮箱（可选）</label><input type="email" class="inp" id="newEmail" placeholder="user@example.com" /></div>
-          <div><label>初始余额（元）</label><input type="number" class="inp" id="newBal" value="1.0" step="0.1" /></div>
+          <div><label>用户名</label><input type="text" id="newName" placeholder="如：客户A"></div>
+          <div><label>邮箱（可选）</label><input type="email" id="newEmail" placeholder="user@example.com"></div>
+          <div><label>初始余额（元）</label><input type="number" id="newBal" value="0" step="0.1"></div>
         </div>
         <button class="btn btn-success" id="createBtn">创建用户</button>
         <div class="msg" id="createMsg"></div>
       </div>
     </div>
-    <div class="page" id="pageSettings">
-      <h2 style="font-size:20px;margin-bottom:16px">充值管理</h2>
+
+    <!-- Recharge -->
+    <div class="page" id="pageRecharge">
+      <h2 style="font-size:18px;margin-bottom:16px">充值管理</h2>
       <div class="card">
         <h3>用户充值</h3>
         <p>输入用户的 API Key 为其增加余额。</p>
-        <div class="row">
-          <div><label>用户 API Key</label><input type="text" class="inp" id="topKey" placeholder="sk-xxx..." /></div>
-          <div><label>充值金额（元）</label><input type="number" class="inp" id="topAmt" value="10" step="1" /></div>
+        <div><label>用户 API Key</label><input type="text" id="topKey" placeholder="sk-xxx..."></div>
+        <div style="margin-top:12px"><label>充值金额</label></div>
+        <div class="amt-btns">
+          <button class="amt-btn" onclick="setAmt(10)">10 元</button>
+          <button class="amt-btn" onclick="setAmt(20)">20 元</button>
+          <button class="amt-btn" onclick="setAmt(50)">50 元</button>
+          <button class="amt-btn" onclick="setAmt(100)">100 元</button>
+          <button class="amt-btn" onclick="setAmt(500)">500 元</button>
+          <button class="amt-btn" onclick="setAmt(0)" style="border-color:#4f46e5;color:#4f46e5">自定义</button>
         </div>
-        <button class="btn btn-primary" id="topBtn">充值</button>
+        <div><label>金额（元）</label><input type="number" id="topAmt" value="10" step="1"></div>
+        <div style="margin-top:12px"><button class="btn btn-primary" id="topBtn">确认充值</button></div>
         <div class="msg" id="topMsg"></div>
+      </div>
+    </div>
+
+    <!-- Transactions -->
+    <div class="page" id="pageTxns">
+      <h2 style="font-size:18px;margin-bottom:16px">交易记录</h2>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3>所有交易</h3>
+          <span id="txnCount" style="color:#888;font-size:12px"></span>
+        </div>
+        <div class="search-bar" style="gap:12px">
+          <input type="text" id="txnSearch" placeholder="搜索用户..." style="max-width:200px">
+          <select id="txnTypeFilter" style="background:#252540;border:1px solid #333;border-radius:6px;color:#fff;font-size:13px;padding:10px 12px;outline:none" onchange="renderTxns()">
+            <option value="">全部类型</option>
+            <option value="usage">用量扣费</option>
+            <option value="topup">充值</option>
+            <option value="registration_bonus">注册赠送</option>
+            <option value="manual_create">手动创建</option>
+          </select>
+        </div>
+        <div id="txnList"><div class="empty-state">加载中...</div></div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- User Detail Modal -->
+<div class="modal-overlay" id="userModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="close" onclick="closeModal()">&times;</button>
+    <h2 id="modalTitle">用户详情</h2>
+    <div class="info-grid" id="modalInfo"></div>
+    <h3 style="color:#fff;font-size:13px;margin:16px 0 8px">交易记录</h3>
+    <div id="modalTxns"><div class="empty-state">加载中...</div></div>
+  </div>
+</div>
+
 <script>
-var ADMIN_KEY = ""; var allUsers = [];
+var ADMIN_KEY = "", allUsers = [], allTxns = [];
 function $(id){return document.getElementById(id);}
-function api(path,method,body){
-  var o={headers:{"Authorization":"Bearer "+ADMIN_KEY}};
-  if(method)o.method=method;
+function api(path, method, body){
+  var o = {headers: {"Authorization": "Bearer "+ADMIN_KEY}};
+  if(method) o.method = method;
   if(body){o.method="POST";o.body=JSON.stringify(body);o.headers["Content-Type"]="application/json";}
-  return fetch(window.location.origin+path,o).then(function(r){return r.json();});
+  return fetch(window.location.origin+path, o).then(function(r){return r.json();});
 }
-$("loginBtn").onclick=function(){
-  var k=$("loginKey").value.trim(),m=$("loginMsg");
+
+// Login
+$("loginBtn").onclick = function(){
+  var k = $("loginKey").value.trim(), m = $("loginMsg");
   if(!k){m.textContent="请输入 API Key";m.style.display="block";return;}
-  ADMIN_KEY=k;$("loginBtn").disabled=true;$("loginBtn").textContent="登录中...";
-  api("/v1/admin/verify","POST").then(function(d){
-    if(d.status==="ok"){$("loginBg").style.display="none";$("dash").style.display="block";loadOverview();}
-    else{m.textContent=d.error||"验证失败";m.style.display="block";$("loginBtn").disabled=false;$("loginBtn").textContent="登录";}
-  }).catch(function(e){m.textContent="请求失败: "+e.message;m.style.display="block";$("loginBtn").disabled=false;$("loginBtn").textContent="登录";});
+  ADMIN_KEY = k; $("loginBtn").disabled = true; $("loginBtn").textContent = "登录中...";
+  api("/v1/admin/verify", "POST").then(function(d){
+    if(d.status === "ok"){
+      $("loginBg").style.display = "none"; $("dash").style.display = "block";
+      $("statAdminKey").textContent = "Key: " + d.admin_key.substring(0,12) + "...";
+      loadOverview(); loadUsers();
+    } else {
+      m.textContent = d.error || "验证失败"; m.style.display = "block";
+      $("loginBtn").disabled = false; $("loginBtn").textContent = "登录";
+    }
+  }).catch(function(e){
+    m.textContent = "请求失败: " + e.message; m.style.display = "block";
+    $("loginBtn").disabled = false; $("loginBtn").textContent = "登录";
+  });
 };
-$("loginKey").onkeydown=function(e){if(e.key==="Enter")$("loginBtn").click();};
+$("loginKey").onkeydown = function(e){if(e.key==="Enter")$("loginBtn").click();};
+
 function showPage(n){
-  ["navOverview","navUsers","navCreate","navSettings"].forEach(function(i){$(i).classList.remove("active");});
-  if(n==="overview")$("navOverview").classList.add("active");
-  if(n==="users")$("navUsers").classList.add("active");
-  if(n==="create")$("navCreate").classList.add("active");
-  if(n==="settings")$("navSettings").classList.add("active");
+  ["navOverview","navUsers","navCreate","navRecharge","navTxns"].forEach(function(i){$(i).classList.remove("active");});
+  $("nav"+n.charAt(0).toUpperCase()+n.slice(1)).classList.add("active");
   document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
   $("page"+n.charAt(0).toUpperCase()+n.slice(1)).classList.add("active");
-  if(n==="overview")loadOverview();if(n==="users")loadUsers();
+  if(n==="overview") loadOverview();
+  if(n==="users") loadUsers();
+  if(n==="txns") loadTxns();
 }
+
+// Overview
 function loadOverview(){
-  api("/v1/admin/verify","POST").then(function(d){
-    $("statUsers").textContent=d.user_count;$("statBalance").textContent=d.total_balance.toFixed(2)+" 元";
-    $("statStatus").textContent="正常";$("statStatus").style.color="#4ade80";
-  }).catch(function(e){$("statStatus").textContent="连接异常";$("statStatus").style.color="#f87171";});
+  api("/v1/admin/stats").then(function(d){
+    $("statUsers").textContent = d.total_users;
+    $("statActiveUsers").textContent = (d.active_users || 0) + " 活跃";
+    $("statBalance").textContent = (d.total_balance || 0).toFixed(2) + " 元";
+    $("statRevenue").textContent = "¥" + (d.total_topup || 0).toFixed(2);
+    $("statTodayRev").textContent = "¥" + (d.today_revenue || 0).toFixed(2);
+    $("statTodayTokens").textContent = (d.today_tokens || 0) + " tokens";
+    $("statStatus").textContent = "正常"; $("statStatus").style.color = "#4ade80";
+    if(d.recent_transactions){
+      allTxns = d.recent_transactions;
+      renderRecentTxns();
+    }
+  }).catch(function(e){
+    $("statStatus").textContent = "连接异常"; $("statStatus").style.color = "#f87171";
+  });
 }
-function loadUsers(){api("/v1/admin/users").then(function(d){if(d.users){allUsers=d.users;renderUsers();}}).catch(function(){});}
+
+function renderRecentTxns(){
+  var txns = allTxns.slice(0, 20), h = "";
+  if(!txns.length){$("recentTxns").innerHTML='<div class="empty-state">暂无交易记录</div>';return;}
+  h = "<table><thead><tr><th>时间</th><th>用户</th><th>类型</th><th>金额</th><th>说明</th></tr></thead><tbody>";
+  for(var i=0;i<txns.length;i++){
+    var t = txns[i];
+    var tagCls = "tag", typeLabel = t.type;
+    if(t.type === "usage"){tagCls="tag tag-usage";typeLabel="用量扣费";}
+    else if(t.type === "registration_bonus" || t.type === "manual_create" || t.amount > 0){tagCls="tag tag-credit";typeLabel="充值";}
+    var timeStr = (t.time || "").substring(0, 16).replace("T", " ");
+    var detail = t.model || "";
+    if(t.tokens) detail += (detail?" | ":"") + t.tokens + " tokens";
+    h += "<tr><td style='font-size:12px;color:#666'>"+timeStr+"</td><td>"+t.user+"</td><td><span class='"+tagCls+"'>"+typeLabel+"</span></td><td>"+(t.amount > 0 ? "+" : "")+t.amount.toFixed(4)+"</td><td style='color:#666;font-size:12px'>"+detail+"</td></tr>";
+  }
+  h += "</tbody></table>";
+  $("recentTxns").innerHTML = h;
+}
+
+// Users
+function loadUsers(){
+  api("/v1/admin/users").then(function(d){
+    if(d.users){allUsers = d.users; renderUsers();}
+  }).catch(function(){});
+}
+
 function renderUsers(){
-  var q=$("searchInput").value||"";
-  var f=q?allUsers.filter(function(u){return u.name.indexOf(q)!==-1||u.api_key.indexOf(q)!==-1;}):allUsers;
-  if(f.length===0){$("userList").innerHTML='<p style="color:#888;text-align:center;padding:20px">暂无用户</p>';return;}
-  var h="<table><thead><tr><th>用户名</th><th>API Key</th><th>余额</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead><tbody>";
-  for(var i=0;i<f.length;i++){var u=f[i];
-    var badge=u.is_active?'<span class="badge on">启用</span>':'<span class="badge off">禁用</span>';
-    h+="<tr><td>"+u.name+"</td>";
-    h+='<td class="key-cell">'+u.api_key.substring(0,20)+'...</td>';
-    h+="<td>"+u.balance.toFixed(2)+" 元</td>";
-    h+="<td>"+badge+"</td>";
-    h+='<td style="font-size:12px;color:#666">'+(u.created_at||"-").substring(0,10)+"</td>";
-    var tt=u.is_active?"禁用":"启用";var tc=u.is_active?"btn-warning":"btn-success";
-    h+='<td><button class="btn '+tc+'" style="padding:4px 10px;font-size:12px" onclick="togUser('+"'"+u.api_key+"'"+')">'+tt+"</button></td>";
-    h+="</tr>";}
-  h+="</tbody></table>";$("userList").innerHTML=h;
+  var q = ($("searchInput").value || "").toLowerCase();
+  var sf = $("statusFilter").value;
+  var f = allUsers.filter(function(u){
+    if(q && u.name.toLowerCase().indexOf(q)===-1 && u.api_key.toLowerCase().indexOf(q)===-1 && (u.email||"").toLowerCase().indexOf(q)===-1) return false;
+    if(sf==="active" && !u.is_active) return false;
+    if(sf==="disabled" && u.is_active) return false;
+    return true;
+  });
+  $("userCount").textContent = f.length + " / " + allUsers.length + " 用户";
+  if(!f.length){$("userList").innerHTML='<div class="empty-state">暂无符合条件的用户</div>';return;}
+  var h = "<table><thead><tr><th>用户名</th><th>邮箱</th><th>API Key</th><th>余额</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead><tbody>";
+  for(var i=0;i<f.length;i++){
+    var u = f[i];
+    var badge = u.is_active ? '<span class="badge on">启用</span>' : '<span class="badge off">禁用</span>';
+    h += "<tr onclick='showUserDetail(\""+u.api_key+"\")' style='cursor:pointer'>";
+    h += "<td><strong>"+u.name+"</strong></td>";
+    h += "<td style='color:#888;font-size:12px'>"+(u.email||"-")+"</td>";
+    h += '<td class="key-cell" onclick="event.stopPropagation();copyKey(\''+u.api_key+'\')">'+u.api_key.substring(0,16)+'... <span class="copy-btn" onclick="event.stopPropagation();copyKey(\''+u.api_key+'\')">复制</span></td>';
+    h += "<td>"+u.balance.toFixed(2)+" 元</td>";
+    h += "<td>"+badge+"</td>";
+    h += '<td style="font-size:12px;color:#666">'+(u.created_at||"-").substring(0,10)+"</td>";
+    var tt = u.is_active ? "禁用" : "启用"; var tc = u.is_active ? "btn-warning" : "btn-success";
+    h += '<td><button class="btn '+tc+' btn-sm" onclick="event.stopPropagation();togUser(\''+u.api_key+'\')">'+tt+'</button></td>';
+    h += "</tr>";
+  }
+  h += "</tbody></table>";
+  $("userList").innerHTML = h;
 }
-$("searchInput").onkeyup=function(){renderUsers();};
-function togUser(k){api("/v1/admin/users/toggle","POST",{api_key:k}).then(function(d){if(d.name)loadUsers();}).catch(function(){});}
-$("createBtn").onclick=function(){
-  var n=$("newName").value.trim();var e=$("newEmail").value.trim().toLowerCase();var b=parseFloat($("newBal").value)||1.0;var m=$("createMsg");
+
+$("searchInput").onkeyup = function(){renderUsers();};
+
+function togUser(k){
+  api("/v1/admin/users/toggle","POST",{api_key:k}).then(function(d){if(d.name)loadUsers();}).catch(function(){});
+}
+
+function copyKey(k){
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(k).then(function(){
+      alert("API Key 已复制到剪贴板");
+    }).catch(function(){});
+  }
+}
+
+// User detail modal
+function showUserDetail(apiKey){
+  var u = null;
+  for(var i=0;i<allUsers.length;i++){if(allUsers[i].api_key===apiKey){u=allUsers[i];break;}}
+  if(!u) return;
+  $("modalTitle").textContent = "用户详情 - " + u.name;
+  $("modalInfo").innerHTML = '<div class="info-item"><div class="l">用户名</div><div class="v">'+u.name+'</div></div><div class="info-item"><div class="l">邮箱</div><div class="v">'+(u.email||"-")+'</div></div><div class="info-item"><div class="l">余额</div><div class="v">'+u.balance.toFixed(4)+' 元</div></div><div class="info-item"><div class="l">API Key</div><div class="v" style="font-size:12px">'+u.api_key+' <button class="copy-btn" onclick="copyKey(\''+u.api_key+'\')">复制</button></div></div><div class="info-item"><div class="l">状态</div><div class="v">'+(u.is_active?"启用":"禁用")+'</div></div><div class="info-item"><div class="l">创建时间</div><div class="v">'+(u.created_at||"-")+'</div></div>';
+  $("modalTxns").innerHTML = '<div class="empty-state">加载中...</div>';
+  $("userModal").style.display = "flex";
+  // Load user transactions
+  api("/v1/user/query", "POST", {api_key: apiKey}).then(function(d){
+    if(d.transactions && d.transactions.length){
+      var h = "<table><thead><tr><th>时间</th><th>类型</th><th>金额</th><th>余额</th><th>模型</th><th>Tokens</th></tr></thead><tbody>";
+      for(var i=0;i<d.transactions.length;i++){
+        var tx = d.transactions[i];
+        var ttype = tx.type || "";
+        var tagCls = ttype === "usage" ? "tag-usage" : "tag-credit";
+        var label = ttype === "usage" ? "扣费" : "充值";
+        var timeStr = (tx.time||"").substring(0, 16).replace("T"," ");
+        h += "<tr><td style='font-size:12px;color:#666'>"+timeStr+"</td>";
+        h += '<td><span class="tag '+tagCls+'">'+label+'</span></td>';
+        h += "<td>"+(tx.amount > 0 ? "+" : "")+tx.amount.toFixed(4)+"</td>";
+        h += "<td>"+(tx.balance_after||0).toFixed(4)+"</td>";
+        h += "<td style='color:#888;font-size:12px'>"+(tx.model||"-")+"</td>";
+        h += "<td style='color:#888;font-size:12px'>"+(tx.tokens||"-")+"</td></tr>";
+      }
+      h += "</tbody></table>";
+      $("modalTxns").innerHTML = h;
+    } else {
+      $("modalTxns").innerHTML = '<div class="empty-state">暂无交易记录</div>';
+    }
+  }).catch(function(){
+    $("modalTxns").innerHTML = '<div class="empty-state">加载失败</div>';
+  });
+}
+
+function closeModal(){$("userModal").style.display="none";}
+
+// Create user
+$("createBtn").onclick = function(){
+  var n = $("newName").value.trim(), e = $("newEmail").value.trim().toLowerCase();
+  var b = parseFloat($("newBal").value) || 0;
+  var m = $("createMsg");
   if(!n){m.textContent="请输入用户名";m.className="msg err";m.style.display="block";return;}
   api("/v1/admin/users","POST",{name:n,email:e,balance:b}).then(function(d){
-    if(d.api_key){m.innerHTML='已创建用户 <b>'+d.name+'</b>'+(d.email?' (<b>'+d.email+'</b>)':'')+'，初始余额 '+d.balance.toFixed(2)+' 元<br>API Key: <code style="color:#a5b4fc">'+d.api_key+"</code>";m.className="msg";m.style.display="block";$("newName").value="";loadOverview();loadUsers();}
-    else{m.textContent=d.error||"创建失败";m.className="msg err";m.style.display="block";}
+    if(d.api_key){
+      m.innerHTML = "已创建用户 <b>"+d.name+"</b>"+(d.email?" (<b>"+d.email+"</b>)":"")+"，初始余额 "+d.balance.toFixed(2)+" 元<br>API Key: <code style='color:#a5b4fc'>"+d.api_key+"</code><br><button class='copy-btn' onclick='navigator.clipboard.writeText(\""+d.api_key+"\");this.textContent=\"已复制\"'>复制 API Key</button>";
+      m.className = "msg"; m.style.display = "block";
+      $("newName").value = ""; loadOverview(); loadUsers();
+    } else {
+      m.textContent = d.error || "创建失败"; m.className = "msg err"; m.style.display = "block";
+    }
   }).catch(function(e){m.textContent="请求失败: "+e.message;m.className="msg err";m.style.display="block";});
 };
-$("topBtn").onclick=function(){
-  var k=$("topKey").value.trim();var a=parseFloat($("topAmt").value)||0;var m=$("topMsg");
+
+// Recharge
+function setAmt(val){
+  document.querySelectorAll(".amt-btn").forEach(function(b){b.classList.remove("active");});
+  if(val > 0){
+    $("topAmt").value = val;
+    event.target.classList.add("active");
+  } else {
+    $("topAmt").value = "";
+    $("topAmt").focus();
+  }
+}
+
+$("topBtn").onclick = function(){
+  var k = $("topKey").value.trim(), a = parseFloat($("topAmt").value) || 0, m = $("topMsg");
   if(!k){m.textContent="请输入用户 API Key";m.className="msg err";m.style.display="block";return;}
   if(a<=0){m.textContent="充值金额必须大于 0";m.className="msg err";m.style.display="block";return;}
   api("/v1/admin/users/topup","POST",{api_key:k,amount:a}).then(function(d){
-    if(d.balance!==undefined){m.innerHTML='已为 <b>'+d.name+'</b> 充值，当前余额 <b>'+d.balance.toFixed(2)+'</b> 元';m.className="msg";m.style.display="block";$("topKey").value="";loadOverview();loadUsers();}
-    else{m.textContent=d.error||"充值失败";m.className="msg err";m.style.display="block";}
+    if(d.balance!==undefined){
+      m.innerHTML = "已为 <b>"+d.name+"</b> 充值 <b>"+a.toFixed(2)+"</b> 元，当前余额 <b>"+d.balance.toFixed(2)+"</b> 元";
+      m.className = "msg"; m.style.display = "block";
+      $("topKey").value = ""; loadOverview(); loadUsers();
+    } else {
+      m.textContent = d.error || "充值失败"; m.className = "msg err"; m.style.display = "block";
+    }
   }).catch(function(e){m.textContent="请求失败: "+e.message;m.className="msg err";m.style.display="block";});
 };
+
+// Transactions
+function loadTxns(){
+  api("/v1/admin/stats").then(function(d){
+    if(d.recent_transactions){allTxns = d.recent_transactions; renderTxns();}
+  }).catch(function(){});
+}
+
+function renderTxns(){
+  var q = ($("txnSearch").value || "").toLowerCase();
+  var tf = $("txnTypeFilter").value;
+  var f = allTxns.filter(function(t){
+    if(q && t.user.toLowerCase().indexOf(q)===-1) return false;
+    if(tf && t.type !== tf) return false;
+    return true;
+  });
+  $("txnCount").textContent = "共 " + f.length + " 条记录";
+  if(!f.length){$("txnList").innerHTML='<div class="empty-state">暂无匹配的交易记录</div>';return;}
+  var h = "<table><thead><tr><th>时间</th><th>用户</th><th>类型</th><th>金额</th><th>模型</th><th>Tokens</th></tr></thead><tbody>";
+  for(var i=0;i<f.length;i++){
+    var t = f[i];
+    var tagCls = "tag", typeLabel = t.type;
+    if(t.type === "usage"){tagCls="tag tag-usage";typeLabel="用量扣费";}
+    else if(t.type === "registration_bonus"){tagCls="tag tag-credit";typeLabel="注册赠送";}
+    else if(t.type === "manual_create"){tagCls="tag tag-credit";typeLabel="创建赠送";}
+    else if(t.amount > 0){tagCls="tag tag-credit";typeLabel="充值";}
+    var timeStr = (t.time || "").substring(0, 16).replace("T", " ");
+    h += "<tr><td style='font-size:12px;color:#666'>"+timeStr+"</td><td>"+t.user+"</td><td><span class='"+tagCls+"'>"+typeLabel+"</span></td><td>"+(t.amount > 0 ? "+" : "")+t.amount.toFixed(4)+"</td><td style='color:#888;font-size:12px'>"+(t.model||"-")+"</td><td style='color:#888;font-size:12px'>"+(t.tokens||"-")+"</td></tr>";
+  }
+  h += "</tbody></table>";
+  $("txnList").innerHTML = h;
+}
+
+$("txnSearch").onkeyup = function(){renderTxns();};
 </script>
 </body>
 </html>

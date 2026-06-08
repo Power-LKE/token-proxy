@@ -2,6 +2,7 @@
 import time
 import os
 from fastapi import APIRouter, Request
+from datetime import datetime
 from fastapi.responses import JSONResponse
 from config import UPSTREAM_PROVIDERS, SERVICE_NAME, DEFAULT_BALANCE, DISABLE_REGISTRATION
 from proxy.models import ChatCompletionRequest
@@ -172,6 +173,7 @@ async def admin_list_users(request: Request):
                 "balance": u.balance,
                 "is_active": u.is_active,
                 "created_at": u.created_at,
+                "email": u.email,
             }
             for u in users
         ]
@@ -227,6 +229,56 @@ async def admin_toggle_user(request: Request):
     user.is_active = not user.is_active
     user_manager._save()
     return {"name": user.name, "is_active": user.is_active}
+
+
+
+@router.get("/v1/admin/stats", summary="系统统计", tags=["管理"])
+async def admin_stats(request: Request):
+    api_key = _get_api_key(request)
+    if not api_key or not user_manager.is_admin_key(api_key):
+        return JSONResponse(status_code=401, content={"error": "未授权"})
+    users = user_manager.list_users()
+    total_balance = sum(u.balance for u in users)
+    active_users = sum(1 for u in users if u.is_active)
+    today = datetime.now().isoformat()[:10]
+
+    total_topup = 0.0
+    today_revenue = 0.0
+    today_tokens = 0
+    all_txns = []
+
+    for u in users:
+        for tx in u.transactions:
+            ttype = tx.get("type", "")
+            ttime = tx.get("time", "")
+            if ttype in ("manual_create",) and tx.get("amount", 0) > 0:
+                total_topup += tx["amount"]
+            if ttype == "registration_bonus":
+                total_topup += tx.get("amount", 0)
+            if ttime.startswith(today):
+                if ttype == "usage":
+                    today_revenue += abs(tx.get("amount", 0))
+                    today_tokens += tx.get("tokens", 0)
+            all_txns.append({
+                "time": ttime,
+                "user": u.name,
+                "type": ttype,
+                "amount": tx.get("amount", 0),
+                "model": tx.get("model", ""),
+                "tokens": tx.get("tokens", 0),
+            })
+
+    all_txns.sort(key=lambda x: x["time"], reverse=True)
+
+    return {
+        "total_users": len(users),
+        "active_users": active_users,
+        "total_balance": round(total_balance, 4),
+        "total_topup": round(total_topup, 4),
+        "today_revenue": round(today_revenue, 4),
+        "today_tokens": today_tokens,
+        "recent_transactions": all_txns[:200],
+    }
 
 @router.get("/v1/admin/init", summary="获取管理员 Key", tags=["管理"])
 async def admin_init():
