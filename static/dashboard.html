@@ -104,6 +104,13 @@ pre .comment{color:#6a9955}
       </div>
     </div>
 
+    <div class="card" id="rechargeCard" style="display:none">
+      <h2>充值提示</h2>
+      <p style="color:#888;font-size:13px;margin-bottom:12px">你的余额已经用完了，联系管理员充值后可以继续使用。</p>
+      <div style="background:#f0f0f5;border-radius:6px;padding:12px;font-size:13px">
+        <p style="color:#888">管理员联系方式：<strong style="color:#1a1a2e">联系你的管理员</strong></p>
+      </div>
+    </div>
     <div class="card">
       <h2>API Key</h2>
       <div class="key-box">
@@ -219,6 +226,14 @@ function showDashboard(data) {
   document.getElementById("codeKey").textContent = CURRENT_KEY;
   document.getElementById("codeUrl").textContent = origin;
 
+  var rc = document.getElementById("rechargeCard");
+  if(data.balance <= 0) {
+    document.getElementById("dashStatus").textContent = "余额为零 · 请联系管理员";
+    document.getElementById("dashStatusDot").className = "status-dot status-inactive";
+    if(rc) rc.style.display = "block";
+  } else {
+    if(rc) rc.style.display = "none";
+  }
   if(data.is_active === false) {
     document.getElementById("dashStatus").textContent = "已禁用";
     document.getElementById("dashStatusDot").className = "status-dot status-inactive";
