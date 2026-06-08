@@ -292,9 +292,7 @@ function escHtml(t){return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(
 
 function renderMd(t){
   if(!t)return"";
-  return escHtml(t).replace(/```(\w*)
-([\s\S]*?)```/g,"<pre><code>$2</code></pre>").replace(/\`([^`]+)\`/g,"<code>$1</code>").replace(/
-/g,"<br>");
+  return escHtml(t).replace(/```(\w*)\n([\s\S]*?)```/g,"<pre><code>$2</code></pre>").replace(/\`([^`]+)\`/g,"<code>$1</code>").replace(/\n/g,"<br>");
 }
 
 async function sendMessage(){
@@ -326,8 +324,7 @@ async function sendMessage(){
       while(true){
         var res=await reader.read();if(res.done)break;
         buf+=decoder.decode(res.value,{stream:true});
-        var lines=buf.split("
-");buf=lines.pop()||"";
+        var lines=buf.split("\n");buf=lines.pop()||"";
         for(var line of lines){
           line=line.trim();
           if(line.startsWith("data: ")&&line!=="data: [DONE]"){
