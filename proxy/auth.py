@@ -113,6 +113,13 @@ class UserManager:
     def filter_by_parent(self, parent_key):
         return [u for u in self._users.values() if u.parent_key == parent_key]
 
+    @property
+    def admin_api_key(self):
+        for user in self._users.values():
+            if user.name == "admin":
+                return user.api_key
+        return None
+
     def list_users(self):
         return list(self._users.values())
 
