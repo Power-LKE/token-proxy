@@ -60,6 +60,11 @@ async def admin_page():
     return _serve_html("admin.html")
 
 
+@app.get("/reseller")
+async def reseller_page():
+    return _serve_html("reseller.html")
+
+
 @app.get("/user")
 async def user_page():
     return RedirectResponse(url="/static/user.html")

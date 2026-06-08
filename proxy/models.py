@@ -51,6 +51,8 @@ class UserInfo(BaseModel):
     created_at: str = ""
     email: str = ""
     transactions: List[dict] = []
+    role: str = "user"
+    parent_key: str = ""
 
 
 class RegistrationRequest(BaseModel):

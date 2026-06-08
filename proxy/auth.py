@@ -57,6 +57,10 @@ class UserManager:
         return prefix + "-" + uuid.uuid4().hex
 
     def is_admin_key(self, api_key):
+    def is_reseller_key(self, api_key):
+        user = self._users.get(api_key)
+        return user is not None and user.role == 'reseller'
+
         user = self._users.get(api_key)
         return user is not None and user.name == "admin"
 
@@ -100,6 +104,8 @@ class UserManager:
             balance=balance if balance is not None else DEFAULT_BALANCE,
             created_at=datetime.now().isoformat(),
             email=email,
+            role=note,
+            parent_key=parent_key,
         )
         user.transactions.append({"time": datetime.now().isoformat(), "type": note or "manual_create", "amount": user.balance, "balance_before": 0, "balance_after": user.balance})
         self._users[api_key] = user
@@ -108,6 +114,9 @@ class UserManager:
 
     def get_user(self, api_key):
         return self._users.get(api_key)
+
+    def filter_by_parent(self, parent_key):
+        return [u for u in self._users.values() if u.parent_key == parent_key]
 
     def list_users(self):
         return list(self._users.values())

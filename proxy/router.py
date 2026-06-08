@@ -142,6 +142,90 @@ async def user_query(request: Request):
         return JSONResponse(status_code=401, content={"error": "无效的 API Key"})
     return {"name": user.name, "balance": user.balance, "is_active": user.is_active, "created_at": user.created_at, "transactions": user.transactions[-20:][::-1]}
 
+# === 代理 API ===
+
+@router.api_route("/v1/reseller/verify", methods=["GET", "POST"], summary="验证代理", tags=["代理"])
+async def reseller_verify(request: Request):
+    api_key = _get_api_key(request)
+    if not api_key or not user_manager.is_reseller_key(api_key):
+        return JSONResponse(status_code=401, content={"error": "无效的代理 Key"})
+    parent_users = user_manager.filter_by_parent(api_key)
+    total_balance = sum(u.balance for u in parent_users)
+    return {
+        "status": "ok",
+        "reseller_key": api_key,
+        "user_count": len(parent_users),
+        "total_balance": round(total_balance, 4),
+    }
+
+@router.get("/v1/reseller/stats", summary="代理统计", tags=["代理"])
+async def reseller_stats(request: Request):
+    api_key = _get_api_key(request)
+    if not api_key or not user_manager.is_reseller_key(api_key):
+        return JSONResponse(status_code=401, content={"error": "未授权"})
+    users = user_manager.filter_by_parent(api_key)
+    total_balance = sum(u.balance for u in users)
+    today = datetime.now().isoformat()[:10]
+    today_tokens = 0
+    today_revenue = 0.0
+    for u in users:
+        for tx in u.transactions:
+            ttime = tx.get("time", "")
+            if ttime.startswith(today) and tx.get("type") == "usage":
+                today_tokens += tx.get("tokens", 0)
+                today_revenue += abs(tx.get("amount", 0))
+    return {
+        "user_count": len(users),
+        "active_users": sum(1 for u in users if u.is_active),
+        "total_balance": round(total_balance, 4),
+        "today_tokens": today_tokens,
+        "today_revenue": round(today_revenue, 6),
+    }
+
+@router.get("/v1/reseller/users", summary="代理-用户列表", tags=["代理"])
+async def reseller_list_users(request: Request):
+    api_key = _get_api_key(request)
+    if not api_key or not user_manager.is_reseller_key(api_key):
+        return JSONResponse(status_code=401, content={"error": "未授权"})
+    users = user_manager.filter_by_parent(api_key)
+    return {
+        "users": [
+            {
+                "name": u.name,
+                "api_key": u.api_key,
+                "balance": u.balance,
+                "is_active": u.is_active,
+                "created_at": u.created_at,
+            }
+            for u in users
+        ]
+    }
+
+@router.post("/v1/reseller/users/topup", summary="代理-充值", tags=["代理"])
+async def reseller_topup(request: Request):
+    api_key = _get_api_key(request)
+    if not api_key or not user_manager.is_reseller_key(api_key):
+        return JSONResponse(status_code=401, content={"error": "未授权"})
+    body = await request.json()
+    user_key = body.get("api_key", "").strip()
+    amount = float(body.get("amount", 0))
+    if amount <= 0:
+        return JSONResponse(status_code=400, content={"error": "充值金额必须大于 0"})
+    target = user_manager.get_user(user_key)
+    if not target or target.parent_key != api_key:
+        return JSONResponse(status_code=404, content={"error": "用户不存在"})
+    before = target.balance
+    target.balance += amount
+    target.transactions.append({
+        "time": datetime.now().isoformat(),
+        "type": "reseller_topup",
+        "amount": amount,
+        "balance_before": before,
+        "balance_after": target.balance,
+    })
+    user_manager._save()
+    return {"name": target.name, "balance": target.balance}
+
 # === 管理后台 API ===
 
 @router.api_route("/v1/admin/verify", methods=["GET", "POST"], summary="验证管理员", tags=["管理"])
@@ -179,6 +263,42 @@ async def admin_list_users(request: Request):
         ]
     }
 
+
+
+
+@router.post("/v1/admin/create_reseller", summary="创建代理", tags=["管理"])
+async def admin_create_reseller(request: Request):
+    api_key = _get_api_key(request)
+    if not api_key or not user_manager.is_admin_key(api_key):
+        return JSONResponse(status_code=401, content={"error": "未授权"})
+    body = await request.json()
+    name = body.get("name", "").strip()
+    if not name:
+        return JSONResponse(status_code=400, content={"error": "请提供代理名称"})
+    # Create user with role="reseller", the note field is used as role
+    from proxy.models import UserInfo
+    reseller = user_manager.create_user(name, 0, note="reseller")
+    reseller.role = "reseller"
+    user_manager._save()
+    return {"api_key": reseller.api_key, "name": reseller.name, "message": "代理创建成功"}
+
+@router.get("/v1/admin/resellers", summary="代理列表", tags=["管理"])
+async def admin_list_resellers(request: Request):
+    api_key = _get_api_key(request)
+    if not api_key or not user_manager.is_admin_key(api_key):
+        return JSONResponse(status_code=401, content={"error": "未授权"})
+    resellers = [u for u in user_manager.list_users() if u.role == "reseller"]
+    result = []
+    for r in resellers:
+        children = user_manager.filter_by_parent(r.api_key)
+        result.append({
+            "name": r.name,
+            "api_key": r.api_key,
+            "user_count": len(children),
+            "total_balance": round(sum(u.balance for u in children), 4),
+            "created_at": r.created_at,
+        })
+    return {"resellers": result}
 
 @router.post("/v1/admin/users", summary="创建用户", tags=["管理"])
 async def admin_create_user(request: Request):
