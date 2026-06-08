@@ -1,4 +1,4 @@
-﻿"""Data models - OpenAI compatible request/response formats"""
+"""Data models - OpenAI compatible request/response formats"""
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any, Union
 

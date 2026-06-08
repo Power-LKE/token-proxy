@@ -1,4 +1,4 @@
-﻿"""API 路由 — 中文标签"""
+"""API 路由 — 中文标签"""
 import time
 import os
 from fastapi import APIRouter, Request
