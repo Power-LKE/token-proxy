@@ -3,111 +3,145 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TokenProxy - AI API 服务</title>
+<title>使用教程 - AI 智能对话</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
-body{background:#f5f5f5;color:#333}
-header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:40px 24px;text-align:center}
+body{background:#f8f9fc;color:#333;line-height:1.7}
+header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:48px 24px;text-align:center}
 header h1{font-size:28px;margin-bottom:8px}
-header p{color:#aaa;font-size:14px}
+header p{color:#aaa;font-size:15px}
 main{max-width:800px;margin:0 auto;padding:24px}
-.card{background:#fff;border-radius:8px;padding:24px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.card h2{font-size:16px;margin-bottom:12px;color:#1a1a2e}
-.card h3{font-size:14px;margin:12px 0 6px;color:#555}
-code{background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:13px}
+
+.card{background:#fff;border-radius:10px;padding:28px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card h2{font-size:17px;margin-bottom:16px;color:#1a1a2e;display:flex;align-items:center;gap:8px}
+.card h2 .step{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:#4f46e5;color:#fff;border-radius:50%;font-size:14px;font-weight:700;flex-shrink:0}
+.card h3{font-size:15px;margin:16px 0 8px;color:#555}
+.card p,.card li{font-size:14px;color:#555;line-height:1.8}
+
+code{background:#f0f0f5;padding:2px 8px;border-radius:4px;font-size:13px;color:#4f46e5;word-break:break-all}
 pre{background:#1a1a2e;color:#e0e0e0;padding:16px;border-radius:8px;overflow-x:auto;font-size:13px;line-height:1.6;margin:12px 0}
-pre .comment{color:#6a9955}
-.model-tag{display:inline-block;padding:4px 12px;background:#e8f4fd;color:#1a73e8;border-radius:12px;font-size:12px;margin:3px}
-.url-box{padding:12px;background:#e8f4fd;border-radius:6px;font-size:14px;text-align:center;margin:12px 0}
-.url-box strong{color:#1a73e8}
-.balance-box{background:#fffbe6;border:1px solid #ffe58f;border-radius:8px;padding:16px;text-align:center;margin:12px 0}
+.highlight-box{background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;padding:16px;margin:12px 0}
+.highlight-box strong{color:#4f46e5}
+.warn-box{background:#fffbe6;border:1px solid #ffe58f;border-radius:8px;padding:16px;margin:12px 0;font-size:14px}
+.code-block{background:#f0f0f5;border-radius:8px;padding:16px;font-family:monospace;font-size:13px;line-height:1.8;word-break:break-all;margin:8px 0}
+.code-block .label{color:#888;font-size:12px}
+.code-block .val{color:#4f46e5;font-weight:600}
+.balance-box{background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;padding:20px;text-align:center;margin:12px 0}
 .balance-box input{width:100%;max-width:400px;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;margin-top:8px}
-.copy-btn{padding:4px 12px;background:#1a1a2e;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px;margin-left:8px}
+.copy-btn{padding:6px 14px;background:#4f46e5;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px}
+.ol{list-style:none;counter-reset:item;padding-left:0}
+.ol li{counter-increment:item;padding:8px 0 8px 36px;position:relative;font-size:14px;line-height:1.6}
+.ol li::before{content:counter(item);position:absolute;left:0;top:8px;width:24px;height:24px;background:#4f46e5;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+ol.custom{padding-left:20px;font-size:14px}
+ol.custom li{padding:6px 0}
+.screenshot-box{background:#f0f0f5;border-radius:8px;padding:48px 24px;text-align:center;margin:16px 0;border:2px dashed #ddd;color:#888;font-size:15px}
+ul{padding-left:20px;font-size:14px}
+ul li{padding:4px 0}
+.btn{display:inline-block;background:#4f46e5;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-size:15px;font-weight:600}
+.btn:hover{background:#4338ca}
+.center{text-align:center;margin:20px 0}
 </style>
 </head>
 <body>
 <header>
-  <h1>TokenProxy AI API</h1>
-  <p>OpenAI 兼容接口 · 多模型支持</p>
+  <h1>📖 使用教程</h1>
+  <p>5 分钟上手，无需任何技术背景</p>
 </header>
 <main>
   <div class="card">
-    <h2>API 地址</h2>
-    <div class="url-box">
-      你的 API 地址: <strong id="apiUrl">加载中...</strong>
+    <h2><span class="step">1</span>下载聊天软件</h2>
+    <p>推荐使用 <strong>Chatbox</strong> — 一款免费的 AI 聊天桌面软件，支持 Windows / Mac / Linux。</p>
+    <div class="highlight-box">
+      <strong>下载地址：</strong><a href="https://chatboxai.app" target="_blank" style="color:#4f46e5">chatboxai.app</a><br>
+      打开后点击"Download"按钮，选择你的操作系统版本下载安装。
+    </div>
+    <p>也可以用其他 OpenAI 兼容的客户端，如 NextChat、LobeChat 等。本文以 Chatbox 为例。</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="step">2</span>注册账号，获取密钥</h2>
+    <p>点击下方按钮进入用户面板：</p>
+    <div class="center"><a href="/dashboard" class="btn">进入用户面板 →</a></div>
+    <ol class="custom">
+      <li>在"注册新用户"标签下，输入你的用户名（随便取个名字）</li>
+      <li>点击"免费注册"按钮</li>
+      <li>系统会自动生成一个 <strong>API Key</strong>（一串以 <code>sk-</code> 开头的密钥）</li>
+      <li><strong>复制保存好这个 Key</strong>，下一步要用</li>
+    </ol>
+    <div class="warn-box">
+      ⚠️ 如果已经有 Key 了，选"已有 API Key"标签，粘贴查询即可看到余额
     </div>
   </div>
+
   <div class="card">
-    <h2>支持模型</h2>
-    <div id="models">
-      <span class="model-tag">deepseek-chat</span>
-      <span class="model-tag">deepseek-reasoner</span>
-      <span class="model-tag">glm-4</span>
-      <span class="model-tag">glm-4-flash</span>
-      <span class="model-tag">gpt-4o</span>
-      <span class="model-tag">gpt-4o-mini</span>
-      <span class="model-tag">deepseek-ai/DeepSeek-V3</span>
-      <span class="model-tag">deepseek-ai/DeepSeek-R1</span>
-      <span class="model-tag">Qwen/Qwen2.5-72B-Instruct</span>
+    <h2><span class="step">3</span>配置 Chatbox</h2>
+    <p>打开安装好的 Chatbox，按以下步骤配置：</p>
+    <ol class="custom">
+      <li>点击设置图标（⚙️ 齿轮按钮）</li>
+      <li>在"模型提供方"中选择 <strong>OpenAI Compatible</strong></li>
+      <li>填入以下三个信息：</li>
+    </ol>
+    <div class="code-block">
+      <div><span class="label">API 主机 / 地址：</span></div>
+      <div class="val">https://token-proxy-h397.onrender.com</div>
     </div>
+    <div class="code-block">
+      <div><span class="label">API 密钥 / Key：</span></div>
+      <div class="val">sk-xxxxxxxxxxxxxxxxxxxxxxxxxx（你注册得到的 Key）</div>
+    </div>
+    <div class="code-block">
+      <div><span class="label">模型：</span></div>
+      <div class="val">deepseek-chat</div>
+    </div>
+    <ol class="custom" start="4">
+      <li>保存设置</li>
+      <li>回到对话界面，输入消息即可开始聊天</li>
+    </ol>
   </div>
+
   <div class="card">
-    <h2>余额查询</h2>
+    <h2><span class="step">4</span>查余额与充值</h2>
+    <p>在用户面板中，你可以随时查看：</p>
+    <ul>
+      <li>当前余额（元）</li>
+      <li>账户状态（正常/禁用）</li>
+      <li>交易记录（每次对话的扣费明细）</li>
+    </ul>
     <div class="balance-box">
-      <p>输入你的 API Key 查询余额</p>
+      <p style="margin-bottom:8px">快捷查余额：输入你的 Key</p>
       <input type="text" id="balanceKey" placeholder="sk-xxx..." />
       <br/><br/>
-      <button class="copy-btn" onclick="checkBalance()" style="padding:8px 20px">查询</button>
-      <div id="balanceResult" style="margin-top:8px;font-size:13px;color:#666"></div>
+      <button class="copy-btn" onclick="checkBalance()" style="padding:10px 24px;font-size:14px">查询</button>
+      <div id="balanceResult" style="margin-top:10px;font-size:13px;color:#666"></div>
     </div>
+    <p>余额用完后，联系管理员续费即可。</p>
   </div>
+
   <div class="card">
-    <h2>使用示例</h2>
-    <h3>方式一：curl</h3>
-    <pre>curl <span id="curlUrl">你的API地址</span>/v1/chat/completions \
-  -H "Authorization: Bearer <span style="color:#ce9178">你的API Key</span>" \
-  -H "Content-Type: application/json" \
-  -d '{"model":"deepseek-chat","messages":[{"role":"user","content":"你好"}]}'</pre>
-    <h3>方式二：Python</h3>
-<pre><span class="comment"># pip install openai</span>
-from openai import OpenAI
-client = OpenAI(
-    api_key="<span style="color:#ce9178">你的API Key</span>",
-    base_url="<span id="pythonUrl">你的API地址</span>"
-)
-response = client.chat.completions.create(
-    model="deepseek-chat",
-    messages=[{"role":"user","content":"你好"}]
-)
-print(response.choices[0].message.content)</pre>
-    <h3>方式三：Chatbox / NextChat 客户端</h3>
-    <p>推荐使用 Chatbox（下载：chatboxai.app），设置如下：</p>
-    <ul style="padding-left:20px;line-height:2;font-size:14px">
-      <li><strong>API 地址：</strong> <code id="chatboxApiUrl">你的API地址</code></li>
-      <li><strong>API Key：</strong> <code>你的 API Key</code></li>
-      <li><strong>模型：</strong> <code>deepseek-chat</code></li>
-    </ul>
+    <h2><span class="step">5</span>常见问题</h2>
+    <h3>Q: 我收到"无效的 API Key"怎么办？</h3>
+    <p>检查是否复制了完整的 Key（包括 sk- 前缀），注意不要有多余的空格或换行。</p>
+    <h3>Q: 对话速度怎么样？</h3>
+    <p>取决于网络状况，通常跟用 ChatGPT 差不多，几秒内就有回复。</p>
+    <h3>Q: 可以用手机吗？</h3>
+    <p>Chatbox 有手机端 App（iOS / Android），也可以在手机浏览器中访问网站使用。</p>
+    <h3>Q: 支持其他模型吗？</h3>
+    <p>目前支持多种模型，包括 DeepSeek、智谱 GLM 等。在 Chatbox 模型下拉框中选择即可。</p>
   </div>
 </main>
 <script>
-var origin = window.location.origin;
-document.getElementById("apiUrl").textContent = origin;
-document.getElementById("curlUrl").textContent = origin;
-document.getElementById("pythonUrl").textContent = origin;
-document.getElementById("chatboxApiUrl").textContent = origin;
 function checkBalance() {
   var key = document.getElementById("balanceKey").value.trim();
   var el = document.getElementById("balanceResult");
   if (!key) { el.textContent = "请输入 API Key"; return; }
+  var origin = window.location.origin;
   fetch(origin + "/v1/balance", {headers: {"Authorization": "Bearer " + key}})
     .then(function(r){ return r.json(); })
     .then(function(d){
-      if (d.name) el.innerHTML = '用户: <strong>' + d.name + '</strong> | 余额: <strong>' + d.balance.toFixed(2) + '</strong> 元';
-      else el.textContent = '无效的 API Key';
-    }).catch(function(){ el.textContent = '查询失败'; });
+      if (d.name) el.innerHTML = "用户: <strong>" + d.name + "</strong> | 余额: <strong>" + d.balance.toFixed(4) + "</strong> 元";
+      else el.textContent = "无效的 API Key";
+    }).catch(function(){ el.textContent = "查询失败"; });
 }
 </script>
 </body>
 </html>
-
-
