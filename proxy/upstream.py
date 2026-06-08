@@ -1,4 +1,4 @@
-﻿"""Forward requests to upstream AI API providers"""
+"""Forward requests to upstream AI API providers"""
 import httpx
 import tiktoken
 from typing import Tuple, Optional, AsyncGenerator
