@@ -12,7 +12,7 @@ from proxy.router import router
 app = FastAPI(
     title=f"{SERVICE_NAME} - AI API 代理服务",
     description="将 OpenAI 兼容格式的请求转发到 DeepSeek / 智谱等上游 AI 供应商，支持鉴权、计费、多供应商管理。",
-    version="1.0.0",
+    version="1.1.0",
 )
 
 app.add_middleware(
