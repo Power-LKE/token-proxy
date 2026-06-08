@@ -9,6 +9,19 @@ from proxy.models import ChatCompletionRequest
 from proxy.auth import user_manager
 from proxy.upstream import _detect_provider, forward_chat_completion, forward_stream, _calculate_sell_price
 
+
+
+# === ?????? ===
+SENSITIVE_WORDS = ["???","??","???","??","??","??","??","??","??","???","????","????","????","??","???"]
+
+def check_content(text: str) -> tuple:
+    if not text: return True, ""
+    for kw in SENSITIVE_WORDS:
+        if kw in text:
+            return False, kw
+    return True, ""
+
+
 router = APIRouter(tags=["代理服务"])
 
 
@@ -79,7 +92,13 @@ async def chat_completions(request: Request, body: ChatCompletionRequest):
             content={"error": {"message": f"不支持的模型: {body.model}。支持的模型: {_list_supported_models_str()}", "type": "invalid_model"}},
         )
 
-    upstream_api_key = os.getenv(UPSTREAM_PROVIDERS[provider_key].api_key_env, "")
+    # ????
+    for msg in body.messages:
+        safe, kw = check_content(msg.content if msg.content else "")
+        if not safe:
+            return JSONResponse(status_code=400, content={"error": {"message": f"???????: {kw}", "type": "filter"}})
+
+        upstream_api_key = os.getenv(UPSTREAM_PROVIDERS[provider_key].api_key_env, "")
     if not upstream_api_key:
         return JSONResponse(
             status_code=500,
