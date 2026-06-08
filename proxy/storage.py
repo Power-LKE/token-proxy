@@ -210,7 +210,7 @@ def create_store() -> DataStore:
     """
     from config import SUPABASE_URL as _SU, SUPABASE_KEY as _SK, USER_DATA_PATH
     
-    supabase_enabled = os.environ.get("SUPABASE_ENABLED", "false").lower() in ("1", "true", "yes")
+    supabase_enabled = os.environ.get("SUPABASE_ENABLED", "true").lower() in ("1", "true", "yes")
     
     if supabase_enabled:
         supabase_url = os.environ.get("SUPABASE_URL", _SU).strip()
@@ -222,20 +222,3 @@ def create_store() -> DataStore:
     print("[Storage] Using file backend:" + " " + USER_DATA_PATH)
     os.makedirs(os.path.dirname(USER_DATA_PATH), exist_ok=True)
     return FileDataStore(USER_DATA_PATH)
-
-
-
-    if supabase_url and supabase_key:
-
-        print("[Storage] Using Supabase backend")
-
-        return SupabaseDataStore(supabase_url, supabase_key)
-
-
-
-    from config import USER_DATA_PATH
-
-    print(f"[Storage] Using file backend: {USER_DATA_PATH}")
-
-    return FileDataStore(USER_DATA_PATH)
-
