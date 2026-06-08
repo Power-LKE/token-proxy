@@ -3,11 +3,11 @@ import time
 import os
 from fastapi import APIRouter, Request
 from datetime import datetime
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from config import UPSTREAM_PROVIDERS, SERVICE_NAME, DEFAULT_BALANCE, DISABLE_REGISTRATION
 from proxy.models import ChatCompletionRequest
 from proxy.auth import user_manager
-from proxy.upstream import _detect_provider, forward_chat_completion
+from proxy.upstream import _detect_provider, forward_chat_completion, forward_stream, _calculate_sell_price
 
 router = APIRouter(tags=["代理服务"])
 
@@ -86,9 +86,38 @@ async def chat_completions(request: Request, body: ChatCompletionRequest):
             content={"error": {"message": "上游 API Key 未配置", "type": "server_error"}},
         )
 
-    # Strip streaming flag so upstream returns regular JSON
+    # Handle streaming and non-streaming requests
     request_data = body.model_dump()
     request_data.pop("stream", None)
+
+    if body.stream:
+        import json
+        async def stream_generator():
+            last_usage = {}
+            try:
+                async for chunk in forward_stream(provider_key, upstream_api_key, request_data):
+                    # Track usage from the final data chunk
+                    if b"usage" in chunk:
+                        try:
+                            line = chunk.decode("utf-8")
+                            if line.startswith("data: "):
+                                data = json.loads(line[6:])
+                                if "usage" in data:
+                                    last_usage = data["usage"]
+                        except:
+                            pass
+                    yield chunk
+            finally:
+                if last_usage:
+                    sell_price = _calculate_sell_price(
+                        last_usage.get("prompt_tokens", 0),
+                        last_usage.get("completion_tokens", 0),
+                        body.model
+                    )
+                    user_manager.deduct_balance(api_key, sell_price, model=body.model, tokens=last_usage.get("total_tokens", 0))
+
+        return StreamingResponse(stream_generator(), media_type="text/event-stream")
+
     try:
         resp_data, sell_price = await forward_chat_completion(
             provider_key, upstream_api_key, request_data
@@ -96,14 +125,14 @@ async def chat_completions(request: Request, body: ChatCompletionRequest):
     except Exception as e:
         return JSONResponse(
             status_code=502,
-            content={"error": {"message": f"上游请求失败: {str(e)}", "type": "upstream_error"}},
+            content={"error": {"message": f"??????: {str(e)}", "type": "upstream_error"}},
         )
 
     usage = resp_data.get("usage", {})
     if not user_manager.deduct_balance(api_key, sell_price, model=body.model, tokens=usage.get("total_tokens", 0)):
         return JSONResponse(
             status_code=402,
-            content={"error": {"message": "余额不足", "type": "insufficient_balance"}},
+            content={"error": {"message": "????", "type": "insufficient_balance"}},
         )
 
     resp_data["_cost"] = sell_price
