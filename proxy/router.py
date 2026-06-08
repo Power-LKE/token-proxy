@@ -123,7 +123,7 @@ async def register_user(body: dict):
         return JSONResponse(status_code=400, content={"error": "请输入用户名"})
     if len(name) > 50:
         return JSONResponse(status_code=400, content={"error": "用户名过长"})
-    if not email or "@" not in email or "." not in email:
+    if not email or "@" not in email:
         return JSONResponse(status_code=400, content={"error": "请输入有效的邮箱地址"})
     user = user_manager.register(name, email)
     if not user:
