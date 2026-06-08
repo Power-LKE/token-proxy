@@ -1,9 +1,6 @@
-"""
-Forward requests to upstream AI API providers
-"""
+﻿"""Forward requests to upstream AI API providers"""
 import httpx
 import tiktoken
-from urllib.parse import urljoin
 from typing import Tuple, Optional, AsyncGenerator
 from config import UPSTREAM_PROVIDERS, MARKUP
 
@@ -39,17 +36,44 @@ def _calculate_sell_price(prompt_tokens: int, completion_tokens: int, model: str
     return round(cost * MARKUP, 6)
 
 
+def _build_url(provider, request_data: dict) -> str:
+    """Build the API URL based on provider type."""
+    if provider.is_azure:
+        deployment = provider.azure_deployment
+        model = request_data.get("model", "gpt-4o")
+        return (
+            f"{provider.api_base.rstrip('/')}"
+            f"/openai/deployments/{deployment}"
+            f"/chat/completions?api-version={provider.azure_api_version}"
+        )
+    else:
+        from urllib.parse import urljoin
+        return urljoin(provider.api_base, "/v1/chat/completions")
+
+
+def _build_headers(provider, api_key: str) -> dict:
+    """Build request headers based on provider type."""
+    if provider.is_azure:
+        return {
+            "api-key": api_key,
+            "Content-Type": "application/json",
+        }
+    else:
+        return {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        }
+
+
 async def forward_chat_completion(
     provider_key: str,
     api_key: str,
     request_data: dict,
 ) -> Tuple[dict, float]:
     provider = UPSTREAM_PROVIDERS[provider_key]
-    url = urljoin(provider.api_base, "/v1/chat/completions")
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-    }
+    url = _build_url(provider, request_data)
+    headers = _build_headers(provider, api_key)
+    
     async with httpx.AsyncClient(timeout=120.0) as client:
         resp = await client.post(url, headers=headers, json=request_data)
         resp.raise_for_status()
@@ -69,11 +93,9 @@ async def forward_stream(
     request_data: dict,
 ) -> AsyncGenerator[bytes, None]:
     provider = UPSTREAM_PROVIDERS[provider_key]
-    url = urljoin(provider.api_base, "/v1/chat/completions")
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-    }
+    url = _build_url(provider, request_data)
+    headers = _build_headers(provider, api_key)
+    
     request_data["stream"] = True
     async with httpx.AsyncClient(timeout=300.0) as client:
         async with client.stream("POST", url, headers=headers, json=request_data) as resp:

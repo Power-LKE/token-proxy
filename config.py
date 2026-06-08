@@ -1,9 +1,7 @@
-"""
-Configuration — Edit upstream API keys and pricing here
-"""
+﻿"""Configuration - Edit upstream API keys and pricing here"""
 import os
 from dataclasses import dataclass, field
-from typing import Dict
+from typing import Dict, Optional
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -15,6 +13,17 @@ class UpstreamProvider:
     api_base: str
     api_key_env: str
     models: Dict[str, float] = field(default_factory=dict)
+    """model_name -> price per 1M input tokens"""
+    
+    azure_deployment: Optional[str] = None
+    """Azure OpenAI deployment name (if using Azure)"""
+    
+    azure_api_version: str = "2024-10-21"
+    """Azure OpenAI API version"""
+    
+    @property
+    def is_azure(self) -> bool:
+        return self.azure_deployment is not None
 
 
 UPSTREAM_PROVIDERS: Dict[str, UpstreamProvider] = {
@@ -34,6 +43,16 @@ UPSTREAM_PROVIDERS: Dict[str, UpstreamProvider] = {
         models={
             "glm-4": 0.1,
             "glm-4-flash": 0.01,
+        },
+    ),
+    "azure-gpt4o": UpstreamProvider(
+        name="Azure OpenAI GPT-4o",
+        api_base="https://YOUR_RESOURCE.openai.azure.com",
+        api_key_env="AZURE_OPENAI_API_KEY",
+        azure_deployment="gpt-4o",
+        models={
+            "gpt-4o": 2.5,       # $2.50 / 1M input tokens
+            "gpt-4o-mini": 0.15,  # $0.15 / 1M input tokens
         },
     ),
 }
