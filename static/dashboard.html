@@ -155,8 +155,10 @@ function switchTab(name) {
 function register() {
   var name = document.getElementById("regName").value.trim();
   var email = document.getElementById("regEmail").value.trim();
+  var email = document.getElementById("regEmail").value.trim();
   var msg = document.getElementById("regMsg");
   if(!name) { msg.textContent = "请输入用户名"; msg.className = "msg err"; return; }
+  if(!email || email.indexOf("@") === -1) { msg.textContent = "请输入有效的邮箱地址"; msg.className = "msg err"; return; }
   if(!email || email.indexOf("@") === -1) { msg.textContent = "请输入有效的邮箱地址"; msg.className = "msg err"; return; }
   document.getElementById("regBtn").disabled = true;
   document.getElementById("regBtn").textContent = "注册中...";
@@ -232,8 +234,8 @@ function showDashboard(data) {
       var tagCls = "tag-debit";
       var typeLabel = "消费";
       if(tx.amount > 0) { tagCls = "tag-credit"; typeLabel = "充值"; }
-      if(tx.type === "registration_bonus") { tagCls = "tag-reg"; typeLabel = "注册赠送"; }
-      if(tx.type === "manual_create") { tagCls = "tag-reg"; typeLabel = "创建赠送"; }
+      if(tx.type === "registration_bonus") { tagCls = "tag-reg"; typeLabel = "注册"; }
+      if(tx.type === "manual_create") { tagCls = "tag-reg"; typeLabel = "创建"; }
       var timeStr = (tx.time || "").substring(0, 19).replace("T", " ");
       var note = "";
       if(tx.model) note = tx.model;

@@ -3,182 +3,278 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 智能对话 - 按量付费，不用翻墙，像聊天一样简单</title>
+<title>TokenProxy - AI API 中转服务 | 按量付费，国内直连</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-body{background:#f8f9fc;color:#1a1a2e;line-height:1.6}
-nav{background:#1a1a2e;color:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+body{background:#f8f9fc;color:#111827;line-height:1.6}
+
+/* Nav */
+nav{background:#0f172a;color:#fff;padding:0 24px;display:flex;justify-content:space-between;align-items:center;height:60px;position:sticky;top:0;z-index:100}
 nav .logo{font-size:18px;font-weight:700}
 nav .logo span{color:#818cf8}
-nav a{color:#aaa;text-decoration:none;font-size:14px;margin-left:20px}
-nav a:hover{color:#fff}
+nav .nav-links{display:flex;gap:24px;align-items:center}
+nav .nav-links a{color:#94a3b8;text-decoration:none;font-size:14px;transition:color .15s}
+nav .nav-links a:hover{color:#e2e8f0}
+nav .nav-cta{background:#4f46e5;color:#fff!important;padding:8px 18px;border-radius:6px;font-weight:600}
+nav .nav-cta:hover{background:#4338ca!important}
 
-.hero{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:100px 24px;text-align:center}
-.hero .badge{display:inline-block;background:rgba(79,70,229,.3);border:1px solid #4f46e5;color:#a5b4fc;padding:6px 16px;border-radius:20px;font-size:13px;margin-bottom:20px}
-.hero h1{font-size:42px;margin-bottom:16px;font-weight:800;line-height:1.2}
-.hero h1 span{background:linear-gradient(90deg,#818cf8,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{color:#aaa;font-size:17px;max-width:600px;margin:0 auto 32px;line-height:1.7}
-.hero .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.hero .btn{display:inline-block;background:#4f46e5;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-size:16px;font-weight:600}
+/* Hero */
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:#fff;padding:100px 24px 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 40%,rgba(79,70,229,.12) 0%,transparent 60%)}
+.hero h1{font-size:44px;margin-bottom:16px;font-weight:800;line-height:1.2;position:relative}
+.hero h1 span{background:linear-gradient(135deg,#818cf8,#a78bfa,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:#94a3b8;font-size:17px;max-width:560px;margin:0 auto 36px;line-height:1.7;position:relative}
+.hero .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+.hero .btn{display:inline-flex;align-items:center;gap:6px;background:#4f46e5;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:15px;font-weight:600;transition:background .15s}
 .hero .btn:hover{background:#4338ca}
-.hero .btn-secondary{display:inline-block;background:transparent;border:1px solid #4f46e5;color:#a5b4fc;padding:14px 36px;border-radius:8px;text-decoration:none;font-size:16px}
-.hero .btn-secondary:hover{background:rgba(79,70,229,.1)}
+.hero .btn-outline{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid #334155;color:#94a3b8;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:15px;transition:background .15s,border-color .15s}
+.hero .btn-outline:hover{background:rgba(255,255,255,.05);border-color:#4f46e5;color:#e2e8f0}
+.hero .stats{display:flex;justify-content:center;gap:48px;margin-top:56px;position:relative}
+.hero .stat-item{text-align:center}
+.hero .stat-num{font-size:28px;font-weight:800;color:#f1f5f9}
+.hero .stat-label{font-size:13px;color:#64748b;margin-top:2px}
 
-.section{padding:80px 24px;max-width:1000px;margin:0 auto}
-.section h2{font-size:28px;margin-bottom:12px;text-align:center}
-.section .sub{color:#666;font-size:15px;text-align:center;margin-bottom:48px;max-width:600px;margin-left:auto;margin-right:auto}
+/* Sections */
+.section{padding:80px 24px}
+.section-inner{max-width:1000px;margin:0 auto}
 .section-alt{background:#fff}
+.section h2{font-size:28px;margin-bottom:8px;text-align:center}
+.section .sub{color:#64748b;font-size:15px;text-align:center;margin-bottom:48px}
 
-.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
-.feature-card{background:#f8f9fc;border-radius:12px;padding:32px;border:1px solid #eef0f5;text-align:center}
-.feature-card .icon{font-size:36px;margin-bottom:12px}
-.feature-card h3{font-size:17px;margin-bottom:8px}
-.feature-card p{color:#666;font-size:14px;line-height:1.6}
+/* Features grid */
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.feature-card{background:#f8fafc;border-radius:10px;padding:28px;border:1px solid #e2e8f0;transition:border-color .15s,box-shadow .15s}
+.feature-card:hover{border-color:#c7d2fe;box-shadow:0 2px 12px rgba(79,70,229,.08)}
+.feature-card .icon{width:40px;height:40px;background:#eef2ff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px}
+.feature-card h3{font-size:16px;margin-bottom:6px}
+.feature-card p{color:#64748b;font-size:14px;line-height:1.7}
 
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:32px;counter-reset:step}
-.step-card{text-align:center;padding:28px;position:relative}
-.step-card .num{width:44px;height:44px;background:#4f46e5;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:18px;font-weight:700}
-.step-card h3{font-size:17px;margin-bottom:8px}
-.step-card p{color:#666;font-size:14px;line-height:1.6}
-.step-card .detail{background:#f0f0f5;border-radius:8px;padding:12px;margin-top:12px;font-size:13px;color:#888;text-align:left}
+/* Steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:900px;margin:0 auto}
+@media(max-width:768px){.steps{grid-template-columns:1fr}}
+.step-card{text-align:center;padding:32px 20px;position:relative}
+.step-card:not(:last-child)::after{content:"";position:absolute;right:-12px;top:52px;width:24px;height:2px;background:linear-gradient(90deg,#4f46e5,transparent)}
+@media(max-width:768px){.step-card:not(:last-child)::after{display:none}}
+.step-card .num{width:40px;height:40px;background:#eef2ff;color:#4f46e5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:16px;font-weight:700}
+.step-card h3{font-size:16px;margin-bottom:6px}
+.step-card p{color:#64748b;font-size:14px;line-height:1.6}
+.step-card .code-block{background:#f1f5f9;border-radius:6px;padding:10px 12px;margin-top:10px;font-size:12px;color:#475569;text-align:left;word-break:break-all}
+.step-card .code-block code{background:#e2e8f0;padding:1px 4px;border-radius:3px;font-size:12px}
 
-.compare{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #eef0f5}
-.compare th{background:#1a1a2e;color:#fff;padding:16px;text-align:center;font-weight:600;font-size:15px}
-.compare td{padding:16px;text-align:center;border-bottom:1px solid #eef0f5;font-size:14px}
-.compare tr:last-child td{border-bottom:none}
-.compare .highlight{background:#f5f3ff}
-.compare .check{color:#16a34a;font-weight:700}
-.compare .cross{color:#ef4444}
-.compare .price-big{font-size:24px;font-weight:800;color:#1a1a2e}
-.compare .price-big span{font-size:14px;color:#888;font-weight:400}
+/* Pricing table */
+.table-wrap{overflow-x:auto}
+.comparison{width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden;font-size:14px}
+.comparison th{background:#0f172a;color:#f1f5f9;padding:14px 20px;text-align:center;font-weight:600}
+.comparison td{padding:14px 20px;text-align:center;border-bottom:1px solid #f1f5f9;color:#334155}
+.comparison tr:last-child td{border-bottom:none}
+.comparison .featured{background:#f8fafc}
+.comparison .check{color:#16a34a;font-weight:700}
+.comparison .cross{color:#dc2626}
+.comparison .highlight-cell{color:#4f46e5;font-weight:700}
 
-.faq{max-width:700px;margin:0 auto}
-.faq-item{border-bottom:1px solid #eef0f5;padding:20px 0}
-.faq-item h3{font-size:15px;margin-bottom:6px;cursor:pointer}
-.faq-item p{color:#666;font-size:14px;line-height:1.6}
+/* FAQ */
+.faq{max-width:680px;margin:0 auto}
+.faq-item{padding:20px 0;border-bottom:1px solid #e2e8f0}
+.faq-item:last-child{border-bottom:none}
+.faq-item h3{font-size:15px;margin-bottom:6px;color:#1e293b}
+.faq-item p{color:#64748b;font-size:14px;line-height:1.7}
+.faq-item a{color:#4f46e5;text-decoration:none}
 
-footer{background:#1a1a2e;color:#888;text-align:center;padding:40px;font-size:13px}
+/* CTA block */
+.cta-block{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;text-align:center;padding:60px 24px}
+.cta-block h2{font-size:26px;margin-bottom:12px}
+.cta-block p{color:#94a3b8;font-size:15px;margin-bottom:28px}
+.cta-block .btn{display:inline-flex;align-items:center;gap:6px;background:#4f46e5;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-size:15px;font-weight:600;transition:background .15s}
+.cta-block .btn:hover{background:#4338ca}
+
+/* Footer */
+footer{background:#0f172a;color:#64748b;text-align:center;padding:32px 24px;font-size:13px}
 footer a{color:#818cf8;text-decoration:none}
+footer a:hover{text-decoration:underline}
+footer .sep{padding:0 8px;color:#334155}
 
 @media(max-width:640px){
   .hero h1{font-size:28px}
-  .hero{padding:60px 16px}
-  .section{padding:48px 16px}
+  .hero{padding:64px 16px 56px}
+  .hero .stats{gap:24px;margin-top:40px}
+  .section{padding:56px 16px}
 }
-
-.pricing-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;max-width:700px;margin:0 auto}
-.pricing-card{background:#fff;border-radius:12px;padding:28px;text-align:center;border:1px solid #eef0f5;position:relative}
-.pricing-card.featured{border-color:#4f46e5;box-shadow:0 4px 20px rgba(79,70,229,.15)}
-.pricing-card.featured .tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#4f46e5;color:#fff;padding:4px 16px;border-radius:20px;font-size:12px}
-.pricing-card h3{font-size:18px;margin-bottom:8px}
-.pricing-card .p{font-size:40px;font-weight:800;color:#1a1a2e}
-.pricing-card .p span{font-size:16px;color:#888;font-weight:400}
-.pricing-card ul{list-style:none;padding:20px 0 0;text-align:left}
-.pricing-card li{padding:6px 0;font-size:14px;color:#555}
-.pricing-card li:before{content:"✓";color:#16a34a;margin-right:8px}
 </style>
 </head>
 <body>
 <nav>
-  <div class="logo"><span>AI</span>Chat</div>
-  <div>
-    <a href="/dashboard">联系管理员</a>
-    <a href="/static/user.html">使用教程</a>
+  <div class="logo"><span>Token</span>Proxy</div>
+  <div class="nav-links">
+    <a href="#features">优势</a>
+    <a href="#howto">使用</a>
+    <a href="#pricing">价格</a>
+    <a href="/dashboard" class="nav-cta">开始使用</a>
   </div>
 </nav>
 
 <div class="hero">
-  <div class="badge">🔥 新用户注册即送体验金</div>
-  <h1>比 ChatGPT 更便宜的<br><span>AI 智能对话</span></h1>
-  <p>不用科学上网，不用绑定信用卡，装个软件直接聊。<br>用多少扣多少，最低一天几毛钱。</p>
+  <h1>便宜好用的<br><span>AI 对话中转服务</span></h1>
+  <p>国内直连，不用翻墙，不用海外信用卡。<br>支持 Chatbox、OpenAI 客户端等主流软件，即开即用。</p>
   <div class="btns">
-    <a href="/static/user.html" class="btn">联系管理员 →</a>
-    <a href="/static/user.html" class="btn-secondary">查看使用教程</a>
+    <a href="/dashboard" class="btn">免费注册 →</a>
+    <a href="/static/user.html" class="btn-outline">使用教程</a>
+  </div>
+  <div class="stats">
+    <div class="stat-item"><div class="stat-num">按量付费</div><div class="stat-label">用多少扣多少</div></div>
+    <div class="stat-item"><div class="stat-num">无需 VPN</div><div class="stat-label">国内网络直连</div></div>
+    <div class="stat-item"><div class="stat-num">0 月费</div><div class="stat-label">不聊不花钱</div></div>
   </div>
 </div>
 
-<div class="section">
-  <h2>为什么选我们？</h2>
-  <p class="sub">同样的 AI 能力，更便宜、更方便的方案</p>
-  <div class="features">
-    <div class="feature-card">
-      <div class="icon">💰</div>
-      <h3>按量付费，绝不浪费</h3>
-      <p>ChatGPT 每月固定 20 美元，用不用都扣钱。我们按实际使用量扣费，聊多少花多少，不聊不花钱。</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">🛜</div>
-      <h3>国内直接访问</h3>
-      <p>无需科学上网，无需海外账号，国内网络直接使用。省去折腾 VPN 的烦恼。</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">🧩</div>
-      <h3>像微信一样简单</h3>
-      <p>下载 Chatbox 聊天软件，填三个信息就能开始聊。不用写代码，不用懂技术。</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">🔄</div>
-      <h3>效果跟 ChatGPT 一样</h3>
-      <p>底层使用 DeepSeek 等顶级 AI 模型，对话质量与 ChatGPT 相当，价格却便宜很多。</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">💳</div>
-      <h3>无需绑卡，随时充值</h3>
-      <p>不需要海外信用卡。余额用完了找我续费就行，5 分钟到账，灵活方便。</p>
-    </div>
-    
-    </div>
-    <div class="step-card">
-      <div class="num">2</div>
-      <h3>获取 API Key</h3>
-      <p>点击下方"联系管理员"，输入用户名即可注册，自动获得 API Key</p>
-      <div class="detail">👉 <a href="/static/user.html" style="color:#4f46e5">查看使用教程 →</a></div>
-    </div>
-    <div class="step-card">
-      <div class="num">3</div>
-      <h3>填三个信息，开聊</h3>
-      <p>在 Chatbox 设置中填入地址、密钥、模型，保存后直接对话</p>
-      <div class="detail">
-        地址：<code style="word-break:break-all">https://token-proxy-h397.onrender.com</code><br>
-        密钥：管理员给你的 Key<br>
-        模型：<code>deepseek-chat</code>
+<div class="section" id="features">
+  <div class="section-inner">
+    <h2>为什么选择我们？</h2>
+    <p class="sub">同样的 AI 能力，更简单、更便宜的访问方式</p>
+    <div class="features">
+      <div class="feature-card">
+        <div class="icon">💰</div>
+        <h3>按量付费</h3>
+        <p>ChatGPT 月费 20 美元，用不用都扣钱。我们按实际用量计费，聊多少花多少，一天几毛钱起步。</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🌐</div>
+        <h3>国内直连</h3>
+        <p>不需要科学上网，不需要海外手机号，不需要国际信用卡。国内网络直接使用。</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🧩</div>
+        <h3>配置简单</h3>
+        <p>下载 Chatbox 聊天软件，填三个字段就能用。跟微信一样简单，完全不需要编程基础。</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🤖</div>
+        <h3>效果出色</h3>
+        <p>底层使用 DeepSeek 等顶级模型，对话质量与 ChatGPT 相当，价格却低很多。</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🔐</div>
+        <h3>隐私安全</h3>
+        <p>我们仅转发请求，不存储任何对话内容。聊天记录仅保存在你本地电脑上。</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">⚡</div>
+        <h3>充值灵活</h3>
+        <p>联系管理员即可充值，5 分钟到账。量大优惠，长期使用更划算。</p>
       </div>
     </div>
   </div>
-  <div style="text-align:center;margin-top:32px">
-    <a href="/dashboard" class="hero btn" style="display:inline-block">联系管理员 →</a>
+</div>
+
+<div class="section section-alt" id="howto">
+  <div class="section-inner">
+    <h2>三步上手，开始使用</h2>
+    <p class="sub">无需技术背景，三分钟完成配置</p>
+    <div class="steps">
+      <div class="step-card">
+        <div class="num">1</div>
+        <h3>联系管理员</h3>
+        <p>点击"开始使用"注册账号，获取你的 API Key</p>
+        <div class="code-block">注册后自动生成 Key</div>
+      </div>
+      <div class="step-card">
+        <div class="num">2</div>
+        <h3>安装 Chatbox</h3>
+        <p>下载 <a href="https://chatboxai.app" style="color:#4f46e5" target="_blank">Chatbox</a> 聊天软件，安装后打开设置</p>
+        <div class="code-block">下载地址：<strong>chatboxai.app</strong></div>
+      </div>
+      <div class="step-card">
+        <div class="num">3</div>
+        <h3>填入信息，开聊</h3>
+        <p>在 Chatbox 设置中填写以下三个字段，保存后即可对话</p>
+        <div class="code-block">
+          <div>模型提供方：<strong>OpenAI</strong></div>
+          <div>API 域名：<code>https://token-proxy-h397.onrender.com</code></div>
+          <div>API Key：粘贴你的 Key</div>
+          <div>模型：<code>deepseek-chat</code></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="pricing">
+  <div class="section-inner">
+    <h2>价格对比</h2>
+    <p class="sub">同样的体验，更低的成本</p>
+    <div class="table-wrap">
+    <table class="comparison">
+      <tr>
+        <th style="text-align:left;width:32%"></th>
+        <th>ChatGPT Plus</th>
+        <th>ChatGPT 官方 API</th>
+        <th style="background:#4f46e5">TokenProxy</th>
+      </tr>
+      <tr>
+        <td style="text-align:left;font-weight:600">月费</td>
+        <td class="cross">$20 / 月（约 ¥145）</td>
+        <td class="check">按量付费</td>
+        <td class="check highlight-cell">按量付费</td>
+      </tr>
+      <tr>
+        <td style="text-align:left;font-weight:600">科学上网</td>
+        <td class="cross">需要</td>
+        <td class="cross">需要 + 海外信用卡</td>
+        <td class="check highlight-cell">不需要</td>
+      </tr>
+      <tr>
+        <td style="text-align:left;font-weight:600">入门门槛</td>
+        <td class="cross">每月必扣费</td>
+        <td class="cross">需绑海外信用卡</td>
+        <td class="check highlight-cell">注册即用，0 门槛</td>
+      </tr>
+      <tr>
+        <td style="text-align:left;font-weight:600">充值方式</td>
+        <td class="cross">海外信用卡</td>
+        <td class="cross">海外信用卡</td>
+        <td class="check highlight-cell">扫码 / 转账</td>
+      </tr>
+    </table>
+    </div>
   </div>
 </div>
 
 <div class="section section-alt">
-  <h2>常见问题</h2>
-  <div class="faq">
-    <div class="faq-item">
-      <h3>这个跟 ChatGPT 有什么区别？</h3>
-      <p>使用体验几乎一样，都是 AI 对话。区别在于：我们不用科学上网，不用海外信用卡，按量付费更灵活，适合轻度到中度使用的用户。</p>
-    </div>
-    <div class="faq-item">
-      <h3>我不会编程，能使用吗？</h3>
-      <p>完全不需要。下载 Chatbox 聊天软件，填入我们给你的信息就能用，跟用微信一样简单。详细教程在<a href="/static/user.html" style="color:#4f46e5">使用教程页面</a>。</p>
-    </div>
-    <div class="faq-item">
-      <h3>收费怎么算？大概多少钱？</h3>
-      <p>按实际对话的 token 数量计费。日常聊天每天大概几毛到一两块钱。新用户注册赠送体验金，可以先联系管理员来感受。</p>
-    </div>
-    <div class="faq-item">
-      <h3>对话内容安全吗？</h3>
-      <p>我们只转发请求，不存储对话内容。你的聊天记录只在你的电脑和 Chatbox 本地保存。</p>
-    </div>
-    <div class="faq-item">
-      <h3>余额用完了怎么办？</h3>
-      <p>联系我续费即可，5 分钟到账，随时可用。</p>
+  <div class="section-inner">
+    <h2>常见问题</h2>
+    <div class="faq">
+      <div class="faq-item">
+        <h3>这个跟用 ChatGPT 有什么区别？</h3>
+        <p>使用体验几乎一样，都是 AI 对话。区别是我们不需要科学上网，不需要海外信用卡，按实际使用量收费，适合轻度到中度用户。底层用的是 DeepSeek 等模型，效果很好。</p>
+      </div>
+      <div class="faq-item">
+        <h3>我不会写代码，能使用吗？</h3>
+        <p>完全不需要。下载 <a href="https://chatboxai.app" target="_blank">Chatbox</a> 聊天软件，填入我们给你的三个字段就能开始聊天。整个配置过程 2 分钟就能完成。</p>
+      </div>
+      <div class="faq-item">
+        <h3>一天大概花多少钱？</h3>
+        <p>日常聊天、查资料、翻译等轻度使用，每天大约几毛到一两块钱。写代码、处理长文档等重度使用多一些。相比 ChatGPT 月费 145 元，用我们的服务一个月省一半以上很正常。</p>
+      </div>
+      <div class="faq-item">
+        <h3>余额用完了怎么办？</h3>
+        <p>联系管理员充值，5 分钟内到账。充值金额你自己定，不用套餐，没有绑定。量大优惠，长期使用可谈折扣。</p>
+      </div>
     </div>
   </div>
 </div>
 
+<div class="cta-block">
+  <h2>开始使用 AI 对话</h2>
+  <p>不用科学上网，不用海外信用卡，注册即用</p>
+  <a href="/dashboard" class="btn">免费注册 →</a>
+</div>
+
 <footer>
-  <p>有任何问题？联系 <a href="#">管理员</a></p>
-  <p style="margin-top:8px">&copy; 2026 AI Chat 服务</p>
+  <p>
+    <a href="/dashboard">开始使用</a><span class="sep">|</span>
+    <a href="/static/user.html">使用教程</a><span class="sep">|</span>
+    <a href="/admin">管理后台</a>
+  </p>
+  <p style="margin-top:10px">&copy; 2026 TokenProxy. All rights reserved.</p>
 </footer>
 </body>
 </html>

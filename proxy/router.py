@@ -128,7 +128,7 @@ async def register_user(body: dict):
     user = user_manager.register(name, email)
     if not user:
         return JSONResponse(status_code=409, content={"error": "用户名或邮箱已被使用"})
-    return {"api_key": user.api_key, "name": user.name, "email": user.email, "balance": user.balance, "message": "注册成功，赠送启动余额"}
+    return {"api_key": user.api_key, "name": user.name, "email": user.email, "balance": user.balance, "message": "注册成功，注册成功"}
 
 
 @router.post("/v1/user/query", summary="用户面板", tags=["用户"])
