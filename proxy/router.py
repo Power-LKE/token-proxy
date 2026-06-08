@@ -275,8 +275,6 @@ async def admin_create_reseller(request: Request):
     name = body.get("name", "").strip()
     if not name:
         return JSONResponse(status_code=400, content={"error": "请提供代理名称"})
-    # Create user with role="reseller", the note field is used as role
-    from proxy.models import UserInfo
     reseller = user_manager.create_user(name, 0, note="reseller")
     reseller.role = "reseller"
     user_manager._save()
