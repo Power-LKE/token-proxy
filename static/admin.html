@@ -106,6 +106,10 @@ tbody tr:hover{background:#14142a}
     <div class="section-title">财务</div>
     <a id="navRecharge" onclick="showPage('recharge')">充值管理</a>
     <a id="navTxns" onclick="showPage('txns')">交易记录</a>
+    <a id="navReseller" onclick="showPage('reseller')">代理管理</a>
+    <a id="navReseller" onclick="showPage('reseller')">代理管理</a>
+    <a id="navReseller" onclick="showPage('reseller')">代理管理</a>
+    <a id="navReseller" onclick="showPage('reseller')">代理管理</a>
   </div>
 
   <div class="main">
@@ -207,6 +211,21 @@ tbody tr:hover{background:#14142a}
   </div>
 </div>
 
+    <div class="page" id="pageReseller">
+      <h2 style="font-size:18px;margin-bottom:16px">代理管理</h2>
+      <div class="card">
+        <h3>创建代理</h3>
+        <p>创建一个下级代理账号，对方可以登录 /reseller 管理自己的用户。</p>
+        <div style="margin-bottom:12px"><input type="text" id="resellerName" placeholder="代理名称（如：客户A）"></div>
+        <button class="btn btn-success" id="createResellerBtn">创建代理</button>
+        <div class="msg" id="resellerCreateMsg"></div>
+      </div>
+      <div class="card">
+        <h3>代理列表</h3>
+        <div id="resellerList"><p style="color:#888;text-align:center;padding:20px">加载中...</p></div>
+      </div>
+    </div>
+
 <!-- User Detail Modal -->
 <div class="modal-overlay" id="userModal" onclick="if(event.target===this)closeModal()">
   <div class="modal">
@@ -250,7 +269,7 @@ $("loginBtn").onclick = function(){
 $("loginKey").onkeydown = function(e){if(e.key==="Enter")$("loginBtn").click();};
 
 function showPage(n){
-  ["navOverview","navUsers","navCreate","navRecharge","navTxns"].forEach(function(i){$(i).classList.remove("active");});
+  ["navOverview","navUsers","navCreate","navRecharge","navTxns","navReseller","navReseller","navReseller","navReseller"].forEach(function(i){$(i).classList.remove("active");});
   $("nav"+n.charAt(0).toUpperCase()+n.slice(1)).classList.add("active");
   document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
   $("page"+n.charAt(0).toUpperCase()+n.slice(1)).classList.add("active");
@@ -386,6 +405,16 @@ function showUserDetail(apiKey){
 function closeModal(){$("userModal").style.display="none";}
 
 // Create user
+document.getElementById("createResellerBtn").onclick=function(){
+  var n=document.getElementById("resellerName").value.trim(),m=document.getElementById("resellerCreateMsg");
+  if(!n){m.textContent="请输入代理名称";m.className="msg err";m.style.display="block";return;}
+  fetch(window.location.origin+"/v1/admin/create_reseller",{method:"POST",headers:{"Authorization":"Bearer "+ADMIN_KEY,"Content-Type":"application/json"},body:JSON.stringify({name:n})}).then(function(r){return r.json();}).then(function(d){
+    if(d.api_key){m.innerHTML="已创建代理 <b>"+d.name+"</b><br>API Key: <code style='color:#a5b4fc'>"+d.api_key+"</code><br>请将此 Key 发给对方，对方登录 /reseller 管理用户。";m.className="msg";m.style.display="block";document.getElementById("resellerName").value="";loadResellers();}
+    else{m.textContent=d.error||"创建失败";m.className="msg err";m.style.display="block";}
+  }).catch(function(e){m.textContent="请求失败:"+e.message;m.className="msg err";m.style.display="block";});
+};
+
+
 $("createBtn").onclick = function(){
   var n = $("newName").value.trim(), e = $("newEmail").value.trim().toLowerCase();
   var b = parseFloat($("newBal").value) || 0;
@@ -430,6 +459,58 @@ $("topBtn").onclick = function(){
 };
 
 // Transactions
+function loadResellers(){
+  api("/v1/admin/resellers").then(function(d){
+    if(d.resellers){renderResellers(d.resellers);}
+  }).catch(function(){});
+}
+function renderResellers(resellers){
+  if(!resellers.length){document.getElementById("resellerList").innerHTML='<p style="color:#888;text-align:center;padding:20px">暂无代理</p>';return;}
+  var h="<table><tr><th>名称</th><th>API Key</th><th>用户数</th><th>用户总余额</th><th>创建时间</th></tr>";
+  for(var i=0;i<resellers.length;i++){var r=resellers[i];
+    h+="<tr><td>"+r.name+"</td><td class='key-cell'>"+r.api_key.substring(0,20)+"...</td><td>"+r.user_count+"</td><td>"+r.total_balance.toFixed(2)+" 元</td><td style='font-size:12px;color:#666'>"+(r.created_at||"-").substring(0,10)+"</td></tr>";}
+  h+="</table>";document.getElementById("resellerList").innerHTML=h;
+}
+
+function loadResellers(){
+  api("/v1/admin/resellers").then(function(d){
+    if(d.resellers){renderResellers(d.resellers);}
+  }).catch(function(){});
+}
+function renderResellers(resellers){
+  if(!resellers.length){document.getElementById("resellerList").innerHTML='<p style="color:#888;text-align:center;padding:20px">暂无代理</p>';return;}
+  var h="<table><tr><th>名称</th><th>API Key</th><th>用户数</th><th>用户总余额</th><th>创建时间</th></tr>";
+  for(var i=0;i<resellers.length;i++){var r=resellers[i];
+    h+="<tr><td>"+r.name+"</td><td class='key-cell'>"+r.api_key.substring(0,20)+"...</td><td>"+r.user_count+"</td><td>"+r.total_balance.toFixed(2)+" 元</td><td style='font-size:12px;color:#666'>"+(r.created_at||"-").substring(0,10)+"</td></tr>";}
+  h+="</table>";document.getElementById("resellerList").innerHTML=h;
+}
+
+function loadResellers(){
+  api("/v1/admin/resellers").then(function(d){
+    if(d.resellers){renderResellers(d.resellers);}
+  }).catch(function(){});
+}
+function renderResellers(resellers){
+  if(!resellers.length){document.getElementById("resellerList").innerHTML='<p style="color:#888;text-align:center;padding:20px">暂无代理</p>';return;}
+  var h="<table><tr><th>名称</th><th>API Key</th><th>用户数</th><th>用户总余额</th><th>创建时间</th></tr>";
+  for(var i=0;i<resellers.length;i++){var r=resellers[i];
+    h+="<tr><td>"+r.name+"</td><td class='key-cell'>"+r.api_key.substring(0,20)+"...</td><td>"+r.user_count+"</td><td>"+r.total_balance.toFixed(2)+" 元</td><td style='font-size:12px;color:#666'>"+(r.created_at||"-").substring(0,10)+"</td></tr>";}
+  h+="</table>";document.getElementById("resellerList").innerHTML=h;
+}
+
+function loadResellers(){
+  api("/v1/admin/resellers").then(function(d){
+    if(d.resellers){renderResellers(d.resellers);}
+  }).catch(function(){});
+}
+function renderResellers(resellers){
+  if(!resellers.length){document.getElementById("resellerList").innerHTML='<p style="color:#888;text-align:center;padding:20px">暂无代理</p>';return;}
+  var h="<table><tr><th>名称</th><th>API Key</th><th>用户数</th><th>用户总余额</th><th>创建时间</th></tr>";
+  for(var i=0;i<resellers.length;i++){var r=resellers[i];
+    h+="<tr><td>"+r.name+"</td><td class='key-cell'>"+r.api_key.substring(0,20)+"...</td><td>"+r.user_count+"</td><td>"+r.total_balance.toFixed(2)+" 元</td><td style='font-size:12px;color:#666'>"+(r.created_at||"-").substring(0,10)+"</td></tr>";}
+  h+="</table>";document.getElementById("resellerList").innerHTML=h;
+}
+
 function loadTxns(){
   api("/v1/admin/stats").then(function(d){
     if(d.recent_transactions){allTxns = d.recent_transactions; renderTxns();}
