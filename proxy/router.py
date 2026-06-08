@@ -81,9 +81,12 @@ async def chat_completions(request: Request, body: ChatCompletionRequest):
             content={"error": {"message": "上游 API Key 未配置", "type": "server_error"}},
         )
 
+    # Strip streaming flag so upstream returns regular JSON
+    request_data = body.model_dump()
+    request_data.pop("stream", None)
     try:
         resp_data, sell_price = await forward_chat_completion(
-            provider_key, upstream_api_key, body.model_dump()
+            provider_key, upstream_api_key, request_data
         )
     except Exception as e:
         return JSONResponse(
