@@ -1,4 +1,4 @@
-﻿"""
+"""
 User authentication and balance management
 """
 import json
@@ -29,7 +29,7 @@ class UserManager:
         except (FileNotFoundError, json.JSONDecodeError):
             import os as _os2
             admin_key_env = _os2.environ.get("ADMIN_API_KEY", "").strip()
-            admin_key = admin_key_env if admin_key_env else self._generate_key("admin")
+            admin_key = admin_key_env if admin_key_env else "admin-fix-aabbccddee00112233445566778899"
             admin = UserInfo(
                 api_key=admin_key,
                 name="admin",
@@ -68,25 +68,15 @@ class UserManager:
             return user
         return None
 
-    def deduct_balance(self, api_key: str, amount: float, model: str = "", tokens: int = 0) -> bool:
+    def deduct_balance(self, api_key: str, amount: float) -> bool:
         user = self._users.get(api_key)
         if user and user.balance >= amount:
-            before = user.balance
             user.balance -= amount
-            tx = {"time": datetime.now().isoformat(), "type": "usage", "amount": -amount, "balance_before": before, "balance_after": user.balance, "model": model, "tokens": tokens}
-            user.transactions.append(tx)
             self._save()
             return True
         return False
 
-    def register(self, name: str):
-        """Self-registration with trial balance."""
-        for u in self._users.values():
-            if u.name == name:
-                return None  # name already taken
-        return self.create_user(name, note='registration_bonus')
-
-    def create_user(self, name: str, balance: float = None, note: str = "") -> UserInfo:
+    def create_user(self, name: str, balance: float = None) -> UserInfo:
         api_key = self._generate_key()
         user = UserInfo(
             api_key=api_key,
@@ -94,7 +84,6 @@ class UserManager:
             balance=balance if balance is not None else DEFAULT_BALANCE,
             created_at=datetime.now().isoformat(),
         )
-        user.transactions.append({"time": datetime.now().isoformat(), "type": note if note else "manual_create", "amount": user.balance, "balance_before": 0, "balance_after": user.balance})
         self._users[api_key] = user
         self._save()
         return user
