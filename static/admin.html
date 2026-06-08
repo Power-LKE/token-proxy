@@ -468,7 +468,6 @@ function loadResellers(){
     if(d.resellers){renderResellers(d.resellers);}
   }).catch(function(){});
 }
-}
 
 function loadTxns(){
   api("/v1/admin/stats").then(function(d){
