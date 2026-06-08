@@ -47,12 +47,12 @@ UPSTREAM_PROVIDERS: Dict[str, UpstreamProvider] = {
     ),
     "azure-gpt4o": UpstreamProvider(
         name="Azure OpenAI GPT-4o",
-        api_base="https://YOUR_RESOURCE.openai.azure.com",
+        api_base=os.getenv("AZURE_OPENAI_ENDPOINT", "https://YOUR_RESOURCE.openai.azure.com"),
         api_key_env="AZURE_OPENAI_API_KEY",
-        azure_deployment="gpt-4o",
+        azure_deployment=os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4o"),
         models={
-            "gpt-4o": 2.5,       # $2.50 / 1M input tokens
-            "gpt-4o-mini": 0.15,  # $0.15 / 1M input tokens
+            "gpt-4o": 2.5,
+            "gpt-4o-mini": 0.15,
         },
     ),
 }
