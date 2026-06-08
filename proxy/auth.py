@@ -107,6 +107,14 @@ class UserManager:
         self._save()
         return user
 
+    def find_by_email(self, email):
+        """????????"""
+        email = email.strip().lower()
+        for u in self._users.values():
+            if u.email and u.email.lower() == email:
+                return u
+        return None
+
     def get_user(self, api_key):
         return self._users.get(api_key)
 

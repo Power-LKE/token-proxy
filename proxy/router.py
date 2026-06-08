@@ -180,6 +180,20 @@ async def register_user(body: dict):
     return {"api_key": user.api_key, "name": user.name, "email": user.email, "balance": user.balance, "message": "注册成功"}
 
 
+
+@router.post("/v1/login", summary="????", tags=["??"])
+async def login_user(body: dict):
+    """???????????? API Key"""
+    email = body.get("email", "").strip().lower()
+    if not email or "@" not in email:
+        return JSONResponse(status_code=400, content={"error": "??????????"})
+    user = user_manager.find_by_email(email)
+    if not user:
+        return JSONResponse(status_code=404, content={"error": "???????????"})
+    if not user.is_active:
+        return JSONResponse(status_code=403, content={"error": "??????"})
+    return {"api_key": user.api_key, "name": user.name, "email": user.email, "balance": user.balance}
+
 @router.post("/v1/user/query", summary="用户面板", tags=["用户"])
 async def user_query(request: Request):
     api_key = request.headers.get("Authorization", "").replace("Bearer ", "").strip()
