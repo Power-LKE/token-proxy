@@ -118,14 +118,17 @@ async def register_user(body: dict):
     if DISABLE_REGISTRATION:
         return JSONResponse(status_code=403, content={"error": "注册已关闭，请联系管理员开通账号"})
     name = body.get("name", "").strip()
+    email = body.get("email", "").strip().lower()
     if not name:
         return JSONResponse(status_code=400, content={"error": "请输入用户名"})
     if len(name) > 50:
         return JSONResponse(status_code=400, content={"error": "用户名过长"})
-    user = user_manager.register(name)
+    if not email or "@" not in email or "." not in email:
+        return JSONResponse(status_code=400, content={"error": "请输入有效的邮箱地址"})
+    user = user_manager.register(name, email)
     if not user:
-        return JSONResponse(status_code=409, content={"error": "用户名已被使用"})
-    return {"api_key": user.api_key, "name": user.name, "balance": user.balance, "message": "注册成功，赠送启动余额"}
+        return JSONResponse(status_code=409, content={"error": "用户名或邮箱已被使用"})
+    return {"api_key": user.api_key, "name": user.name, "email": user.email, "balance": user.balance, "message": "注册成功，赠送启动余额"}
 
 
 @router.post("/v1/user/query", summary="用户面板", tags=["用户"])

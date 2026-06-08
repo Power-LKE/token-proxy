@@ -84,18 +84,22 @@ class UserManager:
             return True
         return False
 
-    def register(self, name):
+    def register(self, name, email=""):
+        email = email.strip().lower()
         for u in self._users.values():
             if u.name == name:
                 return None
-        return self.create_user(name, note="registration_bonus")
+            if email and u.email and u.email.lower() == email:
+                return None
+        return self.create_user(name, note="registration_bonus", email=email)
 
-    def create_user(self, name, balance=None, note=""):
+    def create_user(self, name, balance=None, note="", email=""):
         api_key = self._generate_key()
         user = UserInfo(
             api_key=api_key, name=name,
             balance=balance if balance is not None else DEFAULT_BALANCE,
             created_at=datetime.now().isoformat(),
+            email=email,
         )
         user.transactions.append({"time": datetime.now().isoformat(), "type": note or "manual_create", "amount": user.balance, "balance_before": 0, "balance_after": user.balance})
         self._users[api_key] = user

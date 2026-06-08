@@ -49,8 +49,10 @@ class UserInfo(BaseModel):
     balance: float
     is_active: bool = True
     created_at: str = ""
+    email: str = ""
     transactions: List[dict] = []
 
 
 class RegistrationRequest(BaseModel):
     name: str = Field(..., min_length=1, max_length=50)
+    email: str = Field(default="", max_length=200)
