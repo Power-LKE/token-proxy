@@ -8,6 +8,35 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}
 body{background:linear-gradient(135deg,#f0f2f5,#e8ecf1);color:#1a1d23;height:100vh;overflow:hidden;line-height:1.5}
 input,textarea,select,button{font-family:inherit}
+
+/* Landing page */
+#landingPage{display:flex;flex-direction:column;min-height:100vh;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);position:relative;overflow:hidden}
+#landingPage::before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='g' patternUnits='userSpaceOnUse' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1.5' fill='rgba(255,255,255,.06)'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='60' height='60' fill='url(%23g)'/%3E%3C/svg%3E");pointer-events:none}
+.landing-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;position:relative;z-index:1}
+.landing-icon{width:80px;height:80px;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border-radius:24px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;font-size:36px;box-shadow:0 12px 40px rgba(0,0,0,.15);border:1px solid rgba(255,255,255,.15)}
+.landing-hero h1{font-size:48px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-1px;text-shadow:0 2px 20px rgba(0,0,0,.15)}
+.landing-hero .sub{font-size:18px;color:rgba(255,255,255,.8);margin-bottom:12px;font-weight:500}
+.landing-hero .desc{font-size:15px;color:rgba(255,255,255,.6);margin-bottom:40px;max-width:480px;line-height:1.6}
+.landing-btns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.landing-btn{display:inline-flex;align-items:center;gap:8px;background:#fff;border:none;border-radius:14px;color:#667eea;cursor:pointer;font-size:16px;font-weight:600;padding:16px 36px;transition:all .3s cubic-bezier(.22,1,.36,1);box-shadow:0 8px 30px rgba(0,0,0,.15)}
+.landing-btn:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.landing-btn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.3);box-shadow:none}
+.landing-btn-outline:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.5)}
+.landing-features{padding:60px 24px;background:rgba(0,0,0,.15);position:relative;z-index:1}
+.landing-features-inner{max-width:960px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px}
+.landing-feat{background:rgba(255,255,255,.08);backdrop-filter:blur(10px);border-radius:16px;padding:28px 24px;text-align:center;border:1px solid rgba(255,255,255,.1);transition:all .3s}
+.landing-feat:hover{transform:translateY(-4px);background:rgba(255,255,255,.12)}
+.landing-feat h3{color:#fff;font-size:16px;font-weight:600;margin-bottom:6px}
+.landing-feat p{color:rgba(255,255,255,.6);font-size:13px;line-height:1.5}
+.landing-footer{text-align:center;padding:20px;color:rgba(255,255,255,.35);font-size:12px;position:relative;z-index:1}
+.auth-link{color:#fff;text-decoration:underline;cursor:pointer;opacity:.7;transition:opacity .2s}
+.auth-link:hover{opacity:1}
+@media(max-width:640px){
+.landing-hero h1{font-size:36px}
+.landing-hero .sub{font-size:16px}
+.landing-btn{padding:14px 28px;font-size:15px}
+.landing-features-inner{grid-template-columns:1fr}
+}
 #authPage{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:linear-gradient(135deg,#eef2ff,#f5f7fb 60%,#f0f9ff)}
 .auth-box{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:24px;padding:48px 40px;width:440px;max-width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.15),0 0 0 1px rgba(255,255,255,.1);position:relative;overflow:hidden}
 .auth-box::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#667eea,#764ba2,#f093fb)}
@@ -132,11 +161,13 @@ pre:hover .copy-btn{opacity:1}
 </head>
 <body>
 <div id="toast" class="toast"></div>
-<div id="authPage"><div class="auth-box"><div class="auth-icon">🚀</div><h1>LinkPower</h1><p class="sub">LinkPower · 最新版 AI 对话 · 旗舰模型</p><div class="auth-tabs"><button id="tabLogin" class="active" onclick="swAuth('login')">登录</button><button id="tabReg" onclick="swAuth('register')">注册</button></div><div id="loginForm"><div class="field"><input type="email" id="loginEmail" placeholder="邮箱地址" autocomplete="email"></div><div class="field"><input type="password" id="loginPassword" placeholder="密码" autocomplete="current-password"></div><button class="auth-btn" onclick="login()" id="loginBtn">登录</button></div><div id="registerForm" style="display:none"><div class="field"><input type="text" id="regName" placeholder="设置昵称" autocomplete="off"></div><div class="field"><input type="email" id="regEmail" placeholder="邮箱地址" autocomplete="email"></div><div class="field"><input type="password" id="regPassword" placeholder="密码（至少6位）" autocomplete="new-password"></div><button class="auth-btn" onclick="register()" id="regBtn">注册</button></div><div id="authMsg" class="auth-msg"></div><div class="auth-footer">注册即送 1 元体验金</div></div></div>
+<div id="landingPage"><div class="landing-hero"><div class="landing-icon">🚀</div><h1>LinkPower</h1><p class="sub">DeepSeek V4 Pro AI 中转服务</p><p class="desc">一键接入最新 DeepSeek V4 Pro 旗舰模型，智能对话。注册即送体验金，立刻开始体验。</p><div class="landing-btns"><button class="landing-btn" onclick="showAuth()">立即体验 →</button><button class="landing-btn landing-btn-outline" onclick="showAuth('register')">免费注册</button></div><p style="color:rgba(255,255,255,.5);margin-top:16px;font-size:13px"><span class="auth-link" onclick="showAuth('login')">已有账号？立即登录</span></p></div><div class="landing-features"><div class="landing-features-inner"><div class="landing-feat"><h3>最新模型</h3><p>DeepSeek V4 Pro 旗舰模型</p></div><div class="landing-feat"><h3>超低延迟</h3><p>响应速度提升 300%</p></div><div class="landing-feat"><h3>便宜实惠</h3><p>注册即送体验金</p></div><div class="landing-feat"><h3>安全可靠</h3><p>API Key 加密存储</p></div></div></div><div class="landing-footer">© 2026 LinkPower · AI 中转服务</div></div>
+<div id="authPage" style="display:none"><div class="auth-box"><div class="auth-icon">🚀</div><h1>LinkPower</h1><p class="sub">LinkPower · 最新版 AI 对话 · 旗舰模型</p><div class="auth-tabs"><button id="tabLogin" class="active" onclick="swAuth('login')">登录</button><button id="tabReg" onclick="swAuth('register')">注册</button></div><div id="loginForm"><div class="field"><input type="email" id="loginEmail" placeholder="邮箱地址" autocomplete="email"></div><div class="field"><input type="password" id="loginPassword" placeholder="密码" autocomplete="current-password"></div><button class="auth-btn" onclick="login()" id="loginBtn">登录</button></div><div id="registerForm" style="display:none"><div class="field"><input type="text" id="regName" placeholder="设置昵称" autocomplete="off"></div><div class="field"><input type="email" id="regEmail" placeholder="邮箱地址" autocomplete="email"></div><div class="field"><input type="password" id="regPassword" placeholder="密码（至少6位）" autocomplete="new-password"></div><button class="auth-btn" onclick="register()" id="regBtn">注册</button></div><div id="authMsg" class="auth-msg"></div><div class="auth-footer">注册即送 1 元体验金</div></div></div>
 <div id="chatPage"><div class="top-bar"><div class="top-left"><button class="sidebar-toggle" onclick="sideToggle()">&#x2630;</button><span class="logo-text">Token<span>Proxy</span><span class="v4-badge">V4 Pro</span></span></div><div class="top-center"><span class="balance-display" id="balanceDisplay">&#xa5; 0.00</span><select id="modelSelect" onchange="onModelChange()"><optgroup label="🔷 DeepSeek V4"><option value="deepseek-v4-flash">Flash 标准版</option><option value="deepseek-v4-pro" selected>Pro 专业版 ★</option><option value="deepseek-reasoner">Reasoner 专家版</option></optgroup>/select></div><div class="top-right"><span class="user-name" id="userNameDisplay"></span><button class="user-btn" onclick="logout()">退出</button></div></div><div class="chat-wrap"><div id="sidebar" class="sidebar"><div class="sidebar-header"><button class="new-chat-btn" onclick="newChat()">+ 新对话</button></div><div class="sidebar-search"><input type="text" id="searchConv" placeholder="搜索对话..." oninput="filterConvs()"></div><div id="conversationList"></div></div><div class="main-area"><div id="chatMessages" class="chat-msgs"><div class="welcome"><div class="welcome-icon">&#x1f916;</div><h2>🚀 DeepSeek V4 Pro</h2><p>搭载最新 DeepSeek V4 旗舰模型 · 智能对话 · 超低延迟</p><div class="model-pills"><button data-model="deepseek-v4-flash" class="active">? Flash 标准版</button><button data-model="deepseek-v4-pro">?? Pro 专业版</button><button data-model="deepseek-reasoner">?? Reasoner 专家版</button></div></div></div><div class="input-wrap"><textarea id="chatInput" rows="1" placeholder="输入消息，Enter 发送" onkeydown="if(event.key=='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea><button class="send-btn" id="sendBtn" onclick="sendMsg()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> 发送</button></div></div></div></div>
 <script>
-var KEY=localStorage.getItem("tp_key")||"";var NAME=localStorage.getItem("tp_name")||"";var CUR=null;var CONVS=JSON.parse(localStorage.getItem("tp_convs")||"[]");var SENDING=false;var BAL=0;if(KEY){showChat();loadBal();renderConvs()}
-function $(id){return document.getElementById(id)}
+var KEY=localStorage.getItem("tp_key")||"";var NAME=localStorage.getItem("tp_name")||"";var CUR=null;var CONVS=JSON.parse(localStorage.getItem("tp_convs")||"[]");var SENDING=false;var BAL=0;if(KEY){document.getElementById('landingPage').style.display='none';showChat();loadBal();renderConvs()}
+
+function showAuth(t){document.getElementById('landingPage').style.display='none';document.getElementById('authPage').style.display='';if(t)swAuth(t)}function $(id){return document.getElementById(id)}
 function toast(m,ok){var t=$("toast");t.textContent=m;t.className="toast"+(ok?" ok":" err")+" show";setTimeout(function(){t.classList.remove("show")},3000)}
 function swAuth(t){$("tabLogin").className=t=="login"?"active":"";$("tabReg").className=t=="register"?"active":"";$("loginForm").style.display=t=="login"?"":"none";$("registerForm").style.display=t=="register"?"":"none";$("authMsg").style.display="none"}
 function validEmail(e){return e&&e.includes("@")&&e.length>3}
@@ -146,7 +177,7 @@ function showMsg(m){var el=$("authMsg");if(m){el.textContent=m;el.className="aut
 function hideMsg(){$("authMsg").style.display="none"}
 function doLogin(key,nm,bal){KEY=key;NAME=nm;localStorage.setItem("tp_key",key);localStorage.setItem("tp_name",nm);showChat();$("userNameDisplay").textContent=nm;BAL=bal||0;updBal();renderConvs()}
 function showChat(){$("authPage").style.display="none";$("chatPage").style.display="flex"}
-function logout(){KEY="";NAME="";localStorage.removeItem("tp_key");localStorage.removeItem("tp_name");$("chatPage").style.display="none";$("authPage").style.display="flex";$("loginEmail").value="";$("loginPassword").value=""}
+function logout(){KEY="";NAME="";localStorage.removeItem("tp_key");localStorage.removeItem("tp_name");$("chatPage").style.display="none";$("landingPage").style.display="flex";$("loginEmail").value="";$("loginPassword").value=""}
 function sideToggle(){$("sidebar").classList.toggle("show")}
 function updBal(){$("balanceDisplay").textContent="\xa5 "+BAL.toFixed(4)}
 async function loadBal(){if(!KEY)return;try{var r=await fetch("/v1/balance",{headers:{"Authorization":"Bearer "+KEY}});var d=await r.json();if(d.balance!==undefined){BAL=d.balance;updBal()}}catch(e){}}
