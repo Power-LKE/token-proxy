@@ -277,7 +277,7 @@ function renderMessages(){
     var isUser=m.role==="user";
     var thinkHtml="";
     if(m.reasoning){
-      thinkHtml="<div class='think-head' onclick='this.nextElementSibling.classList.toggle("show")'>💭 查看推理过程</div><div class='think-body'>"+escHtml(m.reasoning)+"</div>";
+      thinkHtml="<div class='think-head' onclick='this.nextElementSibling.classList.toggle(\"show\")'>💭 查看推理过程</div><div class='think-body'>"+escHtml(m.reasoning)+"</div>";
     }
     var metaHtml="<div class='msg-meta'>";
     if(m.cost)metaHtml+="<span>¥"+m.cost.toFixed(6)+"</span>";
