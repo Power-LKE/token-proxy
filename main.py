@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse, Response
 import pathlib as _p
 
-__version__ = "2.0.0"  # trigger redeploy
+__version__ = "2.0.1"  # trigger redeploy
 
 from config import HOST, PORT, SERVICE_NAME
 from proxy.router import router
