@@ -190,9 +190,10 @@ async def register_user(body: dict):
 async def login_user(body: dict):
     """???????????? API Key"""
     email = body.get("email", "").strip().lower()
+    password = body.get("password", "")
     if not email or "@" not in email:
         return JSONResponse(status_code=400, content={"error": "??????????"})
-    user = user_manager.find_by_email(email)
+    user = user_manager.find_by_email_and_password(email, password)
     if not user:
         return JSONResponse(status_code=404, content={"error": "???????????"})
     if not user.is_active:
