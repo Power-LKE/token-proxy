@@ -1,13 +1,14 @@
 """API 路由 — 中文标签"""
 import time
 import os
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, UploadFile, File
 from datetime import datetime
 from fastapi.responses import JSONResponse, StreamingResponse
 from config import UPSTREAM_PROVIDERS, SERVICE_NAME, DEFAULT_BALANCE, DISABLE_REGISTRATION
 from proxy.models import ChatCompletionRequest
 from proxy.auth import user_manager
 from proxy.upstream import _detect_provider, forward_chat_completion, forward_stream, _calculate_sell_price
+from proxy.file_handler import process_upload
 
 
 
@@ -74,6 +75,20 @@ def _list_supported_models_str() -> str:
             models.append(model_name)
     return ", ".join(models)
 
+
+
+@router.post("/v1/upload", summary="上传文件", description="上传文件（txt/docx/pptx/pdf/图片），提取内容用于提问")
+async def upload_file(file: UploadFile = File(...)):
+    """Upload and process a file, extracting text or image content."""
+    if not file or not file.filename:
+        return JSONResponse(status_code=400, content={"error": "请选择要上传的文件"})
+    data = await file.read()
+    if len(data) == 0:
+        return JSONResponse(status_code=400, content={"error": "文件为空"})
+    result = process_upload(data, file.filename)
+    if "error" in result:
+        return JSONResponse(status_code=400, content=result)
+    return result
 
 @router.post("/v1/chat/completions", summary="聊天补全", description="发送聊天消息到 AI 模型，获取回复（兼容 OpenAI 格式）")
 async def chat_completions(request: Request, body: ChatCompletionRequest):
