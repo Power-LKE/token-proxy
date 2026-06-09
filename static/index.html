@@ -286,37 +286,35 @@ function copyT(el){navigator.clipboard.writeText(el.textContent).then(function()
 async 
 var FILE_DATA = null;
 function uploadFile(){
-  var inp=document.getElementById("fileInput");
-  if(!inp)return;
-  inp.click();
-}
-var _fileHandler=function(){
-  var inp=document.getElementById("fileInput");
-  if(!inp)return;
-  inp.addEventListener("change",function(){
+  var inp=document.createElement('input');
+  inp.type='file';
+  inp.accept='.txt,.md,.csv,.json,.xml,.yaml,.yml,.log,.py,.js,.ts,.html,.css,.docx,.pptx,.pdf,.jpg,.jpeg,.png,.gif,.webp';
+  inp.style.cssText='position:fixed;top:0;left:0;width:0;height:0;opacity:0';
+  inp.addEventListener('change',function(){
+    try{document.body.removeChild(inp)}catch(e){}
     var f=inp.files[0];if(!f)return;
-    var preview=document.getElementById("filePreview");if(!preview)return;
-    var ss=f.size>1048576?(f.size/1048576).toFixed(1)+" MB":(f.size/1024).toFixed(1)+" KB";
-    preview.style.display="";
+    var preview=document.getElementById('filePreview');if(!preview)return;
+    var ss=f.size>1048576?(f.size/1048576).toFixed(1)+' MB':(f.size/1024).toFixed(1)+' KB';
+    preview.style.display='';
     preview.innerHTML='<span class="fp-icon">\uD83D\uDCC4</span><span class="fp-name">'+esc(f.name)+'</span><span class="fp-size">'+ss+'</span><span class="fp-status">\u4e0a\u4f20\u4e2d...</span><button class="fp-close" onclick="removeFile()">&times;</button>';
-    var fd=new FormData();fd.append("file",f);
-    fetch("/v1/upload",{method:"POST",body:fd})
+    var fd=new FormData();fd.append('file',f);
+    fetch('/v1/upload',{method:'POST',body:fd})
       .then(function(r){return r.json()})
       .then(function(result){
-        var st=preview.querySelector(".fp-status");
-        if(!st)return;
-        if(result.error){st.className="fp-status err";st.textContent=result.error;FILE_DATA=null;return}
-        st.className="fp-status done";st.textContent="\u2713";FILE_DATA=result
+        var st=preview.querySelector('.fp-status');if(!st)return;
+        if(result.error){st.className='fp-status err';st.textContent=result.error;FILE_DATA=null;return}
+        st.className='fp-status done';st.textContent='\u2713';FILE_DATA=result
       })
-      .catch(function(err){
-        var st=preview.querySelector(".fp-status");
-        if(st){st.className="fp-status err";st.textContent="\u5931\u8d25"}
+      .catch(function(e){
+        var st=preview.querySelector('.fp-status');if(st){st.className='fp-status err';st.textContent='\u5931\u8d25'}
         FILE_DATA=null
-      })
+      });
   });
-};
-if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",_fileHandler)}else{_fileHandler()}
-function removeFile(){FILE_DATA=null;var preview=document.getElementById("filePreview");if(preview){preview.style.display="none";preview.innerHTML=""}}
+  document.body.appendChild(inp);
+  inp.click();
+  setTimeout(function(){try{if(inp.parentNode)document.body.removeChild(inp)}catch(e){}},30000);
+}
+function removeFile(){FILE_DATA=null;var preview=document.getElementById('filePreview');if(preview){preview.style.display='none';preview.innerHTML=''}}
 function sendMsg(){var inp=$("chatInput");var txt=inp.value.trim();if(!txt||SENDING)return;if(!KEY){toast("请先登录",false);return}if(!CUR)newChat();if(CUR.messages.length===0)CUR.title=txt.substring(0,20)+(txt.length>20?"...":"");
 var model=$("modelSelect").value;if(FILE_DATA){var msgContent;if(FILE_DATA.type==="image"){msgContent=[{type:"text",text:txt||"请回答这张图片的问题"},{type:"image_url",image_url:{url:"data:"+FILE_DATA.mime+";base64,"+FILE_DATA.content}}]}else{msgContent=txt+"\n\n---\n文件: "+FILE_DATA.filename+"\n内容:\n"+FILE_DATA.content}CUR.messages.push({role:"user",content:msgContent});removeFile()}else{CUR.messages.push({role:"user",content:txt})}inp.value="";inp.style.height="auto";renderMsgs();if(!CONVS.includes(CUR))CONVS.push(CUR);renderConvs();localStorage.setItem("tp_convs",JSON.stringify(CONVS));
 SENDING=true;$("sendBtn").disabled=true;$("sendBtn").innerHTML='<span class="loading"><span></span><span></span><span></span></span>';var el=$("chatMessages");el.innerHTML+='<div class="msg-row ai" id="aiMsg"><div class="msg-av a">AI</div><div class="msg-bub"><span class="loading"><span></span><span></span><span></span></span></div></div>';el.scrollTop=el.scrollHeight;
