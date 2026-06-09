@@ -291,8 +291,8 @@ function uploadFile(){
   inp.accept='.txt,.md,.csv,.json,.xml,.yaml,.yml,.log,.py,.js,.ts,.html,.css,.docx,.pptx,.pdf,.jpg,.jpeg,.png,.gif,.webp';
   inp.style.cssText='position:fixed;top:0;left:0;width:0;height:0;opacity:0';
   inp.addEventListener('change',function(){
-    try{document.body.removeChild(inp)}catch(e){}
     var f=inp.files[0];if(!f)return;
+    try{document.body.removeChild(inp)}catch(e){}
     var preview=document.getElementById('filePreview');if(!preview)return;
     var ss=f.size>1048576?(f.size/1048576).toFixed(1)+' MB':(f.size/1024).toFixed(1)+' KB';
     preview.style.display='';
