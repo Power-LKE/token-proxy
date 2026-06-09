@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -176,7 +176,7 @@ async function register(){var nm=$("regName").value.trim();var em=$("regEmail").
 function showMsg(m){var el=$("authMsg");if(m){el.textContent=m;el.className="auth-msg err";el.style.display="block"}else{el.style.display="none"}}
 function hideMsg(){$("authMsg").style.display="none"}
 function doLogin(key,nm,bal){KEY=key;NAME=nm;localStorage.setItem("tp_key",key);localStorage.setItem("tp_name",nm);showChat();$("userNameDisplay").textContent=nm;BAL=bal||0;updBal();renderConvs()}
-function showChat(){$("authPage").style.display="none";$("chatPage").style.display="flex"}
+function showChat(){$("landingPage").style.display="none";$("authPage").style.display="none";$("chatPage").style.display="flex"}
 function logout(){KEY="";NAME="";localStorage.removeItem("tp_key");localStorage.removeItem("tp_name");$("chatPage").style.display="none";$("landingPage").style.display="flex";$("loginEmail").value="";$("loginPassword").value=""}
 function sideToggle(){$("sidebar").classList.toggle("show")}
 function updBal(){$("balanceDisplay").textContent="\xa5 "+BAL.toFixed(4)}
