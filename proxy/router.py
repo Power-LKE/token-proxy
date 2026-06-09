@@ -1,4 +1,4 @@
-"""API 路由 — 中文标签"""
+﻿"""API 路由 — 中文标签"""
 import time
 import os
 from fastapi import APIRouter, Request, UploadFile, File
@@ -12,7 +12,7 @@ from proxy.file_handler import process_upload
 
 
 
-# === ?????? ===
+# === 内容过滤 ===
 SENSITIVE_WORDS = ["???","??","???","??","??","??","??","??","??","???","????","????","????","??","???"]
 
 def check_content(text: str) -> tuple:
@@ -107,7 +107,7 @@ async def chat_completions(request: Request, body: ChatCompletionRequest):
             content={"error": {"message": f"不支持的模型: {body.model}。支持的模型: {_list_supported_models_str()}", "type": "invalid_model"}},
         )
 
-    # ????
+    # 内容审查
     for msg in body.messages:
         safe, kw = check_content(msg.content if msg.content else "")
         if not safe:
