@@ -99,11 +99,13 @@ body{background:#0f0f1a;color:#e0e0e0;height:100vh;overflow:hidden}
   </div>
   <div id="loginForm">
     <input type="email" id="loginEmail" placeholder="邮箱地址" autocomplete="email">
+    <input type="password" id="loginPassword" placeholder="密码" autocomplete="current-password">
     <button class="auth-btn" onclick="login()" id="loginBtn">登录</button>
   </div>
   <div id="registerForm" style="display:none">
     <input type="text" id="regName" placeholder="设置昵称" autocomplete="off">
     <input type="email" id="regEmail" placeholder="邮箱地址" autocomplete="email">
+    <input type="password" id="regPassword" placeholder="密码（至少6位）" autocomplete="new-password">
     <button class="auth-btn" onclick="register()" id="regBtn">注册</button>
   </div>
   <div id="authMsg" class="auth-msg"></div>
@@ -177,11 +179,12 @@ function switchAuth(tab){
 
 async function login(){
   var email=qs("loginEmail").value.trim().toLowerCase();
+  var password=qs("loginPassword").value;
   var btn=qs("loginBtn");
   if(!email||!email.includes("@")){showMsg("请输入有效的邮箱地址");return;}
   btn.disabled=true;btn.textContent="登录中...";showMsg(null);
   try{
-    var r=await fetch("/v1/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email})});
+    var r=await fetch("/v1/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password})});
     var d=await r.json();
     if(d.error){showMsg(d.error);return;}
     doLogin(d.api_key,d.name,d.balance);
@@ -191,12 +194,14 @@ async function login(){
 
 async function register(){
   var name=qs("regName").value.trim();var email=qs("regEmail").value.trim().toLowerCase();
+  var password=qs("regPassword").value;
   var btn=qs("regBtn");
+  if(!password||password.length<6){showMsg("密码至少需要6位");return;}
   if(!name){showMsg("请输入昵称");return;}
   if(!email||!email.includes("@")){showMsg("请输入有效的邮箱地址");return;}
   btn.disabled=true;btn.textContent="注册中...";showMsg(null);
   try{
-    var r=await fetch("/v1/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,email})});
+    var r=await fetch("/v1/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,email,password})});
     var d=await r.json();
     if(d.error){showMsg(d.error);return;}
     doLogin(d.api_key,d.name,d.balance);

@@ -53,6 +53,7 @@ class UserInfo(BaseModel):
     transactions: List[dict] = []
     role: str = "user"
     parent_key: str = ""
+    password_hash: str = ""
 
 
 class RegistrationRequest(BaseModel):

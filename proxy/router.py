@@ -168,13 +168,18 @@ async def register_user(body: dict):
         return JSONResponse(status_code=403, content={"error": "注册已关闭，请联系管理员开通账号"})
     name = body.get("name", "").strip()
     email = body.get("email", "").strip().lower()
+    password = body.get("password", "").strip()
+    if not password:
+        return JSONResponse(status_code=400, content={"error": "\u8bf7\u8f93\u5165\u5bc6\u7801"})
+    if len(password) < 6:
+        return JSONResponse(status_code=400, content={"error": "\u5bc6\u7801\u81f3\u5c11\u9700\u89816\u4f4d"})
     if not name:
         return JSONResponse(status_code=400, content={"error": "请输入用户名"})
     if len(name) > 50:
         return JSONResponse(status_code=400, content={"error": "用户名过长"})
     if not email or "@" not in email:
         return JSONResponse(status_code=400, content={"error": "请输入有效的邮箱地址"})
-    user = user_manager.register(name, email)
+    user = user_manager.register(name, email, password=password)
     if not user:
         return JSONResponse(status_code=409, content={"error": "用户名或邮箱已被使用"})
     return {"api_key": user.api_key, "name": user.name, "email": user.email, "balance": user.balance, "message": "注册成功"}

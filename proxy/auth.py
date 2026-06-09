@@ -13,6 +13,16 @@ def _deterministic_admin_key() -> str:
         return "admin-" + digest
     return "admin-d9832619d29729c5eb6e91df"
 
+
+def _hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
+
+
+def _verify_password(password: str, password_hash: str) -> bool:
+    if not password_hash:
+        return True  # legacy users without password
+    return _hash_password(password) == password_hash
+
 class UserManager:
     def __init__(self):
         self._store = create_store()
@@ -83,14 +93,18 @@ class UserManager:
             return True
         return False
 
-    def register(self, name, email=""):
+    def register(self, name, email="", password=""):
         email = email.strip().lower()
         for u in self._users.values():
             if u.name == name:
                 return None
             if email and u.email and u.email.lower() == email:
                 return None
-        return self.create_user(name, note="registration_bonus", email=email)
+        user = self.create_user(name, note="registration_bonus", email=email)
+        if password:
+            user.password_hash = _hash_password(password)
+            self._save()
+        return user
 
     def create_user(self, name, balance=None, note="", email="", parent_key=""):
         api_key = self._generate_key()
@@ -106,6 +120,14 @@ class UserManager:
         self._users[api_key] = user
         self._save()
         return user
+
+    def find_by_email_and_password(self, email, password):
+        email = email.strip().lower()
+        for u in self._users.values():
+            if u.email and u.email.lower() == email:
+                if _verify_password(password, u.password_hash):
+                    return u
+        return None
 
     def find_by_email(self, email):
         """????????"""
