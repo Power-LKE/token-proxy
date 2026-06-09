@@ -130,7 +130,7 @@ HOST = os.getenv("PROXY_HOST", "0.0.0.0")
 
 PORT = int(os.getenv("PROXY_PORT", "8000"))
 
-SERVICE_NAME = os.getenv("SERVICE_NAME", "TokenProxy")
+SERVICE_NAME = os.getenv("SERVICE_NAME", "LinkPower")
 
 DEFAULT_BALANCE = float(os.getenv("DEFAULT_BALANCE", "0"))
 
