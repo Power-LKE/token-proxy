@@ -1,4 +1,4 @@
-"""Configuration - Edit upstream API keys and pricing here"""
+﻿"""Configuration - Edit upstream API keys and pricing here"""
 
 import os
 
@@ -132,7 +132,7 @@ PORT = int(os.getenv("PROXY_PORT", "8000"))
 
 SERVICE_NAME = os.getenv("SERVICE_NAME", "LinkPower")
 
-DEFAULT_BALANCE = float(os.getenv("DEFAULT_BALANCE", "0"))
+DEFAULT_BALANCE = float(os.getenv("DEFAULT_BALANCE", "1.0"))
 
 USER_DATA_PATH = os.getenv("USER_DATA_PATH", "/tmp/users.json")
 
