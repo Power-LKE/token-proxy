@@ -168,6 +168,7 @@ let allTxns = [];
 async function adminLogin() {
   const key = $('loginKey').value.trim();
   if (!key) { showLoginError('请输入管理员 Key'); return; }
+  LP_KEY = key;  // 同步到 api.js 的全局变量
   ADMIN_KEY = key;
   const btn = $('loginBtn'); btn.disabled = true; btn.textContent = '验证中...';
   try {
