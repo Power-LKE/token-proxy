@@ -258,19 +258,22 @@ let CUR_CONV=null;  // index into CONVS
 
 // ── Init ──────────────────────────────────────────
 (function(){
-  KEY=localStorage.getItem('lp3_key')||localStorage.getItem(P+'key')||'';
-  NAME=localStorage.getItem('lp3_name')||localStorage.getItem(P+'name')||'';
-  // Migrate old conversations from v3
+  // Load from any known prefix (migration-safe)
+  KEY=localStorage.getItem('lp4_key')||localStorage.getItem('lp3_key')||'';
+  NAME=localStorage.getItem('lp4_name')||localStorage.getItem('lp3_name')||'';
+  CURRENT_MODEL=localStorage.getItem('lp4_model')||localStorage.getItem('lp3_model')||'deepseek-chat';
+  document.getElementById('modelPick').value=CURRENT_MODEL;
+  // Migrate old messages
   try{
     const oldMsgs=JSON.parse(localStorage.getItem('lp3_msgs')||'[]');
-    const oldConvs=JSON.parse(localStorage.getItem(P+'convs')||'[]');
+    const oldConvs=JSON.parse(localStorage.getItem('lp4_convs')||'[]');
     if(oldMsgs.length&&!oldConvs.length){
       CONVS=[{id:Date.now(),title:(oldMsgs[0]?.content||'').slice(0,30),msgs:oldMsgs,model:CURRENT_MODEL,createdAt:new Date().toISOString()}];
-      saveConvs();
-      localStorage.removeItem('lp3_msgs');
+      saveConvs();renderConvs();
+      localStorage.removeItem('lp3_msgs');localStorage.removeItem('lp3_key');localStorage.removeItem('lp3_name');
     }else{CONVS=oldConvs}
-  }catch{try{CONVS=JSON.parse(localStorage.getItem(P+'convs')||'[]')}catch{}}
-  CURRENT_MODEL=localStorage.getItem(P+'model')||localStorage.getItem('lp3_model')||'deepseek-chat';
+  }catch{try{CONVS=JSON.parse(localStorage.getItem('lp4_convs')||'[]')}catch{}}
+  const t=localStorage.getItem('lp4_theme')||localStorage.getItem('lp3_theme');
 
   if(KEY&&(NAME||'').startsWith('同学')){localStorage.removeItem(P+'key');localStorage.removeItem(P+'name');KEY='';NAME=''}
 
