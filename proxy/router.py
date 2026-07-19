@@ -465,6 +465,28 @@ async def admin_delete_user(request: Request):
     return {"status": "ok", "name": name}
 
 
+@router.post("/v1/admin/users/edit", summary="编辑用户", tags=["管理"])
+async def admin_edit_user(request: Request):
+    api_key = _get_api_key(request)
+    if not api_key or not user_manager.is_admin_key(api_key):
+        return JSONResponse(status_code=401, content={"error": "未授权"})
+    body = await request.json()
+    user_key = body.get("api_key", "").strip()
+    if not user_key:
+        return JSONResponse(status_code=400, content={"error": "请提供用户 API Key"})
+    user = user_manager.get_user(user_key)
+    if not user:
+        return JSONResponse(status_code=404, content={"error": "用户不存在"})
+    new_name = body.get("name", "").strip()
+    new_email = body.get("email", "").strip().lower()
+    if new_name:
+        user.name = new_name
+    if new_email is not None:
+        user.email = new_email
+    user_manager._save()
+    return {"name": user.name, "email": user.email, "status": "ok"}
+
+
 
 @router.get("/v1/admin/stats", summary="系统统计", tags=["管理"])
 async def admin_stats(request: Request):

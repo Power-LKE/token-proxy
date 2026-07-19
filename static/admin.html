@@ -247,15 +247,38 @@ async function showUserDetail(apiKey) {
   if (!u) return;
   let txnHtml = '<div class="empty-state"><div class="empty-state-desc">加载中...</div></div>';
   $('modalTitle').textContent = u.name;
-  $('modalBody').innerHTML = `<div class="user-detail-grid"><div class="user-detail-item"><div class="lbl">用户名</div><div class="val">${escHtml(u.name)}</div></div><div class="user-detail-item"><div class="lbl">邮箱</div><div class="val">${escHtml(u.email||'—')}</div></div><div class="user-detail-item"><div class="lbl">余额</div><div class="val">${formatBalance(u.balance)}</div></div><div class="user-detail-item"><div class="lbl">状态</div><div class="val"><span class="badge ${u.is_active?'badge-success':'badge-danger'}">${u.is_active?'启用':'禁用'}</span></div></div><div class="user-detail-item" style="grid-column:span 2"><div class="lbl">API Key</div><div class="val text-mono" onclick="copyToClipboard('${escHtml(u.api_key)}').then(()=>showToast('已复制','success'))">${escHtml(u.api_key)}</div></div></div><h4 class="heading-sm mb-2">交易记录</h4><div id="modalTxns">${txnHtml}</div>`;
+  $('modalBody').innerHTML = `<div class="user-detail-grid">
+    <div class="user-detail-item"><div class="lbl">用户名</div><div class="val"><input class="form-input" id="editName" value="${escHtml(u.name)}" style="font-size:14px;padding:6px 8px"></div></div>
+    <div class="user-detail-item"><div class="lbl">邮箱</div><div class="val"><input class="form-input" id="editEmail" value="${escHtml(u.email||'')}" placeholder="未设置" style="font-size:14px;padding:6px 8px"></div></div>
+    <div class="user-detail-item"><div class="lbl">余额</div><div class="val">${formatBalance(u.balance)}</div></div>
+    <div class="user-detail-item"><div class="lbl">状态</div><div class="val"><span class="badge ${u.is_active?'badge-success':'badge-danger'}">${u.is_active?'启用':'禁用'}</span></div></div>
+    <div class="user-detail-item" style="grid-column:span 2"><div class="lbl">API Key</div><div class="val text-mono" onclick="copyToClipboard('${escHtml(u.api_key)}').then(()=>showToast('已复制','success'))">${escHtml(u.api_key)}</div></div>
+  </div>
+  <div class="flex gap-2 mb-4">
+    <button class="btn btn-primary btn-sm" onclick="saveUserEdit('${escHtml(u.api_key)}')">保存修改</button>
+    <button class="btn btn-ghost btn-sm" onclick="closeUserModal()">取消</button>
+  </div>
+  <h4 class="heading-sm mb-2">交易记录</h4><div id="modalTxns">${txnHtml}</div>`;
   $('userModal').classList.remove('hidden');
   try {
-    const resp = await fetch(origin()+'/v1/user/query', {method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+ADMIN_KEY},body:JSON.stringify({})}); // api_key not needed, auth header suffices
+    const resp = await fetch(origin()+'/v1/user/query', {method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+ADMIN_KEY},body:JSON.stringify({})});
     const d = await resp.json();
     const txnBody = (d.transactions||[]).slice(0,30);
     if (!txnBody.length) { $('modalTxns').innerHTML = '<div class="empty-state"><div class="empty-state-desc">暂无交易记录</div></div>'; return; }
     $('modalTxns').innerHTML = `<div class="table-wrap"><table><thead><tr><th>时间</th><th>类型</th><th>金额</th><th>模型</th><th>Token</th></tr></thead><tbody>${txnBody.map(t=>`<tr><td>${formatDate(t.time)}</td><td><span class="badge ${t.type==='usage'?'badge-danger':'badge-success'}">${escHtml(t.type)}</span></td><td>${formatBalance(t.amount)}</td><td>${escHtml(t.model||'')}</td><td>${formatTokens(t.tokens)}</td></tr>`).join('')}</tbody></table></div>`;
   } catch(e) { $('modalTxns').innerHTML = `<div class="empty-state"><div class="empty-state-desc">加载失败: ${escHtml(e.message)}</div></div>`; }
+}
+
+async function saveUserEdit(apiKey) {
+  const name = $('editName').value.trim();
+  const email = $('editEmail').value.trim();
+  if (!name) { showToast('用户名不能为空', 'err'); return; }
+  try {
+    await adminApi.editUser(apiKey, name, email);
+    showToast('修改已保存', 'ok');
+    closeUserModal();
+    loadUsers();
+  } catch(e) { showToast(e.message, 'err'); }
 }
 function closeUserModal() { $('userModal').classList.add('hidden'); }
 

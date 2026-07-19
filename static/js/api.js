@@ -249,6 +249,9 @@ const adminApi = {
   async topUp(apiKey, amount) {
     return api('/v1/admin/users/topup', { method: 'POST', body: { api_key: apiKey, amount } });
   },
+  async editUser(apiKey, name, email) {
+    return api('/v1/admin/users/edit', { method: 'POST', body: { api_key: apiKey, name, email } });
+  },
   async getResellers() {
     return api('/v1/admin/resellers');
   },
