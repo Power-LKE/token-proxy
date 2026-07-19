@@ -161,5 +161,5 @@ DISABLE_REGISTRATION = os.getenv("DISABLE_REGISTRATION", "false").lower() in ("1
 #   CREATE TABLE IF NOT EXISTS app_data (id TEXT PRIMARY KEY, value TEXT NOT NULL);
 # Then insert initial data:
 #   INSERT INTO app_data (id, value) VALUES ('token_proxy_users', '[]');
-SUPABASE_URL = os.getenv("SUPABASE_URL", "")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://yxcmfajehkstxrsxzpqg.supabase.co")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4Y21mYWplaGtzdHhyc3h6cHFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4ODc1MTUsImV4cCI6MjA5NjQ2MzUxNX0.ab4sjO2lVdwj0btLQO41Txzo1ZssGU_KZL2H3E3VbcE")
