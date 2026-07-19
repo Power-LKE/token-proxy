@@ -13,10 +13,17 @@ from proxy.file_handler import process_upload
 
 
 # === 内容过滤 ===
-SENSITIVE_WORDS = ["???","??","???","??","??","??","??","??","??","???","????","????","????","??","???"]
+# 敏感词列表从环境变量 CONTENT_FILTER_WORDS 加载，多个词用逗号分隔
+# 示例: CONTENT_FILTER_WORDS=词1,词2,词3
+SENSITIVE_WORDS = [
+    w.strip()
+    for w in os.getenv("CONTENT_FILTER_WORDS", "").split(",")
+    if w.strip()
+]
 
 def check_content(text: str) -> tuple:
-    if not text: return True, ""
+    if not text:
+        return True, ""
     for kw in SENSITIVE_WORDS:
         if kw in text:
             return False, kw

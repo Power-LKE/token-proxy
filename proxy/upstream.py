@@ -1,6 +1,5 @@
 """Forward requests to upstream AI API providers"""
 import httpx
-import tiktoken
 from typing import Tuple, Optional, AsyncGenerator
 from config import UPSTREAM_PROVIDERS, MARKUP
 
@@ -10,14 +9,6 @@ def _detect_provider(model: str) -> Optional[str]:
         if model in provider.models:
             return provider_key
     return None
-
-
-def _count_tokens(text: str, model: str = "gpt-3.5-turbo") -> int:
-    try:
-        enc = tiktoken.encoding_for_model(model)
-        return len(enc.encode(text))
-    except Exception:
-        return len(text) // 2
 
 
 def _estimate_cost(prompt_tokens: int, completion_tokens: int, model: str) -> float:
