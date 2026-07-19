@@ -258,11 +258,19 @@ let CUR_CONV=null;  // index into CONVS
 
 // ── Init ──────────────────────────────────────────
 (function(){
-  KEY=localStorage.getItem(P+'key')||'';NAME=localStorage.getItem(P+'name')||'';
-  CURRENT_MODEL=localStorage.getItem(P+'model')||'deepseek-chat';
-  document.getElementById('modelPick').value=CURRENT_MODEL;
-  try{CONVS=JSON.parse(localStorage.getItem(P+'convs')||'[]')}catch{}
-  const t=localStorage.getItem(P+'theme');if(t)document.documentElement.setAttribute('data-theme',t);
+  KEY=localStorage.getItem('lp3_key')||localStorage.getItem(P+'key')||'';
+  NAME=localStorage.getItem('lp3_name')||localStorage.getItem(P+'name')||'';
+  // Migrate old conversations from v3
+  try{
+    const oldMsgs=JSON.parse(localStorage.getItem('lp3_msgs')||'[]');
+    const oldConvs=JSON.parse(localStorage.getItem(P+'convs')||'[]');
+    if(oldMsgs.length&&!oldConvs.length){
+      CONVS=[{id:Date.now(),title:(oldMsgs[0]?.content||'').slice(0,30),msgs:oldMsgs,model:CURRENT_MODEL,createdAt:new Date().toISOString()}];
+      saveConvs();
+      localStorage.removeItem('lp3_msgs');
+    }else{CONVS=oldConvs}
+  }catch{try{CONVS=JSON.parse(localStorage.getItem(P+'convs')||'[]')}catch{}}
+  CURRENT_MODEL=localStorage.getItem(P+'model')||localStorage.getItem('lp3_model')||'deepseek-chat';
 
   if(KEY&&(NAME||'').startsWith('同学')){localStorage.removeItem(P+'key');localStorage.removeItem(P+'name');KEY='';NAME=''}
 
