@@ -6,8 +6,7 @@
 <title>LinkPower · 你的学习助手</title>
 <style>
 /* ═══════════════════════════════════════════════════════════
-   LinkPower v3 — 大学生 AI 学习助手
-   设计理念：温暖、简洁、有反馈、易上手
+   LinkPower v3.1 — 大学生 AI 学习助手
    ═══════════════════════════════════════════════════════════ */
 
 :root {
@@ -38,7 +37,6 @@
   --font-mono: "SF Mono", "Cascadia Code", "Fira Code", monospace;
   --transition: .2s cubic-bezier(.4,0,.2,1);
 }
-
 [data-theme="dark"] {
   --bg: #0f0f0f;
   --bg-card: #1a1a1a;
@@ -60,7 +58,7 @@
 *,*::before,*::after{box-sizing:border-box}
 html{font-size:16px;-webkit-text-size-adjust:100%}
 body{margin:0;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5;height:100dvh;overflow:hidden}
-button{cursor:pointer;font-family:inherit}
+button{cursor:pointer;font-family:inherit;border:none}
 input,textarea{font-family:inherit;font-size:inherit}
 a{color:var(--accent);text-decoration:none}
 ::-webkit-scrollbar{width:5px}
@@ -68,119 +66,137 @@ a{color:var(--accent);text-decoration:none}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 
 /* ── Layout ─────────────────────────────────────── */
-#app{display:flex;flex-direction:column;height:100dvh;max-width:960px;margin:0 auto}
+#app{display:flex;flex-direction:column;height:100dvh;max-width:1000px;margin:0 auto}
+.hide{display:none!important}
 
-/* ── Navbar ─────────────────────────────────────── */
-.navbar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;height:52px;background:var(--bg-card);border-bottom:1px solid var(--border);flex-shrink:0;z-index:10}
-.nav-left{display:flex;align-items:center;gap:6px}
-.nav-logo{font-size:17px;font-weight:700;letter-spacing:-.3px;display:flex;align-items:center;gap:6px}
-.nav-logo .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:dot-pulse 2s infinite}
-@keyframes dot-pulse{0%,100%{opacity:.5}50%{opacity:1}}
-.nav-right{display:flex;align-items:center;gap:6px}
-.nav-badge{font-size:12px;padding:3px 10px;border-radius:20px;background:var(--accent-light);color:var(--accent);font-weight:500;cursor:pointer;transition:all var(--transition);border:none;display:flex;align-items:center;gap:4px}
-.nav-badge:hover{background:var(--accent);color:#fff;transform:scale(1.03)}
-.nav-badge:active{transform:scale(.97)}
-.nav-btn{width:32px;height:32px;border-radius:var(--radius-sm);border:none;background:transparent;color:var(--text-secondary);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
-.nav-btn:hover{background:var(--bg-hover);color:var(--text)}
-.nav-btn:active{transform:scale(.93)}
-
-/* ── Chat Area ──────────────────────────────────── */
-.chat-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative}
-.chat-scroll{flex:1;overflow-y:auto;padding:8px 0;scroll-behavior:smooth}
-
-/* ── Welcome ────────────────────────────────────── */
-.welcome{padding:32px 20px;text-align:center;animation:fadeUp .5s ease}
-.welcome-icon{font-size:48px;margin-bottom:12px;animation:bounce 3s infinite}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.welcome h2{font-size:22px;font-weight:700;margin:0 0 4px;letter-spacing:-.3px}
-.welcome .subtitle{font-size:14px;color:var(--text-secondary);margin:0 0 20px;line-height:1.5}
-.welcome-prompts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:500px;margin:0 auto}
-.prompt-chip{padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text);font-size:13px;cursor:pointer;transition:all var(--transition);white-space:nowrap}
-.prompt-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);transform:translateY(-1px);box-shadow:var(--shadow)}
-.prompt-chip:active{transform:scale(.97)}
-
-/* ── Messages ───────────────────────────────────── */
-.msg{padding:12px 16px;display:flex;gap:10px;animation:fadeIn .25s ease;max-width:100%}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+/* ── Auth Overlay ───────────────────────────────── */
+#authOverlay{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);padding:36px 28px;width:380px;max-width:100%;box-shadow:var(--shadow-lg);animation:fadeUp .4s ease}
+.auth-card h2{font-size:20px;font-weight:700;text-align:center;margin:0 0 4px;letter-spacing:-.3px}
+.auth-card .sub{font-size:13px;color:var(--text-secondary);text-align:center;margin-bottom:20px}
+.auth-tabs{display:flex;gap:4px;background:var(--bg-input);border-radius:var(--radius);padding:3px;margin-bottom:20px}
+.auth-tab{flex:1;padding:7px;border-radius:var(--radius-sm);background:none;color:var(--text-secondary);font-size:13px;font-weight:500;transition:all var(--transition)}
+.auth-tab.active{background:var(--bg-card);color:var(--text);box-shadow:var(--shadow-sm)}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:4px}
+.form-input{width:100%;padding:10px 12px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;outline:none;transition:all var(--transition)}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.form-input::placeholder{color:var(--text-muted)}
+.auth-btn{width:100%;padding:12px;border-radius:var(--radius);background:var(--accent);color:#fff;font-size:14px;font-weight:600;transition:all var(--transition)}
+.auth-btn:hover{background:var(--accent-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(99,102,241,.3)}
+.auth-btn:active{transform:scale(.98)}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.auth-msg{font-size:12px;margin-top:8px;display:none}
+.auth-msg.err{display:block;color:var(--danger)}
+.auth-msg.ok{display:block;color:var(--success)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-/* User message — right aligned */
-.msg.user{flex-direction:row-reverse;padding-left:60px}
-.msg-avatar{width:34px;height:34px;border-radius:var(--radius);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;margin-top:2px}
-.msg-avatar.u{background:linear-gradient(135deg,#818cf8,#6366f1);color:#fff;border-radius:50%}
-.msg-avatar.a{background:var(--bg-input);color:var(--text-secondary);border-radius:50%;font-size:18px}
+/* ── Navbar ─────────────────────────────────────── */
+.navbar{display:flex;align-items:center;justify-content:space-between;padding:6px 16px;height:48px;background:var(--bg-card);border-bottom:1px solid var(--border);flex-shrink:0}
+.nav-left{display:flex;align-items:center;gap:8px}
+.nav-logo{font-size:16px;font-weight:700;letter-spacing:-.3px;display:flex;align-items:center;gap:5px}
+.nav-logo .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:dotPulse 2s infinite}
+@keyframes dotPulse{0%,100%{opacity:.5}50%{opacity:1}}
+.model-select{padding:4px 8px;border-radius:var(--radius-sm);background:var(--bg-input);border:1.5px solid var(--border);color:var(--text);font-size:12px;outline:none;cursor:pointer;transition:all var(--transition)}
+.model-select:focus{border-color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:4px}
+.nav-badge{font-size:11px;padding:3px 10px;border-radius:20px;background:var(--accent-light);color:var(--accent);font-weight:500;cursor:pointer;transition:all var(--transition);display:flex;align-items:center;gap:4px}
+.nav-badge:hover{background:var(--accent);color:#fff}
+.nav-btn{width:30px;height:30px;border-radius:50%;background:transparent;color:var(--text-secondary);font-size:15px;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
+.nav-btn:hover{background:var(--bg-hover);color:var(--text)}
+.nav-btn:active{transform:scale(.9)}
+.user-name-text{font-size:13px;color:var(--text-secondary);margin-right:4px}
 
-.msg-bubble{max-width:82%;font-size:14px;line-height:1.65;padding:10px 14px;border-radius:var(--radius-lg);word-break:break-word}
-.msg.user .msg-bubble{background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border-bottom-right-radius:4px;box-shadow:0 2px 8px rgba(99,102,241,.25)}
-.msg.ai .msg-bubble{background:var(--bg-card);border:1px solid var(--border);border-bottom-left-radius:4px;box-shadow:var(--shadow-sm)}
-.msg.ai .msg-bubble:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+/* ── Chat ───────────────────────────────────────── */
+.chat-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.chat-scroll{flex:1;overflow-y:auto;padding:8px 0;scroll-behavior:smooth}
 
+/* Welcome */
+.welcome{padding:40px 20px;text-align:center;animation:fadeUp .5s ease}
+.welcome-icon{font-size:52px;margin-bottom:12px;animation:bounce 3s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.welcome h2{font-size:24px;font-weight:700;margin:0 0 4px;letter-spacing:-.3px}
+.welcome .subtitle{font-size:14px;color:var(--text-secondary);margin:0 0 24px;line-height:1.5}
+.welcome-prompts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:500px;margin:0 auto}
+.prompt-chip{padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg-card);color:var(--text);font-size:13px;cursor:pointer;transition:all var(--transition)}
+.prompt-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);transform:translateY(-2px);box-shadow:var(--shadow)}
+.prompt-chip:active{transform:scale(.96)}
+
+/* Messages — left/right bubbles */
+.msg{padding:10px 16px;display:flex;gap:10px;animation:fadeIn .25s ease;max-width:100%}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{flex-direction:row-reverse;padding-left:80px}
+.msg.ai{padding-right:80px}
+.msg-avatar{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;margin-top:4px}
+.msg-avatar.u{background:linear-gradient(135deg,#818cf8,#6366f1);color:#fff}
+.msg-avatar.a{background:var(--bg-input);color:var(--text-secondary);font-size:17px}
+.msg-body{max-width:85%;display:flex;flex-direction:column}
+.msg-bubble{font-size:14px;line-height:1.65;padding:10px 14px;word-break:break-word}
+.msg.user .msg-bubble{background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border-radius:16px 16px 4px 16px;box-shadow:0 2px 8px rgba(99,102,241,.25)}
+.msg.ai .msg-bubble{background:var(--bg-card);border:1px solid var(--border);border-radius:16px 16px 16px 4px;box-shadow:var(--shadow-sm)}
 .msg-bubble p{margin:4px 0}
 .msg-bubble p:first-child{margin-top:0}
 .msg-bubble p:last-child{margin-bottom:0}
 .msg-bubble ul,.msg-bubble ol{margin:4px 0;padding-left:18px}
 .msg-bubble li{margin:2px 0}
-.msg-bubble code{font-family:var(--font-mono);font-size:13px;padding:1px 5px;border-radius:4px;background:var(--bg-input)}
-.msg.user .msg-bubble code{background:rgba(255,255,255,.15);color:#fff}
-.msg-bubble pre{background:var(--bg-input);border-radius:var(--radius-sm);padding:12px;overflow-x:auto;margin:8px 0;font-size:13px;line-height:1.45;border:1px solid var(--border-light);position:relative}
+.msg-bubble code{font-family:var(--font-mono);font-size:13px;padding:1px 4px;border-radius:4px}
+.msg.ai .msg-bubble code{background:var(--bg-input)}
+.msg.user .msg-bubble code{background:rgba(255,255,255,.18);color:#fff}
+.msg-bubble pre{background:var(--bg-input);border-radius:var(--radius-sm);padding:12px;overflow-x:auto;margin:8px 0;font-size:13px;line-height:1.45;border:1px solid var(--border-light)}
 .msg.user .msg-bubble pre{background:rgba(0,0,0,.2);border-color:rgba(255,255,255,.1)}
-.msg-bubble pre code{background:none;padding:0;font-size:13px}
-.msg-bubble blockquote{border-left:3px solid var(--accent);margin:8px 0;padding:2px 12px;color:var(--text-secondary);font-style:italic}
+.msg-bubble pre code{background:none;padding:0}
+.msg-bubble blockquote{border-left:3px solid var(--accent);margin:8px 0;padding:2px 12px;color:var(--text-secondary)}
+.msg-bubble strong{color:var(--accent)}
+.msg.user .msg-bubble strong{color:#fff}
 
-.msg-meta{display:flex;gap:8px;font-size:11px;color:var(--text-muted);margin-top:3px;align-items:center}
+.msg-meta{display:flex;gap:8px;font-size:11px;color:var(--text-muted);margin-top:4px;align-items:center}
 .msg.user .msg-meta{justify-content:flex-end;color:rgba(255,255,255,.5)}
-.msg-meta .copy-msg{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:11px;padding:1px 4px;border-radius:3px;opacity:0;transition:opacity var(--transition)}
-.msg.ai:hover .copy-msg{opacity:1}
-.msg.user .copy-msg{color:rgba(255,255,255,.6)}
-.msg.user .copy-msg:hover{color:#fff}
-.copy-msg:hover{background:var(--bg-hover);color:var(--text)}
+.msg-meta .copy-btn{background:none;color:var(--text-muted);cursor:pointer;font-size:11px;padding:1px 4px;border-radius:3px;opacity:0;transition:opacity var(--transition)}
+.msg.ai:hover .msg-body .copy-btn,.msg.user:hover .msg-body .copy-btn{opacity:1}
+.copy-btn:hover{background:var(--bg-hover);color:var(--text)}
 
-/* Thinking animation */
-.thinking{display:inline-flex;gap:4px;padding:4px 0}
-.thinking span{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:think 1.4s infinite}
+/* Thinking dots */
+.thinking{display:inline-flex;gap:3px;padding:4px 0}
+.thinking span{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:thinkBounce 1.4s infinite}
 .thinking span:nth-child(2){animation-delay:.2s}
 .thinking span:nth-child(3){animation-delay:.4s}
-@keyframes think{0%,60%,100%{transform:translateY(0);opacity:.3}30%{transform:translateY(-6px);opacity:1}}
+@keyframes thinkBounce{0%,60%,100%{transform:translateY(0);opacity:.25}30%{transform:translateY(-6px);opacity:1}}
 
 /* ── Input ──────────────────────────────────────── */
-.input-area{padding:6px 12px 12px;flex-shrink:0;background:linear-gradient(to top,var(--bg) 80%,transparent)}
-.input-bar{display:flex;align-items:flex-end;gap:8px;background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--radius-xl);padding:6px 6px 6px 14px;transition:all var(--transition);box-shadow:var(--shadow)}
+.input-area{padding:6px 12px 12px;flex-shrink:0}
+.input-bar{display:flex;align-items:flex-end;gap:6px;background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--radius-xl);padding:6px 6px 6px 14px;transition:all var(--transition);box-shadow:var(--shadow)}
 .input-bar:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light),var(--shadow-lg)}
-.input-bar textarea{flex:1;border:none;background:none;outline:none;resize:none;font-size:14px;line-height:1.5;padding:4px 0;color:var(--text);min-height:24px;max-height:120px}
+.input-bar textarea{flex:1;border:none;background:none;outline:none;resize:none;font-size:14px;line-height:1.5;padding:5px 0;color:var(--text);min-height:24px;max-height:120px}
 .input-bar textarea::placeholder{color:var(--text-muted)}
-.input-actions{display:flex;align-items:center;gap:2px;flex-shrink:0}
-.input-upload{width:34px;height:34px;border-radius:50%;border:none;background:transparent;color:var(--text-muted);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--transition);flex-shrink:0}
-.input-upload:hover{background:var(--bg-hover);color:var(--accent);transform:scale(1.05)}
-.input-send{width:38px;height:38px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--transition);flex-shrink:0}
-.input-send:hover{background:var(--accent-dark);transform:scale(1.05);box-shadow:0 2px 12px rgba(99,102,241,.35)}
-.input-send:active{transform:scale(.93)}
-.input-send:disabled{opacity:.35;cursor:not-allowed;pointer-events:none;transform:none;box-shadow:none}
+.upload-btn{width:32px;height:32px;border-radius:50%;background:transparent;color:var(--text-muted);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--transition);flex-shrink:0}
+.upload-btn:hover{background:var(--bg-hover);color:var(--accent)}
+.send-btn{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--transition);flex-shrink:0}
+.send-btn:hover{background:var(--accent-dark);transform:scale(1.06);box-shadow:0 2px 12px rgba(99,102,241,.35)}
+.send-btn:active{transform:scale(.92)}
+.send-btn:disabled{opacity:.3;cursor:not-allowed;pointer-events:none;transform:none;box-shadow:none}
 
-/* ── File preview ───────────────────────────────── */
+/* File preview */
 .file-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:var(--accent-light);color:var(--accent);border-radius:20px;font-size:12px;margin:0 12px 4px;animation:fadeIn .2s ease}
-.file-tag .rm{background:none;border:none;color:var(--accent);cursor:pointer;font-size:14px;padding:0 2px;opacity:.6}
+.file-tag .rm{background:none;color:var(--accent);cursor:pointer;font-size:14px;padding:0 2px;opacity:.6}
 .file-tag .rm:hover{opacity:1}
 
-/* ── Toast ──────────────────────────────────────── */
+/* Toast */
 #toasts{position:fixed;top:16px;right:16px;z-index:999;display:flex;flex-direction:column;gap:6px;pointer-events:none}
-.toast{padding:10px 16px;border-radius:var(--radius-sm);font-size:13px;box-shadow:var(--shadow-lg);animation:slideIn .3s ease;pointer-events:auto;max-width:320px;background:var(--bg-card);border:1px solid var(--border);display:flex;align-items:center;gap:6px}
-.toast.ok{border-left:3px solid var(--success)}
-.toast.err{border-left:3px solid var(--danger)}
+.toast{padding:10px 16px;border-radius:var(--radius-sm);font-size:13px;box-shadow:var(--shadow-lg);animation:slideIn .3s ease;pointer-events:auto;max-width:320px;display:flex;align-items:center;gap:8px}
+.toast.ok{background:var(--success-light);border-left:3px solid var(--success);color:var(--success)}
+.toast.err{background:var(--danger-light);border-left:3px solid var(--danger);color:var(--danger)}
 @keyframes slideIn{from{opacity:0;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}
-
-/* ── Theme toggle ────────────────────────────────── */
-.theme-btn{width:32px;height:32px;border-radius:50%;border:none;background:var(--bg-input);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
-.theme-btn:hover{background:var(--bg-hover);transform:rotate(15deg)}
-.theme-btn:active{transform:scale(.9)}
 
 /* ── Responsive ─────────────────────────────────── */
 @media(max-width:640px){
-  .msg{padding:8px 10px;gap:8px}
-  .msg.user{padding-left:40px}
-  .msg-bubble{font-size:13px;max-width:88%;padding:8px 12px}
-  .welcome h2{font-size:19px}
-  .welcome-icon{font-size:40px}
-  .input-area{padding:4px 8px 10px}
+  .msg{padding:8px 8px;gap:6px}
+  .msg.user{padding-left:44px}
+  .msg.ai{padding-right:44px}
+  .msg-bubble{font-size:13px;padding:8px 12px}
+  .msg-body{max-width:92%}
+  .welcome h2{font-size:20px}
+  .welcome-icon{font-size:44px}
+  .input-area{padding:4px 6px 10px}
   .input-bar{border-radius:var(--radius-lg)}
 }
 </style>
@@ -188,47 +204,72 @@ a{color:var(--accent);text-decoration:none}
 <body>
 
 <div id="app">
-  <!-- ── Navbar ── -->
+  <!-- ════ Auth Overlay ════ -->
+  <div id="authOverlay">
+    <div class="auth-card">
+      <h2>欢迎使用 LinkPower</h2>
+      <p class="sub">你的 AI 学习助手，随时帮你解决难题</p>
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="swAuthTab('login')">登录</button>
+        <button class="auth-tab" onclick="swAuthTab('register')">注册</button>
+      </div>
+      <div id="loginForm">
+        <div class="form-group"><label class="form-label">邮箱</label><input class="form-input" type="email" id="loginEmail" placeholder="your@email.com"></div>
+        <div class="form-group"><label class="form-label">密码</label><input class="form-input" type="password" id="loginPassword" placeholder="至少 6 位"></div>
+        <button class="auth-btn" id="loginBtn" onclick="doLogin()">登录</button>
+        <div class="auth-msg" id="loginMsg"></div>
+      </div>
+      <div id="registerForm" class="hide">
+        <div class="form-group"><label class="form-label">用户名</label><input class="form-input" id="regName" placeholder="你的昵称"></div>
+        <div class="form-group"><label class="form-label">邮箱</label><input class="form-input" type="email" id="regEmail" placeholder="your@email.com"></div>
+        <div class="form-group"><label class="form-label">密码（至少 6 位）</label><input class="form-input" type="password" id="regPassword" placeholder="至少 6 位"></div>
+        <button class="auth-btn" id="regBtn" onclick="doRegister()">免费注册（送 ¥1.00）</button>
+        <div class="auth-msg" id="regMsg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ Navbar ════ -->
   <nav class="navbar">
     <div class="nav-left">
       <span class="nav-logo"><span class="dot"></span>LinkPower</span>
+      <select class="model-select" id="modelPick" onchange="onModelPick()">
+        <option value="deepseek-chat">DeepSeek V3</option>
+        <option value="deepseek-reasoner">DeepSeek R1</option>
+        <option value="gpt-4o-mini">GPT-4o Mini</option>
+      </select>
     </div>
     <div class="nav-right">
-      <span class="nav-badge" id="balanceBadge" onclick="refreshBalance()" title="点击刷新余额">⚡ <span id="balText">—</span></span>
-      <button class="theme-btn" onclick="toggleTheme()" title="切换主题">🌓</button>
+      <span class="user-name-text" id="userNameDisp"></span>
+      <span class="nav-badge" id="balBadge" onclick="refreshBal()" title="点击刷新">⚡ <span id="balText">—</span></span>
+      <button class="nav-btn" onclick="toggleTheme()" title="切换主题">🌓</button>
       <button class="nav-btn" onclick="newChat()" title="新对话">＋</button>
     </div>
   </nav>
 
-  <!-- ── Chat ── -->
+  <!-- ════ Chat ════ -->
   <div class="chat-wrap">
     <div class="chat-scroll" id="chatScroll">
       <div class="welcome" id="welcome">
         <div class="welcome-icon">🎓</div>
         <h2>你好，我是你的学习助手</h2>
-        <p class="subtitle">无论是高数、编程、论文还是实验报告<br>我都能帮你理清思路、一步步解决问题</p>
+        <p class="subtitle">高数 · 编程 · 论文 · 实验报告 — 我都能帮你</p>
         <div class="welcome-prompts">
-          <button class="prompt-chip" onclick="quickAsk('帮我解释一下微积分中的链式法则')">📐 链式法则</button>
-          <button class="prompt-chip" onclick="quickAsk('帮我写一段 Python 快速排序代码')">💻 快速排序</button>
-          <button class="prompt-chip" onclick="quickAsk('帮我润色这段论文摘要，让它更学术')">📝 论文润色</button>
-          <button class="prompt-chip" onclick="quickAsk('用简单的方式解释什么是机器学习')">🤖 机器学习</button>
-          <button class="prompt-chip" onclick="quickAsk('帮我把这段英文翻译成中文')">🌐 翻译</button>
-          <button class="prompt-chip" onclick="quickAsk('帮我写一个实验报告的模板框架')">🔬 实验报告</button>
+          <button class="prompt-chip" onclick="quickAsk('帮我用简单的方式解释微积分中的链式法则，最好举例说明')">📐 链式法则</button>
+          <button class="prompt-chip" onclick="quickAsk('帮我写一段 Python 快速排序代码，加上详细注释')">💻 快速排序</button>
+          <button class="prompt-chip" onclick="quickAsk('帮我把这段文字润色得更学术，适合放在论文里')">📝 论文润色</button>
+          <button class="prompt-chip" onclick="quickAsk('用通俗易懂的方式解释什么是机器学习，适合大一新生理解')">🤖 机器学习</button>
+          <button class="prompt-chip" onclick="quickAsk('帮我写一个大学物理实验报告的模板框架')">🔬 实验报告</button>
+          <button class="prompt-chip" onclick="quickAsk('请把这段英文翻译成中文，保持学术风格')">🌐 翻译</button>
         </div>
       </div>
     </div>
-
-    <!-- File preview -->
     <div id="fileBar"></div>
-
-    <!-- Input -->
     <div class="input-area">
       <div class="input-bar">
-        <textarea id="chatInput" rows="1" placeholder="输入你的问题，比如「帮我分析这道高数题」..." onkeydown="onKey(event)" oninput="autoResize()"></textarea>
-        <div class="input-actions">
-          <button class="input-upload" id="uploadBtn" onclick="triggerUpload()" title="上传文件">📎</button>
-          <button class="input-send" id="sendBtn" onclick="sendMsg()" disabled title="发送">↑</button>
-        </div>
+        <textarea id="chatInput" rows="1" placeholder="输入你的问题，比如「帮我分析这道高数题」..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}" oninput="autoResize()"></textarea>
+        <button class="upload-btn" onclick="document.getElementById('fileInput').click()" title="上传文件">📎</button>
+        <button class="send-btn" id="sendBtn" onclick="sendMsg()" disabled title="发送">↑</button>
         <input type="file" id="fileInput" hidden onchange="handleFile(event)">
       </div>
     </div>
@@ -238,352 +279,318 @@ a{color:var(--accent);text-decoration:none}
 <div id="toasts"></div>
 
 <script>
-// ═════════════════════════════════════════════════════
-// State
-// ═════════════════════════════════════════════════════
-let KEY = '', NAME = '', BAL = 0, SENDING = false;
-let MESSAGES = [];        // Current conversation
-let FILE_DATA = null;
-let STORAGE_PREFIX = 'lp3_';
+/* ═══════════════════════════════════════════════════
+   LinkPower v3.1 — Application Logic
+   ═══════════════════════════════════════════════════ */
 
-// ═════════════════════════════════════════════════════
-// Init
-// ═════════════════════════════════════════════════════
-(function init() {
-  KEY = localStorage.getItem(STORAGE_PREFIX+'key') || '';
-  NAME = localStorage.getItem(STORAGE_PREFIX+'name') || '';
-  if (KEY) { showChat(); refreshBalance(); }
-  // Load saved messages
-  try { MESSAGES = JSON.parse(localStorage.getItem(STORAGE_PREFIX+'msgs')||'[]'); } catch {}
-  if (MESSAGES.length > 0) {
-    $('welcome').style.display = 'none';
-    MESSAGES.forEach(m => appendBubble(m.role, m.content, m.cost, m.tokens, m.model, false));
-    scrollBottom();
-  }
-  // Theme
-  const saved = localStorage.getItem(STORAGE_PREFIX+'theme');
-  if (saved) document.documentElement.setAttribute('data-theme', saved);
-})();
+// ── State ──────────────────────────────────────────
+const P = 'lp3_';
+let KEY = localStorage.getItem(P+'key') || '';
+let NAME = localStorage.getItem(P+'name') || '';
+let BAL = 0, SENDING = false, FILE_DATA = null;
+let MESSAGES = [];
+let CURRENT_MODEL = localStorage.getItem(P+'model') || 'deepseek-chat';
 
-// ═════════════════════════════════════════════════════
-// Helpers
-// ═════════════════════════════════════════════════════
+try { MESSAGES = JSON.parse(localStorage.getItem(P+'msgs')||'[]'); } catch {}
+let SHOWING_AUTH = !KEY;
+
+// ── Helpers ────────────────────────────────────────
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]||c));
+const ORIGIN = window.location.origin;
 
-async function copyText(txt) {
-  try { await navigator.clipboard.writeText(txt); return true; } catch { return false; }
+function toast(m,ok){const d=document.createElement('div');d.className='toast '+(ok?'ok':'err');d.textContent=m;$('toasts').appendChild(d);setTimeout(()=>{d.style.opacity='0';d.style.transition='opacity .3s';setTimeout(()=>d.remove(),300)},2500)}
+function toggleTheme(){const c=document.documentElement.getAttribute('data-theme');const n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem(P+'theme',n)}
+function scrollBottom(){const s=$('chatScroll');requestAnimationFrame(()=>{s.scrollTop=s.scrollHeight})}
+async function copyText(t){try{await navigator.clipboard.writeText(t);return 1}catch{return 0}}
+
+// ── Init ───────────────────────────────────────────
+(function(){
+  document.getElementById('modelPick').value = CURRENT_MODEL;
+  const t = localStorage.getItem(P+'theme');
+  if(t) document.documentElement.setAttribute('data-theme',t);
+  if(KEY){hideAuth();renderHistory();refreshBal();loadModels()}
+})();
+
+// ── Auth ───────────────────────────────────────────
+function swAuthTab(t){
+  document.querySelectorAll('.auth-tab').forEach((b,i)=>b.classList.toggle('active',i===(t==='login'?0:1)));
+  document.getElementById('loginForm').classList.toggle('hide',t!=='login');
+  document.getElementById('registerForm').classList.toggle('hide',t!=='register');
 }
 
-function toast(msg, ok) {
-  const el = document.createElement('div');
-  el.className = 'toast ' + (ok ? 'ok' : 'err');
-  el.textContent = msg;
-  $('toasts').appendChild(el);
-  setTimeout(() => { el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 2800);
+async function doLogin(){
+  const e=$('loginEmail').value.trim(),p=$('loginPassword').value;
+  if(!e||!e.includes('@')){showAMsg('login','请输入有效邮箱');return}
+  if(!p||p.length<6){showAMsg('login','密码至少 6 位');return}
+  const b=$('loginBtn');b.disabled=true;b.textContent='登录中...';
+  try{
+    const r=await fetch(ORIGIN+'/v1/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p})});
+    const d=await r.json();
+    if(!r.ok) throw new Error(d?.error||'登录失败');
+    setAuth(d.api_key,d.name);hideAuth();renderHistory();refreshBal();loadModels();
+    toast('登录成功！欢迎回来','ok');
+  }catch(err){showAMsg('login',err.message)}finally{b.disabled=false;b.textContent='登录'}
 }
 
-function toggleTheme() {
-  const cur = document.documentElement.getAttribute('data-theme');
-  const next = cur === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem(STORAGE_PREFIX+'theme', next);
+async function doRegister(){
+  const n=$('regName').value.trim(),e=$('regEmail').value.trim(),p=$('regPassword').value;
+  if(!n){showAMsg('reg','请输入用户名');return}
+  if(!e||!e.includes('@')){showAMsg('reg','请输入有效邮箱');return}
+  if(!p||p.length<6){showAMsg('reg','密码至少 6 位');return}
+  const b=$('regBtn');b.disabled=true;b.textContent='注册中...';
+  try{
+    const r=await fetch(ORIGIN+'/v1/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,email:e,password:p})});
+    const d=await r.json();
+    if(!r.ok) throw new Error(d?.error||'注册失败');
+    setAuth(d.api_key,d.name);hideAuth();renderHistory();refreshBal();loadModels();
+    toast('注册成功！赠送 ¥1.00 余额','ok');
+  }catch(err){showAMsg('reg',err.message)}finally{b.disabled=false;b.textContent='免费注册（送 ¥1.00）'}
 }
 
-function scrollBottom() {
-  setTimeout(() => { const s = $('chatScroll'); s.scrollTop = s.scrollHeight; }, 50);
+function setAuth(k,n){KEY=k;NAME=n;localStorage.setItem(P+'key',k);localStorage.setItem(P+'name',n);$('userNameDisp').textContent=n}
+function hideAuth(){$('authOverlay').classList.add('hide');SHOWING_AUTH=false}
+function showAMsg(f,m){const el=$(f+'Msg');el.textContent=m;el.className='auth-msg err';setTimeout(()=>el.className='auth-msg',4000)}
+
+// ── Models ─────────────────────────────────────────
+async function loadModels(){
+  try{
+    const r=await fetch(ORIGIN+'/v1/models');
+    const d=await r.json();
+    const models=d.data||[];
+    if(models.length){const s=$('modelPick');const cur=s.value;s.innerHTML=models.map(m=>`<option value="${esc(m.id)}"${m.id===cur?' selected':''}>${esc(m.owned_by||'')} · ${esc(m.id)}</option>`).join('')}
+  }catch{}
+}
+function onModelPick(){CURRENT_MODEL=$('modelPick').value;localStorage.setItem(P+'model',CURRENT_MODEL)}
+
+// ── Balance ────────────────────────────────────────
+async function refreshBal(){
+  if(!KEY)return;
+  try{const r=await fetch(ORIGIN+'/v1/balance',{headers:{'Authorization':'Bearer '+KEY}});const d=await r.json();BAL=d.balance||0;$('balText').textContent=`¥${BAL.toFixed(2)}`}catch{$('balText').textContent='—'}
 }
 
-// ═════════════════════════════════════════════════════
-// Auth
-// ═════════════════════════════════════════════════════
-function showChat() {
-  // Landing page removed — app IS chat. Just show welcome if no key.
-  if (!KEY) {
-    // Auto-register guest-like: prompt for name
-    autoRegister();
-  }
-}
-
-async function autoRegister() {
-  // Simple: generate a guest key
-  const name = '同学' + Math.random().toString(36).slice(2,6);
-  const email = name + '@guest.linkpower';
-  const password = Math.random().toString(36).slice(2,10);
-  try {
-    const r = await fetch(origin() + '/v1/register', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({name, email, password})
-    });
-    const d = await r.json();
-    if (d.api_key) { setCredentials(d.api_key, d.name); showChat(); refreshBalance(); }
-  } catch {}
-}
-
-function setCredentials(key, name) {
-  KEY = key; NAME = name;
-  localStorage.setItem(STORAGE_PREFIX+'key', key);
-  localStorage.setItem(STORAGE_PREFIX+'name', name);
-}
-
-function origin() { return window.location.origin; }
-
-async function refreshBalance() {
-  if (!KEY) return;
-  try {
-    const r = await fetch(origin()+'/v1/balance', {headers:{'Authorization':'Bearer '+KEY}});
-    const d = await r.json();
-    BAL = d.balance || 0;
-    $('balText').textContent = BAL.toFixed(2) + ' 元';
-  } catch { $('balText').textContent = '—'; }
-}
-
-function quickAsk(q) {
-  $('chatInput').value = q;
-  sendMsg();
-}
-
-// ═════════════════════════════════════════════════════
-// Messages
-// ═════════════════════════════════════════════════════
-function appendBubble(role, content, cost, tokens, model, animate) {
-  if (animate === undefined) animate = true;
-  const div = document.createElement('div');
-  div.className = 'msg ' + role;
-  const avatarChar = role === 'user' ? (NAME?.[0]||'👤') : '🎓';
-  const avatarCls = role === 'user' ? 'u' : 'a';
-  div.innerHTML = `<div class="msg-avatar ${avatarCls}">${avatarChar}</div>
-    <div class="msg-bubble">${renderMd(content)}</div>
-    <div class="msg-meta">
-      ${role === 'ai' && cost ? `<span>消耗 ¥${cost.toFixed(4)}</span>` : ''}
-      ${role === 'ai' && tokens ? `<span>${tokens} tokens</span>` : ''}
-      <button class="copy-msg" onclick="copyText('${esc(content).replace(/'/g,"\\'")}');toast('已复制',1)">复制</button>
-    </div>`;
-  if (!animate) div.style.animation = 'none';
-  $('chatScroll').appendChild(div);
+// ── Render history ─────────────────────────────────
+function renderHistory(){
+  if(!MESSAGES.length) return;
+  $('welcome').style.display='none';
+  MESSAGES.forEach(m=>appendBubble(m,m.role,m.content,m.cost,m.tokens,'final'));
   scrollBottom();
 }
 
-function renderMd(t) {
-  let out = esc(t);
-  // Code blocks
-  out = out.replace(/```(\w*)\n?([\s\S]*?)```/g, (_,lang,code) =>
-    `<pre><code>${esc(code.trim())}</code></pre>`);
-  // Inline code
-  out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
-  // Bold
-  out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  // Headers
-  out = out.replace(/^### (.+)$/gm, '<h3 style="font-size:15px;margin:8px 0">$1</h3>');
-  out = out.replace(/^## (.+)$/gm, '<h3 style="font-size:16px;margin:10px 0">$1</h3>');
-  out = out.replace(/^# (.+)$/gm, '<h2 style="font-size:17px;margin:12px 0">$1</h2>');
-  // Lists
-  out = out.replace(/^- (.+)$/gm, '<li>$1</li>');
-  out = out.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
-  // Blockquote
-  out = out.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
-  // Links
-  out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-  // Line breaks
-  out = out.replace(/\n/g, '<br>');
+// ── Messages ───────────────────────────────────────
+function appendBubble(id,role,content,cost,tokens,state){
+  const div=document.createElement('div');
+  div.className='msg '+(role==='user'?'user':'ai');
+  div.setAttribute('data-msg',id);
+  const avatar=role==='user'?(NAME?.[0]||'👤'):'🎓';
+  const avatarCls=role==='user'?'u':'a';
+  const bubbleContent = state==='thinking'
+    ? '<div class="thinking"><span></span><span></span><span></span></div>'
+    : renderMd(content||'');
+  div.innerHTML=`
+    <div class="msg-avatar ${avatarCls}">${avatar}</div>
+    <div class="msg-body">
+      <div class="msg-bubble">${bubbleContent}</div>
+      <div class="msg-meta">
+        ${cost!=null&&cost>0?`<span>消耗 ¥${cost.toFixed(4)}</span>`:''}
+        ${tokens?`<span>${tokens}t</span>`:''}
+        <button class="copy-btn" onclick="copyText('${esc(content||'').replace(/'/g,"\\'")}');toast('已复制','ok')">复制</button>
+      </div>
+    </div>`;
+  $('chatScroll').appendChild(div);
+  scrollBottom();
+  return div;
+}
+
+function updateBubble(el,content,cost,tokens,state){
+  const bubble=el.querySelector('.msg-bubble');
+  if(state==='thinking') bubble.innerHTML='<div class="thinking"><span></span><span></span><span></span></div>';
+  else bubble.innerHTML=renderMd(content||'');
+  const meta=el.querySelector('.msg-meta');
+  if(meta&&(cost||tokens)){
+    meta.innerHTML=`${cost!=null&&cost>0?`<span>消耗 ¥${cost.toFixed(4)}</span>`:''}${tokens?`<span>${tokens}t</span>`:''}<button class="copy-btn" onclick="copyText('${esc(content||'').replace(/'/g,"\\'")}');toast('已复制','ok')">复制</button>`;
+  }
+  scrollBottom();
+}
+
+function renderMd(t){
+  if(!t) return '';
+  let out=esc(t);
+  out=out.replace(/```(\w*)\n?([\s\S]*?)```/g,(_,lang,code)=>`<pre><code>${esc(code.trim())}</code></pre>`);
+  out=out.replace(/`([^`]+)`/g,'<code>$1</code>');
+  out=out.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  out=out.replace(/^### (.+)$/gm,'<p style="font-weight:600;margin:8px 0 2px">$1</p>');
+  out=out.replace(/^## (.+)$/gm,'<p style="font-size:15px;font-weight:700;margin:10px 0 2px">$1</p>');
+  out=out.replace(/^# (.+)$/gm,'<p style="font-size:16px;font-weight:700;margin:12px 0 4px">$1</p>');
+  out=out.replace(/^- (.+)$/gm,'<li>$1</li>');
+  out=out.replace(/((?:<li>.*<\/li>\n?)+)/g,'<ul style="margin:4px 0;padding-left:18px">$1</ul>');
+  out=out.replace(/^> (.+)$/gm,'<blockquote>$1</blockquote>');
+  out=out.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  out=out.replace(/\n/g,'<br>');
   return out;
 }
 
-function newChat() {
-  MESSAGES = [];
-  localStorage.setItem(STORAGE_PREFIX+'msgs', '[]');
-  $('chatScroll').innerHTML = `<div class="welcome" id="welcome">
-    <div class="welcome-icon">🎓</div>
-    <h2>你好，我是你的学习助手</h2>
-    <p class="subtitle">无论是高数、编程、论文还是实验报告<br>我都能帮你理清思路、一步步解决问题</p>
+// ── Chat ───────────────────────────────────────────
+function newChat(){
+  MESSAGES=[];
+  localStorage.setItem(P+'msgs','[]');
+  $('chatScroll').innerHTML=`<div class="welcome" id="welcome">
+    <div class="welcome-icon">🎓</div><h2>你好，我是你的学习助手</h2>
+    <p class="subtitle">高数 · 编程 · 论文 · 实验报告 — 我都能帮你</p>
     <div class="welcome-prompts">
-      <button class="prompt-chip" onclick="quickAsk('帮我解释一下微积分中的链式法则')">📐 链式法则</button>
-      <button class="prompt-chip" onclick="quickAsk('帮我写一段 Python 快速排序代码')">💻 快速排序</button>
-      <button class="prompt-chip" onclick="quickAsk('帮我润色这段论文摘要，让它更学术')">📝 论文润色</button>
-      <button class="prompt-chip" onclick="quickAsk('用简单的方式解释什么是机器学习')">🤖 机器学习</button>
-      <button class="prompt-chip" onclick="quickAsk('帮我把这段英文翻译成中文')">🌐 翻译</button>
-      <button class="prompt-chip" onclick="quickAsk('帮我写一个实验报告的模板框架')">🔬 实验报告</button>
+      <button class="prompt-chip" onclick="quickAsk('帮我用简单的方式解释微积分中的链式法则，最好举例说明')">📐 链式法则</button>
+      <button class="prompt-chip" onclick="quickAsk('帮我写一段 Python 快速排序代码，加上详细注释')">💻 快速排序</button>
+      <button class="prompt-chip" onclick="quickAsk('帮我把这段文字润色得更学术，适合放在论文里')">📝 论文润色</button>
+      <button class="prompt-chip" onclick="quickAsk('用通俗易懂的方式解释什么是机器学习，适合大一新生理解')">🤖 机器学习</button>
+      <button class="prompt-chip" onclick="quickAsk('帮我写一个大学物理实验报告的模板框架')">🔬 实验报告</button>
+      <button class="prompt-chip" onclick="quickAsk('请把这段英文翻译成中文，保持学术风格')">🌐 翻译</button>
     </div></div>`;
-  FILE_DATA = null;
-  $('fileBar').innerHTML = '';
+  FILE_DATA=null;$('fileBar').innerHTML='';$('chatInput').focus()
+}
+
+function quickAsk(q){$('chatInput').value=q;sendMsg()}
+
+async function sendMsg(){
+  if(SENDING)return;
+  const input=$('chatInput');const text=input.value.trim();
+  if(!text&&!FILE_DATA)return;
+
+  if(!KEY){toast('请先登录或注册','err');$('authOverlay').classList.remove('hide');SHOWING_AUTH=true;return}
+
+  SENDING=true;const sendBtn=$('sendBtn');sendBtn.disabled=true;sendBtn.textContent='⋯';
+  const welcome=$('welcome');if(welcome)welcome.style.display='none';
+
+  let userContent=text||'';
+  if(FILE_DATA){
+    if(FILE_DATA.type==='text')userContent=`[文件: ${FILE_DATA.filename}]\n\n${FILE_DATA.content}\n\n${text||'请帮我分析这个文件内容'}`;
+    else if(FILE_DATA.type==='image')userContent=text||'请帮我分析这张图片';
+  }
+  FILE_DATA=null;$('fileBar').innerHTML='';
+
+  const uid='u'+Date.now();
+  MESSAGES.push({role:'user',content:userContent,cost:0,tokens:0});
+  appendBubble(uid,'user',userContent,0,0,'final');
+  saveMsgs();
+
+  input.value='';input.style.height='auto';sendBtn.disabled=true;
+
+  const sysPrompt=`你是 LinkPower 学习助手，一个专门帮助大学生解决学业问题的 AI 助手。
+
+你的风格：
+- 用中文回复，语气温暖友好，像耐心的学长学姐
+- 复杂问题先给思路框架，再逐步拆解推导
+- 数学题写出完整推导过程，代码加注释，论文给结构模板
+- 信息不足时主动追问，确保真正理解
+- 关键信息用 **加粗** 标注
+
+你的目标：让学生真正学会，而不只是得到答案。`;
+
+  const apiMsgs=[
+    {role:'system',content:sysPrompt},
+    ...MESSAGES.slice(-30).map(m=>({role:m.role,content:m.content}))
+  ];
+
+  const aid='a'+Date.now();
+  const aiDiv=appendBubble(aid,'ai','',0,0,'thinking');
+  MESSAGES.push({role:'ai',content:'',cost:0,tokens:0});
+  let aiContent='',aiCost=0,aiTokens=0;
+
+  try{
+    const resp=await fetch(ORIGIN+'/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEY},
+      body:JSON.stringify({model:CURRENT_MODEL,messages:apiMsgs,stream:true})
+    });
+
+    if(!resp.ok){
+      const err=await resp.json().catch(()=>({}));
+      throw new Error(err?.error?.message||err?.error||`服务器错误 (${resp.status})`);
+    }
+
+    const reader=resp.body.getReader();
+    if(!reader) throw new Error('浏览器不支持流式读取');
+
+    const decoder=new TextDecoder();
+    let buf='',done=false;
+
+    while(!done){
+      const result=await reader.read();
+      if(result.done)break;
+      buf+=decoder.decode(result.value,{stream:true});
+      const lines=buf.split('\n');
+      buf=lines.pop()||'';
+
+      for(const line of lines){
+        const trimmed=line.trim();
+        if(!trimmed||!trimmed.startsWith('data:'))continue;
+        const payload=trimmed.slice(5).trim();
+        if(payload==='[DONE]'){done=true;break}
+        try{
+          const chunk=JSON.parse(payload);
+          const choices=chunk?.choices;
+          if(!choices||!choices.length)continue;
+          const delta=choices[0]?.delta;
+          if(!delta)continue;
+          if(delta.content)aiContent+=delta.content;
+          if(delta.reasoning_content)aiContent+=delta.reasoning_content;
+
+          if(aiContent){
+            updateBubble(aiDiv,aiContent,null,null,'stream');
+            MESSAGES[MESSAGES.length-1].content=aiContent;
+          }
+
+          // Final usage in last chunk
+          const usage=chunk?.usage;
+          if(usage){
+            aiTokens=usage.total_tokens||0;
+            const promptT=usage.prompt_tokens||0;
+            const compT=usage.completion_tokens||0;
+            aiCost=((promptT/1e6)+(compT/1e6)*2)*1.3;
+          }
+        }catch(e){/* skip unparseable chunks */}
+      }
+    }
+  }catch(e){
+    aiContent='请求失败：'+e.message;
+    updateBubble(aiDiv,aiContent,0,0,'error');
+    toast(e.message,'err');
+  }
+
+  aiContent=aiContent||'（收到回复，但内容为空 — 请重试）';
+  MESSAGES[MESSAGES.length-1].content=aiContent;
+  MESSAGES[MESSAGES.length-1].cost=aiCost;
+  MESSAGES[MESSAGES.length-1].tokens=aiTokens;
+  updateBubble(aiDiv,aiContent,aiCost,aiTokens,'final');
+  saveMsgs();
+  refreshBal();
+
+  SENDING=false;
+  sendBtn.disabled=false;
+  sendBtn.textContent='↑';
   $('chatInput').focus();
 }
 
-// ═════════════════════════════════════════════════════
-// Send
-// ═════════════════════════════════════════════════════
-async function sendMsg() {
-  if (SENDING) return;
-  const input = $('chatInput');
-  const text = input.value.trim();
-  if (!text && !FILE_DATA) return;
-
-  // Ensure we have a key
-  if (!KEY) {
-    await autoRegister();
-    if (!KEY) { toast('连接失败，请刷新重试', 0); return; }
-  }
-
-  SENDING = true;
-  $('sendBtn').disabled = true;
-  $('sendBtn').textContent = '⋯';
-
-  // Hide welcome
-  const w = $('welcome'); if (w) w.style.display = 'none';
-
-  // Build user content
-  let userContent = text || '';
-  if (FILE_DATA) {
-    if (FILE_DATA.type === 'text') userContent = `[文件: ${FILE_DATA.filename}]\n${FILE_DATA.content}\n\n${text || '请帮我分析这个文件'}`;
-    else if (FILE_DATA.type === 'image') userContent = text || '请帮我分析这张图片';
-  }
-  FILE_DATA = null;
-  $('fileBar').innerHTML = '';
-
-  // Append user bubble
-  appendBubble('user', userContent);
-  MESSAGES.push({role:'user', content: userContent});
-  saveMsgs();
-
-  input.value = '';
-  input.style.height = 'auto';
-  $('sendBtn').disabled = true;
-
-  // Build API messages
-  const systemPrompt = `你是 LinkPower 学习助手，一个专门帮助大学生解决学业问题的 AI。你的特点是：
-- 用中文回复，语气温暖友好，像学长学姐一样
-- 对于复杂问题，先给出思路框架，再逐步拆解
-- 数学题写出推导过程，代码题加上注释说明
-- 论文和报告类问题给出结构模板和写作建议
-- 如果问题信息不足，主动追问细节，而不是猜测
-- 回答长度适中，关键信息用加粗标注
-- 涉及计算时，用代码块展示公式或代码
-你的目标是让学生真正理解，而不只是给答案。`;
-
-  const apiMsgs = [
-    {role:'system', content: systemPrompt},
-    ...MESSAGES.slice(-30).map(m => ({role: m.role, content: m.content}))
-  ];
-
-  // Insert thinking indicator
-  const thinkDiv = document.createElement('div');
-  thinkDiv.className = 'msg ai';
-  thinkDiv.innerHTML = `<div class="msg-avatar a">🎓</div><div class="msg-bubble"><div class="thinking"><span></span><span></span><span></span></div></div>`;
-  $('chatScroll').appendChild(thinkDiv);
-  scrollBottom();
-
-  let aiContent = '';
-  let aiCost = 0;
-  let aiTokens = 0;
-
-  try {
-    const resp = await fetch(origin()+'/v1/chat/completions', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json','Authorization':'Bearer '+KEY},
-      body: JSON.stringify({model:'deepseek-chat',messages:apiMsgs,stream:true})
-    });
-
-    if (!resp.ok) {
-      const err = await resp.json().catch(()=>({}));
-      throw new Error(err?.error?.message || `HTTP ${resp.status}`);
-    }
-
-    const reader = resp.body.getReader();
-    const decoder = new TextDecoder();
-    let buf = '';
-
-    while (true) {
-      const {value, done} = await reader.read();
-      if (done) break;
-      buf += decoder.decode(value, {stream:true});
-      const lines = buf.split('\n');
-      buf = lines.pop() || '';
-
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        const payload = line.slice(6).trim();
-        if (payload === '[DONE]') break;
-        try {
-          const chunk = JSON.parse(payload);
-          const delta = chunk?.choices?.[0]?.delta;
-          if (delta?.content) {
-            aiContent += delta.content;
-            // Update the thinking bubble in-place
-            const bubble = thinkDiv.querySelector('.msg-bubble');
-            bubble.innerHTML = renderMd(aiContent) || '<span class="thinking"><span></span><span></span><span></span></span>';
-          }
-        } catch {}
-      }
-      scrollBottom();
-    }
-
-    // Final content (fallback if empty)
-    if (!aiContent.trim()) aiContent = '（收到回复但内容为空，请重试）';
-
-    // Replace thinking with final
-    thinkDiv.querySelector('.msg-bubble').innerHTML = renderMd(aiContent);
-    // Add meta
-    const meta = thinkDiv.querySelector('.msg-meta');
-    if (!meta) {
-      const m = document.createElement('div');
-      m.className = 'msg-meta';
-      m.innerHTML = `<span>消耗 ¥${aiCost.toFixed(4)}</span><span>${aiTokens} tokens</span><button class="copy-msg" onclick="copyText('${esc(aiContent).replace(/'/g,"\\'")}');toast('已复制',1)">复制</button>`;
-      thinkDiv.appendChild(m);
-    }
-
-    MESSAGES.push({role:'ai', content: aiContent, cost: aiCost, tokens: aiTokens});
-    saveMsgs();
-    refreshBalance();
-
-  } catch (e) {
-    thinkDiv.querySelector('.msg-bubble').innerHTML = `<span style="color:var(--danger)">请求失败：${esc(e.message)}</span>`;
-    toast(e.message, 0);
-  }
-
-  SENDING = false;
-  $('sendBtn').disabled = false;
-  $('sendBtn').textContent = '↑';
-  input.focus();
+function saveMsgs(){
+  localStorage.setItem(P+'msgs',JSON.stringify(MESSAGES.slice(-60)));
 }
 
-function saveMsgs() {
-  localStorage.setItem(STORAGE_PREFIX+'msgs', JSON.stringify(MESSAGES.slice(-50)));
+// ── File Upload ────────────────────────────────────
+async function handleFile(e){
+  const file=e.target.files?.[0];if(!file)return;
+  const bar=$('fileBar');bar.innerHTML=`<div class="file-tag">📄 ${esc(file.name)} — 上传中...</div>`;
+  try{
+    const fd=new FormData();fd.append('file',file);
+    const h={};if(KEY)h['Authorization']='Bearer '+KEY;
+    const r=await fetch(ORIGIN+'/v1/upload',{method:'POST',headers:h,body:fd});
+    const d=await r.json();
+    if(d.error){bar.innerHTML=`<div class="file-tag" style="color:var(--danger)">❌ ${esc(d.error)} <button class="rm" onclick="$('fileBar').innerHTML='';FILE_DATA=null">×</button></div>`}
+    else{FILE_DATA=d;bar.innerHTML=`<div class="file-tag">✅ ${esc(file.name)} <button class="rm" onclick="$('fileBar').innerHTML='';FILE_DATA=null">×</button></div>`}
+  }catch(err){bar.innerHTML=`<div class="file-tag" style="color:var(--danger)">❌ 上传失败 <button class="rm" onclick="$('fileBar').innerHTML='';FILE_DATA=null">×</button></div>`}
+  e.target.value='';
 }
 
-// ═════════════════════════════════════════════════════
-// File Upload
-// ═════════════════════════════════════════════════════
-function triggerUpload() { $('fileInput').click(); }
-
-async function handleFile(e) {
-  const file = e.target.files?.[0];
-  if (!file) return;
-  const bar = $('fileBar');
-  bar.innerHTML = `<div class="file-tag">📄 ${esc(file.name)} — 上传中...</div>`;
-  try {
-    const fd = new FormData(); fd.append('file', file);
-    const r = await fetch(origin()+'/v1/upload', {method:'POST',body:fd,headers:KEY?{'Authorization':'Bearer '+KEY}:{}});
-    FILE_DATA = await r.json();
-    bar.innerHTML = FILE_DATA.error
-      ? `<div class="file-tag" style="color:var(--danger)">❌ ${esc(FILE_DATA.error)} <button class="rm" onclick="FILE_DATA=null;$('fileBar').innerHTML=''">×</button></div>`
-      : `<div class="file-tag">✅ ${esc(file.name)} <button class="rm" onclick="FILE_DATA=null;$('fileBar').innerHTML=''">×</button></div>`;
-  } catch (err) {
-    bar.innerHTML = `<div class="file-tag" style="color:var(--danger)">❌ 上传失败 <button class="rm" onclick="$('fileBar').innerHTML=''">×</button></div>`;
-  }
-  e.target.value = '';
-}
-
-// ═════════════════════════════════════════════════════
-// Keyboard
-// ═════════════════════════════════════════════════════
-function onKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
-}
-function autoResize() {
-  const ta = $('chatInput');
-  ta.style.height = 'auto';
-  ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
-}
+// ── Auto-resize ────────────────────────────────────
+function autoResize(){const t=$('chatInput');t.style.height='auto';t.style.height=Math.min(t.scrollHeight,120)+'px'}
 </script>
 </body>
 </html>
