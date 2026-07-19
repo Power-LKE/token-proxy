@@ -57,69 +57,77 @@ class UpstreamProvider:
 UPSTREAM_PROVIDERS: Dict[str, UpstreamProvider] = {
 
     "deepseek": UpstreamProvider(
-
         name="DeepSeek",
-
         api_base="https://api.deepseek.com",
-
         api_key_env="DEEPSEEK_API_KEY",
-
         models={
-
-            "deepseek-v4-flash": 1.0,
-
-            "deepseek-v4-pro": 2.0,
-
             "deepseek-chat": 1.0,
-
             "deepseek-reasoner": 4.0,
-
         },
-
     ),
 
     "openai": UpstreamProvider(
-
         name="OpenAI",
-
         api_base="https://api.openai.com",
-
         api_key_env="OPENAI_API_KEY",
-
         models={
-
             "gpt-4o": 2.5,
-
             "gpt-4o-mini": 0.15,
-
-            "gpt-4-turbo": 10.0,
-
-            "gpt-3.5-turbo": 0.5,
-
+            "gpt-4.1-mini": 0.40,
         },
+    ),
 
+    "doubao": UpstreamProvider(
+        name="豆包 (Doubao)",
+        api_base="https://ark.cn-beijing.volces.com/api/v3",
+        api_key_env="DOUBAO_API_KEY",
+        models={
+            "doubao-1.5-pro-32k": 1.0,
+            "doubao-1.5-lite-32k": 0.3,
+            "doubao-pro-32k": 2.0,
+        },
+    ),
+
+    "zhipu": UpstreamProvider(
+        name="智谱 GLM",
+        api_base="https://open.bigmodel.cn/api/paas/v4",
+        api_key_env="ZHIPU_API_KEY",
+        models={
+            "glm-4-plus": 5.0,
+            "glm-4-flash": 0.1,
+        },
+    ),
+
+    "moonshot": UpstreamProvider(
+        name="Moonshot (Kimi)",
+        api_base="https://api.moonshot.cn/v1",
+        api_key_env="MOONSHOT_API_KEY",
+        models={
+            "moonshot-v1-8k": 1.0,
+            "moonshot-v1-32k": 2.0,
+            "moonshot-v1-128k": 6.0,
+        },
+    ),
+
+    "qwen": UpstreamProvider(
+        name="通义千问",
+        api_base="https://dashscope.aliyuncs.com/compatible-mode/v1",
+        api_key_env="QWEN_API_KEY",
+        models={
+            "qwen-plus": 0.8,
+            "qwen-max": 2.0,
+            "qwen-turbo": 0.3,
+        },
     ),
 
     "api2d": UpstreamProvider(
-
-        name="API2D (OpenAI)",
-
+        name="API2D",
         api_base="https://openapi.api2d.com",
-
         api_key_env="API2D_API_KEY",
-
         models={
-
             "gpt-4o": 2.5,
-
             "gpt-4o-mini": 0.15,
-
-            "gpt-4-turbo": 10.0,
-
-            "gpt-3.5-turbo": 0.5,
-
         },
-
     ),
 
 }
