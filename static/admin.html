@@ -125,15 +125,23 @@ body { background: var(--bg-primary); color: var(--text-primary); }
       <div class="dash-page" id="pageTxns">
         <h2 class="heading-lg mb-4">交易记录</h2>
         <div class="card">
+          <div class="card-header"><h3>交易记录</h3></div>
           <div class="flex justify-between items-center mb-4 gap-4 flex-wrap">
-            <div class="flex gap-3 items-center">
-              <input class="form-input" style="max-width:180px" id="txnSearch" placeholder="搜索用户..." oninput="renderTxns()">
+            <div class="flex gap-3 items-center flex-wrap">
+              <input class="form-input" style="max-width:160px" id="txnSearch" placeholder="搜索用户..." oninput="renderTxns()">
               <select class="form-select" style="width:auto" id="txnTypeFilter" onchange="renderTxns()">
-                <option value="">全部类型</option><option value="usage">用量扣费</option><option value="topup">充值</option><option value="registration_bonus">注册赠送</option><option value="manual_create">手动创建</option>
+                <option value="">全部类型</option><option value="usage">用量扣费</option><option value="topup">充值</option><option value="registration_bonus">注册赠送</option><option value="manual_create">手动创建</option><option value="reseller_topup">代理充值</option>
               </select>
+              <input class="form-input" style="max-width:130px" type="date" id="txnDateFrom" onchange="renderTxns()" title="开始日期">
+              <span class="text-sm text-muted">至</span>
+              <input class="form-input" style="max-width:130px" type="date" id="txnDateTo" onchange="renderTxns()" title="结束日期">
             </div>
-            <span class="text-xs text-muted" id="txnCount"></span>
+            <div class="flex gap-2 items-center">
+              <button class="btn btn-secondary btn-sm" onclick="exportCSV()">📥 导出 CSV</button>
+              <span class="text-xs text-muted" id="txnCount"></span>
+            </div>
           </div>
+          <div class="flex gap-4 mb-3" id="txnSummary"></div>
           <div class="table-wrap"><table><thead><tr><th>时间</th><th>用户</th><th>类型</th><th>金额</th><th>模型</th><th>Token</th></tr></thead><tbody id="txnList"></tbody></table></div>
         </div>
       </div>
@@ -316,16 +324,55 @@ async function togUser(k) { try { await adminApi.toggleUser(k); loadUsers(); sho
 async function delUser(k) { if(!confirm('确定删除该用户？'))return; try { await adminApi.deleteUser(k); loadUsers(); showToast('已删除','success'); } catch(e) { showToast(e.message,'error'); } }
 
 async function loadTxns() {
-  try { const d=await adminApi.getStats(); allTxns=(d.recent_transactions||[]).slice(0,200); renderTxns(); }
+  try { const d=await adminApi.getStats(); allTxns=(d.recent_transactions||[]).slice(0,500); renderTxns(); }
   catch(e) { showToast('加载交易失败: '+e.message,'error'); }
 }
 function renderTxns() {
-  const q=($('txnSearch')?.value||'').toLowerCase(); const type=$('txnTypeFilter')?.value||'';
+  const q=($('txnSearch')?.value||'').toLowerCase();
+  const type=$('txnTypeFilter')?.value||'';
+  const dateFrom=$('txnDateFrom')?.value||'';
+  const dateTo=$('txnDateTo')?.value||'';
+
   let t=allTxns;
   if(q) t=t.filter(x=>(x.user||'').toLowerCase().includes(q));
   if(type) t=t.filter(x=>x.type===type);
+  if(dateFrom) t=t.filter(x=>(x.time||'').slice(0,10)>=dateFrom);
+  if(dateTo) t=t.filter(x=>(x.time||'').slice(0,10)<=dateTo);
+
+  // Summary
+  let totalIn=0,totalOut=0,totalTokens=0;
+  t.forEach(tx=>{if((tx.amount||0)>0)totalIn+=tx.amount;else totalOut+=Math.abs(tx.amount);totalTokens+=(tx.tokens||0)});
+  $('txnSummary').innerHTML=`
+    <span class="badge badge-success">总收入 ¥${totalIn.toFixed(2)}</span>
+    <span class="badge badge-danger">总消耗 ¥${totalOut.toFixed(2)}</span>
+    <span class="badge badge-accent">${formatTokens(totalTokens)}</span>
+  `;
   $('txnCount').textContent=`共 ${t.length} 条`;
-  $('txnList').innerHTML=t.map(tx=>`<tr><td>${formatDate(tx.time)}</td><td>${escHtml(tx.user||'')}</td><td><span class="badge ${tx.type==='usage'?'badge-danger':'badge-success'}">${escHtml(tx.type)}</span></td><td>${formatBalance(tx.amount)}</td><td>${escHtml(tx.model||'')}</td><td>${formatTokens(tx.tokens)}</td></tr>`).join('');
+  $('txnList').innerHTML=t.length
+    ? t.map(tx=>`<tr><td>${formatFullDate(tx.time)}</td><td>${escHtml(tx.user||'')}</td><td><span class="badge ${tx.type==='usage'?'badge-danger':tx.type==='topup'||tx.type==='reseller_topup'?'badge-success':'badge-accent'}">${escHtml(tx.type)}</span></td><td>${formatBalance(tx.amount)}</td><td>${escHtml(tx.model||'—')}</td><td>${formatTokens(tx.tokens)}</td></tr>`).join('')
+    : '<tr><td colspan="6"><div class="empty-state"><div class="empty-state-desc">暂无匹配的交易记录</div></div></td></tr>';
+}
+
+function exportCSV() {
+  // Re-run filter
+  const q=($('txnSearch')?.value||'').toLowerCase();
+  const type=$('txnTypeFilter')?.value||'';
+  const dateFrom=$('txnDateFrom')?.value||'';
+  const dateTo=$('txnDateTo')?.value||'';
+  let t=allTxns;
+  if(q) t=t.filter(x=>(x.user||'').toLowerCase().includes(q));
+  if(type) t=t.filter(x=>x.type===type);
+  if(dateFrom) t=t.filter(x=>(x.time||'').slice(0,10)>=dateFrom);
+  if(dateTo) t=t.filter(x=>(x.time||'').slice(0,10)<=dateTo);
+
+  const head='时间,用户,类型,金额,模型,Token\n';
+  const rows=t.map(tx=>`${tx.time},${(tx.user||'').replace(/,/g,' ')},${tx.type},${tx.amount},${tx.model||''},${tx.tokens||0}`).join('\n');
+  const blob=new Blob(['﻿'+head+rows],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='transactions_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  showToast('CSV 已导出','ok');
 }
 
 async function loadResellers() {
