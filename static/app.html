@@ -309,7 +309,18 @@ async function copyText(t){try{await navigator.clipboard.writeText(t);return 1}c
   document.getElementById('modelPick').value = CURRENT_MODEL;
   const t = localStorage.getItem(P+'theme');
   if(t) document.documentElement.setAttribute('data-theme',t);
-  if(KEY){hideAuth();renderHistory();refreshBal();loadModels()}
+  if(KEY){
+    // 清除 v3.0 游客账号，强制显示注册页
+    if(KEY.startsWith('sk-')&&(NAME||'').startsWith('同学')){
+      localStorage.removeItem(P+'key');
+      localStorage.removeItem(P+'name');
+      KEY='';NAME='';
+    }else{
+      hideAuth();renderHistory();refreshBal();loadModels();
+      // 每 30 秒自动刷新余额
+      setInterval(refreshBal,30000);
+    }
+  }
 })();
 
 // ── Auth ───────────────────────────────────────────
