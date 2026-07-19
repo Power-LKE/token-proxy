@@ -488,6 +488,20 @@ async def admin_edit_user(request: Request):
     return {"name": user.name, "email": user.email, "status": "ok"}
 
 
+@router.post("/v1/admin/users/delete-by-email", summary="按邮箱删除用户", tags=["管理"])
+async def admin_delete_user_by_email(request: Request):
+    api_key = _get_api_key(request)
+    if not api_key or not user_manager.is_admin_key(api_key):
+        return JSONResponse(status_code=401, content={"error": "未授权"})
+    body = await request.json()
+    email = body.get("email", "").strip().lower()
+    if not email:
+        return JSONResponse(status_code=400, content={"error": "请提供邮箱地址"})
+    if user_manager.delete_user_by_email(email):
+        return {"status": "ok", "email": email, "message": "用户已删除"}
+    return JSONResponse(status_code=404, content={"error": "未找到该邮箱的用户"})
+
+
 
 @router.get("/v1/admin/stats", summary="系统统计", tags=["管理"])
 async def admin_stats(request: Request):

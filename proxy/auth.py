@@ -153,6 +153,16 @@ class UserManager:
             return True
         return False
 
+    def delete_user_by_email(self, email):
+        """Delete user by email address. Returns True if deleted."""
+        email = email.strip().lower()
+        for key, user in list(self._users.items()):
+            if user.email and user.email.lower() == email:
+                del self._users[key]
+                self._save()
+                return True
+        return False
+
     def filter_by_parent(self, parent_key):
         return [u for u in self._users.values() if u.parent_key == parent_key]
 
