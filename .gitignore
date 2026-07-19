@@ -21,5 +21,10 @@ build/
 .DS_Store
 Thumbs.db
 
-# Data
+# Data — NEVER commit user data
 data/
+*.db
+*.sqlite
+backups/
+*.bak
+/tmp/
