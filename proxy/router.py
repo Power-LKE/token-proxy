@@ -199,8 +199,9 @@ async def register_user(body: dict):
         return JSONResponse(status_code=400, content={"error": "请输入用户名"})
     if len(name) > 50:
         return JSONResponse(status_code=400, content={"error": "用户名过长"})
-    if not email or "@" not in email:
-        return JSONResponse(status_code=400, content={"error": "请输入有效的邮箱地址"})
+    import re
+    if not email or not re.match(r'^[^\s@]+@[^\s@]+\.\w{2,}$', email):
+        return JSONResponse(status_code=400, content={"error": "请输入正确的邮箱地址"})
     user = user_manager.register(name, email, password=password)
     if not user:
         return JSONResponse(status_code=409, content={"error": "用户名或邮箱已被使用"})

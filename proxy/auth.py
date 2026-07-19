@@ -94,7 +94,13 @@ class UserManager:
         return False
 
     def register(self, name, email="", password=""):
+        import re
         email = email.strip().lower()
+
+        # Validate email format
+        if not re.match(r'^[^\s@]+@[^\s@]+\.\w{2,}$', email):
+            return None
+
         for u in self._users.values():
             if u.name == name:
                 return None
