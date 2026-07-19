@@ -47,7 +47,7 @@ def _serve_html(file_name: str) -> Response:
 
 @app.get("/")
 async def root():
-    return _serve_html("index.html")
+    return _serve_html("app.html")
 
 
 @app.get("/dashboard")

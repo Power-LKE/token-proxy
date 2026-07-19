@@ -1,516 +1,316 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>LinkPower 管理后台</title>
+<link rel="stylesheet" href="/static/css/design-system.css">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-body{background:#0f0f1a;color:#e0e0e0;min-height:100vh}
-#loginBg{align-items:center;background:#0f0f1a;display:flex;height:100vh;justify-content:center;left:0;position:fixed;top:0;width:100vw;z-index:999}
-.login-box{background:#1a1a2e;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);padding:36px;text-align:center;width:420px;max-width:90vw}
-.login-box h1{color:#fff;font-size:20px;margin-bottom:4px}
-.login-box p{color:#888;font-size:13px;margin-bottom:20px}
-.login-box input{background:#252540;border:1px solid #333;border-radius:8px;color:#fff;font-size:14px;margin-bottom:12px;outline:none;padding:12px 16px;width:100%}
-.login-box input:focus{border-color:#4f46e5}
-.login-box button{background:#4f46e5;border:none;border-radius:8px;color:#fff;cursor:pointer;font-size:15px;padding:12px;width:100%}
-.login-box button:hover{background:#4338ca}
-.login-box button:disabled{opacity:.5}
-.login-box .login-msg{background:rgba(239,68,68,.15);border:1px solid #ef4444;border-radius:6px;color:#fca5a5;font-size:13px;margin-top:12px;padding:8px;display:none}
-#dash{display:none}
-.sidebar{background:#14142a;border-right:1px solid #1e1e3a;height:100vh;left:0;padding:24px;position:fixed;top:0;width:200px;overflow-y:auto}
-.sidebar h2{color:#fff;font-size:15px;margin-bottom:2px}
-.sidebar .sub{color:#555;font-size:11px;margin-bottom:20px}
-.sidebar a{color:#888;cursor:pointer;display:block;font-size:13px;padding:9px 12px;text-decoration:none;border-radius:6px;margin-bottom:2px}
-.sidebar a:hover,.sidebar a.active{background:#1e1e3a;color:#fff}
-.sidebar .section-title{color:#555;font-size:11px;text-transform:uppercase;padding:16px 12px 6px;letter-spacing:1px}
-.main{margin-left:200px;padding:24px 32px}
-.page{display:none}
-.page.active{display:block}
-.stats{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:24px}
-.stat-card{background:#1a1a2e;border-radius:8px;padding:16px 18px}
-.stat-card .l{color:#888;font-size:11px;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
-.stat-card .v{color:#fff;font-size:22px;font-weight:700}
-.stat-card .s{color:#666;font-size:11px;margin-top:4px}
-.card{background:#1a1a2e;border-radius:8px;margin-bottom:16px;padding:20px}
-.card h3{color:#fff;font-size:14px;margin-bottom:12px;font-weight:600}
-.card p{color:#888;font-size:13px;margin-bottom:12px}
-label{color:#888;display:block;font-size:12px;margin-bottom:4px}
-input{background:#252540;border:1px solid #333;border-radius:6px;color:#fff;font-size:13px;outline:none;padding:10px 12px;width:100%}
-input:focus{border-color:#4f46e5}
-.row{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin-bottom:12px}
-@media(max-width:600px){.row{grid-template-columns:1fr}}
-.btn{background:#252540;border:none;border-radius:6px;color:#c0c0c0;cursor:pointer;font-size:12px;padding:8px 14px;display:inline-block;transition:background .15s}
-.btn:hover{background:#333}
-.btn-primary{background:#4f46e5;color:#fff}
-.btn-primary:hover{background:#4338ca!important}
-.btn-warning{background:#b45309;color:#fff}
-.btn-warning:hover{background:#92400e!important}
-.btn-success{background:#16a34a;color:#fff}
-.btn-success:hover{background:#15803d!important}
-.btn-sm{padding:5px 10px;font-size:11px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-thead th{text-align:left;color:#888;padding:10px 12px;border-bottom:1px solid #333;font-weight:400;white-space:nowrap;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
-tbody td{padding:10px 12px;border-bottom:1px solid #1e1e3a}
-tbody tr:hover{background:#14142a}
-.key-cell{font-family:monospace;font-size:12px;color:#a5b4fc;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
-.key-cell:hover{color:#818cf8}
-.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
-.badge.on{background:rgba(22,163,74,.15);color:#4ade80}
-.badge.off{background:rgba(239,68,68,.15);color:#f87171}
-.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;background:#252540;color:#888}
-.tag-credit{background:rgba(22,163,74,.15);color:#4ade80}
-.tag-usage{background:rgba(239,68,68,.15);color:#f87171}
-.msg{background:rgba(22,163,74,.1);border:1px solid #16a34a;border-radius:6px;color:#86efac;font-size:13px;margin-top:12px;padding:10px 12px;display:none;line-height:1.6}
-.msg.err{background:rgba(239,68,68,.15);border-color:#ef4444;color:#fca5a5}
-.search-bar{margin-bottom:12px;display:flex;gap:8px;align-items:center}
-.search-bar input{max-width:260px}
-.amt-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.amt-btn{background:#252540;border:1px solid #333;border-radius:6px;color:#c0c0c0;cursor:pointer;font-size:13px;padding:8px 18px;transition:all .15s}
-.amt-btn.active,.amt-btn:hover{background:#4f46e5;border-color:#4f46e5;color:#fff}
-/* Modal */
-.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center}
-.modal{background:#1a1a2e;border-radius:12px;padding:24px;max-width:640px;width:90vw;max-height:80vh;overflow-y:auto}
-.modal h2{color:#fff;font-size:16px;margin-bottom:4px}
-.modal .close{float:right;background:none;border:none;color:#888;font-size:22px;cursor:pointer}
-.modal .close:hover{color:#fff}
-.modal .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0}
-.modal .info-item{background:#14142a;padding:10px 14px;border-radius:6px}
-.modal .info-item .l{color:#888;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
-.modal .info-item .v{color:#e0e0e0;font-size:14px;margin-top:2px;word-break:break-all}
-.empty-state{text-align:center;color:#555;padding:30px;font-size:13px}
-.copy-btn{background:#252540;border:none;border-radius:4px;color:#c0c0c0;cursor:pointer;font-size:11px;padding:4px 8px;margin-left:4px}
-.copy-btn:hover{background:#333;color:#fff}
-.copy-btn.copied{background:#16a34a;color:#fff}
+body { background: var(--bg-primary); color: var(--text-primary); }
+#loginScreen { display:flex; align-items:center; justify-content:center; height:100vh; background:var(--bg-secondary); }
+.login-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-2xl); padding:40px 32px; width:400px; max-width:90vw; text-align:center; box-shadow:var(--shadow-lg); }
+.login-card h1 { font-size:20px; margin-bottom:4px; }
+.login-card .sub { font-size:13px; color:var(--text-secondary); margin-bottom:24px; }
+#dash { display:none; }
+.dash-layout { display:flex; height:100vh; }
+.dash-sidebar { width:220px; background:var(--bg-card); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; flex-shrink:0; }
+.dash-sidebar-header { padding:16px; border-bottom:1px solid var(--border-light); }
+.dash-sidebar-body { flex:1; overflow-y:auto; padding:8px; }
+.dash-main { flex:1; overflow-y:auto; padding:24px 28px; }
+.dash-page { display:none; }
+.dash-page.active { display:block; }
+.nav-link { display:flex; align-items:center; gap:8px; padding:9px 12px; border-radius:var(--radius); cursor:pointer; font-size:13px; color:var(--text-secondary); transition:all var(--transition); margin-bottom:1px; }
+.nav-link:hover { background:var(--bg-hover); color:var(--text-primary); }
+.nav-link.active { background:var(--accent-light); color:var(--accent-text); font-weight:500; }
+.nav-section { font-size:11px; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:1px; padding:16px 12px 6px; font-weight:600; }
+.user-row { cursor:pointer; }
+.user-row:hover { background:var(--bg-hover); }
+.user-detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:16px 0; }
+.user-detail-item { background:var(--bg-secondary); padding:10px 14px; border-radius:var(--radius); }
+.user-detail-item .lbl { font-size:11px; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.5px; }
+.user-detail-item .val { font-size:14px; color:var(--text-primary); margin-top:2px; word-break:break-all; }
+@media(max-width:768px) { .dash-main { padding:16px; } .dash-sidebar { width:64px; } .nav-link span { display:none; } }
 </style>
 </head>
 <body>
-<div id="loginBg">
-  <div class="login-box">
+
+<div id="loginScreen">
+  <div class="login-card">
     <h1>LinkPower 管理后台</h1>
-    <p>请输入管理员 API Key 登录</p>
-    <input type="password" id="loginKey" placeholder="粘贴管理员 API Key ...">
-    <button id="loginBtn">登录</button>
-    <div class="login-msg" id="loginMsg"></div>
+    <p class="sub">请输入管理员 API Key</p>
+    <div class="form-group"><input class="form-input" type="password" id="loginKey" placeholder="粘贴管理员 API Key ..."></div>
+    <button class="btn btn-primary w-full" id="loginBtn" onclick="adminLogin()">登录</button>
+    <div class="form-error mt-2 hidden" id="loginError"></div>
   </div>
 </div>
 
 <div id="dash">
-  <div class="sidebar">
-    <h2>LinkPower</h2>
-    <div class="sub">管理后台</div>
-    <a id="navOverview" class="active" onclick="showPage('overview')">概览</a>
-    <div class="section-title">用户</div>
-    <a id="navUsers" onclick="showPage('users')">用户管理</a>
-    <a id="navCreate" onclick="showPage('create')">创建用户</a>
-    <div class="section-title">财务</div>
-    <a id="navRecharge" onclick="showPage('recharge')">充值管理</a>
-    <a id="navTxns" onclick="showPage('txns')">交易记录</a>
-    <a id="navReseller" onclick="showPage('reseller')">代理管理</a>
-  </div>
-
-  <div class="main">
-    <!-- Overview -->
-    <div class="page active" id="pageOverview">
-      <h2 style="font-size:18px;margin-bottom:20px">服务概览</h2>
-      <div class="stats">
-        <div class="stat-card"><div class="l">用户总数</div><div class="v" id="statUsers">-</div><div class="s" id="statActiveUsers"></div></div>
-        <div class="stat-card"><div class="l">总余额</div><div class="v" id="statBalance">-</div><div class="s">所有用户余额总和</div></div>
-        <div class="stat-card"><div class="l">总收入</div><div class="v" id="statRevenue">-</div><div class="s">所有充值总和</div></div>
-        <div class="stat-card"><div class="l">今日消耗</div><div class="v" id="statTodayRev">-</div><div class="s" id="statTodayTokens"></div></div>
-        <div class="stat-card"><div class="l">服务状态</div><div class="v" id="statStatus">-</div><div class="s" id="statAdminKey"></div></div>
+  <div class="dash-layout">
+    <nav class="dash-sidebar">
+      <div class="dash-sidebar-header"><div class="heading-sm">LinkPower</div><div class="text-xs text-muted">管理后台</div></div>
+      <div class="dash-sidebar-body">
+        <div class="nav-link active" data-page="overview" onclick="navTo('overview')"><span>📊</span><span>概览</span></div>
+        <div class="nav-section">用户管理</div>
+        <div class="nav-link" data-page="users" onclick="navTo('users')"><span>👥</span><span>用户管理</span></div>
+        <div class="nav-link" data-page="create" onclick="navTo('create')"><span>➕</span><span>创建用户</span></div>
+        <div class="nav-link" data-page="recharge" onclick="navTo('recharge')"><span>💰</span><span>充值管理</span></div>
+        <div class="nav-section">数据</div>
+        <div class="nav-link" data-page="txns" onclick="navTo('txns')"><span>📋</span><span>交易记录</span></div>
+        <div class="nav-link" data-page="reseller" onclick="navTo('reseller')"><span>🔗</span><span>代理管理</span></div>
       </div>
-      <div class="card">
-        <h3>最近交易</h3>
-        <div id="recentTxns"><div class="empty-state">加载中...</div></div>
-      </div>
-    </div>
-
-    <!-- Users -->
-    <div class="page" id="pageUsers">
-      <h2 style="font-size:18px;margin-bottom:16px">用户管理</h2>
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <h3>用户列表</h3>
-          <span id="userCount" style="color:#888;font-size:12px"></span>
+    </nav>
+    <main class="dash-main">
+      <!-- Overview -->
+      <div class="dash-page active" id="pageOverview">
+        <h2 class="heading-lg mb-6">服务概览</h2>
+        <div class="stat-grid mb-6">
+          <div class="stat-card"><div class="stat-label">用户总数</div><div class="stat-value" id="statUsers">—</div><div class="stat-sub" id="statActiveUsers"></div></div>
+          <div class="stat-card"><div class="stat-label">总余额</div><div class="stat-value" id="statBalance">—</div></div>
+          <div class="stat-card"><div class="stat-label">总收入</div><div class="stat-value" id="statRevenue">—</div></div>
+          <div class="stat-card"><div class="stat-label">今日消耗</div><div class="stat-value" id="statTodayRev">—</div><div class="stat-sub" id="statTodayTokens"></div></div>
         </div>
-        <div class="search-bar">
-          <input type="text" id="searchInput" placeholder="搜索用户名、邮箱或 Key ...">
-          <select id="statusFilter" style="background:#252540;border:1px solid #333;border-radius:6px;color:#fff;font-size:13px;padding:10px 12px;outline:none" onchange="renderUsers()">
-            <option value="">全部状态</option>
-            <option value="active">启用</option>
-            <option value="disabled">禁用</option>
-          </select>
+        <div class="card">
+          <div class="card-header"><h3>最近交易</h3></div>
+          <div id="recentTxns"><div class="empty-state"><div class="empty-state-desc">加载中...</div></div></div>
         </div>
-        <div id="userList"><p style="color:#888;text-align:center;padding:20px">加载中...</p></div>
       </div>
-    </div>
-
-    <!-- Create -->
-    <div class="page" id="pageCreate">
-      <h2 style="font-size:18px;margin-bottom:16px">创建用户</h2>
-      <div class="card">
-        <h3>创建新用户</h3>
-        <p>创建一个新的 API 用户，系统将自动生成 API Key。</p>
-        <div class="row">
-          <div><label>用户名</label><input type="text" id="newName" placeholder="如：客户A"></div>
-          <div><label>邮箱（可选）</label><input type="email" id="newEmail" placeholder="user@example.com"></div>
-          <div><label>初始余额（元）</label><input type="number" id="newBal" value="0" step="0.1"></div>
+      <!-- Users -->
+      <div class="dash-page" id="pageUsers">
+        <h2 class="heading-lg mb-4">用户管理</h2>
+        <div class="card">
+          <div class="flex justify-between items-center mb-4 gap-4">
+            <div class="flex gap-3 items-center flex-1">
+              <input class="form-input" style="max-width:240px" type="text" id="userSearch" placeholder="搜索用户名、邮箱或 Key..." oninput="renderUsers()">
+              <select class="form-select" style="width:auto" id="userStatusFilter" onchange="renderUsers()">
+                <option value="">全部</option><option value="active">启用</option><option value="disabled">禁用</option>
+              </select>
+            </div>
+            <span class="text-xs text-muted" id="userCount"></span>
+          </div>
+          <div class="table-wrap"><table id="userTable"><tbody id="userList"></tbody></table></div>
         </div>
-        <button class="btn btn-success" id="createBtn">创建用户</button>
-        <div class="msg" id="createMsg"></div>
       </div>
-    </div>
-
-    <!-- Recharge -->
-    <div class="page" id="pageRecharge">
-      <h2 style="font-size:18px;margin-bottom:16px">充值管理</h2>
-      <div class="card">
-        <h3>用户充值</h3>
-        <p>输入用户的 API Key 为其增加余额。</p>
-        <div><label>用户 API Key</label><input type="text" id="topKey" placeholder="sk-xxx..."></div>
-        <div style="margin-top:12px"><label>充值金额</label></div>
-        <div class="amt-btns">
-          <button class="amt-btn" onclick="setAmt(10)">10 元</button>
-          <button class="amt-btn" onclick="setAmt(20)">20 元</button>
-          <button class="amt-btn" onclick="setAmt(50)">50 元</button>
-          <button class="amt-btn" onclick="setAmt(100)">100 元</button>
-          <button class="amt-btn" onclick="setAmt(500)">500 元</button>
-          <button class="amt-btn" onclick="setAmt(0)" style="border-color:#4f46e5;color:#4f46e5">自定义</button>
+      <!-- Create -->
+      <div class="dash-page" id="pageCreate">
+        <h2 class="heading-lg mb-4">创建用户</h2>
+        <div class="card" style="max-width:520px">
+          <div class="card-header"><h3>创建新用户</h3></div>
+          <div class="form-row"><div class="form-group"><label class="form-label">用户名</label><input class="form-input" id="newName" placeholder="如：客户A"></div><div class="form-group"><label class="form-label">邮箱（可选）</label><input class="form-input" type="email" id="newEmail" placeholder="user@example.com"></div></div>
+          <div class="form-group"><label class="form-label">初始余额（元）</label><input class="form-input" type="number" id="newBal" value="0" step="0.1"></div>
+          <button class="btn btn-success" id="createUserBtn" onclick="createUser()">创建用户</button>
+          <div class="form-error mt-2 hidden" id="createMsg"></div>
+          <div class="form-hint mt-2 hidden" style="color:var(--success)" id="createOk"></div>
         </div>
-        <div><label>金额（元）</label><input type="number" id="topAmt" value="10" step="1"></div>
-        <div style="margin-top:12px"><button class="btn btn-primary" id="topBtn">确认充值</button></div>
-        <div class="msg" id="topMsg"></div>
       </div>
-    </div>
-
-    <!-- Transactions -->
-    <div class="page" id="pageTxns">
-      <h2 style="font-size:18px;margin-bottom:16px">交易记录</h2>
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <h3>所有交易</h3>
-          <span id="txnCount" style="color:#888;font-size:12px"></span>
+      <!-- Recharge -->
+      <div class="dash-page" id="pageRecharge">
+        <h2 class="heading-lg mb-4">充值管理</h2>
+        <div class="card" style="max-width:520px">
+          <div class="card-header"><h3>用户充值</h3></div>
+          <div class="form-group"><label class="form-label">用户 API Key</label><input class="form-input" id="topKey" placeholder="sk-xxx..."></div>
+          <div class="flex gap-2 flex-wrap mb-4" id="amtBtns">
+            <button class="btn btn-secondary btn-sm" onclick="setAmt(10)">10 元</button>
+            <button class="btn btn-secondary btn-sm" onclick="setAmt(20)">20 元</button>
+            <button class="btn btn-secondary btn-sm" onclick="setAmt(50)">50 元</button>
+            <button class="btn btn-secondary btn-sm" onclick="setAmt(100)">100 元</button>
+            <button class="btn btn-secondary btn-sm" onclick="setAmt(500)">500 元</button>
+          </div>
+          <div class="form-row"><div class="form-group"><label class="form-label">金额（元）</label><input class="form-input" type="number" id="topAmt" value="10" step="1"></div></div>
+          <button class="btn btn-primary" id="topBtn" onclick="doTopUp()">确认充值</button>
+          <div class="form-error mt-2 hidden" id="topErr"></div>
+          <div class="form-hint mt-2 hidden" style="color:var(--success)" id="topOk"></div>
         </div>
-        <div class="search-bar" style="gap:12px">
-          <input type="text" id="txnSearch" placeholder="搜索用户..." style="max-width:200px">
-          <select id="txnTypeFilter" style="background:#252540;border:1px solid #333;border-radius:6px;color:#fff;font-size:13px;padding:10px 12px;outline:none" onchange="renderTxns()">
-            <option value="">全部类型</option>
-            <option value="usage">用量扣费</option>
-            <option value="topup">充值</option>
-            <option value="registration_bonus">注册赠送</option>
-            <option value="manual_create">手动创建</option>
-          </select>
+      </div>
+      <!-- Transactions -->
+      <div class="dash-page" id="pageTxns">
+        <h2 class="heading-lg mb-4">交易记录</h2>
+        <div class="card">
+          <div class="flex justify-between items-center mb-4 gap-4 flex-wrap">
+            <div class="flex gap-3 items-center">
+              <input class="form-input" style="max-width:180px" id="txnSearch" placeholder="搜索用户..." oninput="renderTxns()">
+              <select class="form-select" style="width:auto" id="txnTypeFilter" onchange="renderTxns()">
+                <option value="">全部类型</option><option value="usage">用量扣费</option><option value="topup">充值</option><option value="registration_bonus">注册赠送</option><option value="manual_create">手动创建</option>
+              </select>
+            </div>
+            <span class="text-xs text-muted" id="txnCount"></span>
+          </div>
+          <div class="table-wrap"><table><thead><tr><th>时间</th><th>用户</th><th>类型</th><th>金额</th><th>模型</th><th>Token</th></tr></thead><tbody id="txnList"></tbody></table></div>
         </div>
-        <div id="txnList"><div class="empty-state">加载中...</div></div>
       </div>
-<div class="page" id="pageReseller">
-      <h2 style="font-size:18px;margin-bottom:16px">代理管理</h2>
-      <div class="card">
-        <h3>创建代理</h3>
-        <p>创建一个下级代理账号，对方可以登录 /reseller 管理自己的用户。</p>
-        <div style="margin-bottom:12px"><input type="text" id="resellerName" placeholder="代理名称（如：客户A）"></div>
-        <button class="btn btn-success" id="createResellerBtn">创建代理</button>
-        <div class="msg" id="resellerCreateMsg"></div>
+      <!-- Reseller -->
+      <div class="dash-page" id="pageReseller">
+        <h2 class="heading-lg mb-4">代理管理</h2>
+        <div class="card mb-4" style="max-width:520px">
+          <div class="card-header"><h3>创建代理</h3></div>
+          <div class="form-group"><label class="form-label">代理名称</label><input class="form-input" id="resellerName" placeholder="如：代理A"></div>
+          <button class="btn btn-success" onclick="createReseller()">创建代理</button>
+          <div class="form-error mt-2 hidden" id="resellerMsg"></div>
+          <div class="form-hint mt-2 hidden" style="color:var(--success)" id="resellerOk"></div>
+        </div>
+        <div class="card"><div class="card-header"><h3>代理列表</h3></div><div id="resellerList"></div></div>
       </div>
-      <div class="card">
-        <h3>代理列表</h3>
-        <div id="resellerList"><p style="color:#888;text-align:center;padding:20px">加载中...</p></div>
-      </div>
-    </div>
-    </div>
-  </div>
-
-<!-- User Detail Modal -->
-<div class="modal-overlay" id="userModal" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <button class="close" onclick="closeModal()">&times;</button>
-    <h2 id="modalTitle">用户详情</h2>
-    <div class="info-grid" id="modalInfo"></div>
-    <h3 style="color:#fff;font-size:13px;margin:16px 0 8px">交易记录</h3>
-    <div id="modalTxns"><div class="empty-state">加载中...</div></div>
+    </main>
   </div>
 </div>
 
+<div class="modal-overlay hidden" id="userModal" onclick="if(event.target===this)closeUserModal()">
+  <div class="modal"><div class="modal-header"><h2 id="modalTitle">用户详情</h2><button class="modal-close" onclick="closeUserModal()">&times;</button></div><div id="modalBody"></div></div>
 </div>
+
+<script src="/static/js/utils.js"></script>
+<script src="/static/js/api.js"></script>
 <script>
-var ADMIN_KEY = "", allUsers = [], allTxns = [];
-function $(id){return document.getElementById(id);}
-function api(path, method, body){
-  var o = {headers: {"Authorization": "Bearer "+ADMIN_KEY}};
-  if(method) o.method = method;
-  if(body){o.method="POST";o.body=JSON.stringify(body);o.headers["Content-Type"]="application/json";}
-  return fetch(window.location.origin+path, o).then(function(r){return r.json();});
+let ADMIN_KEY = '';
+let allUsers = [];
+let allTxns = [];
+
+// ── Auth ────────────────────────────────────────────────
+async function adminLogin() {
+  const key = $('loginKey').value.trim();
+  if (!key) { showLoginError('请输入管理员 Key'); return; }
+  ADMIN_KEY = key;
+  const btn = $('loginBtn'); btn.disabled = true; btn.textContent = '验证中...';
+  try {
+    await adminApi.verify();
+    $('loginScreen').style.display = 'none';
+    $('dash').style.display = 'block';
+    loadOverview();
+  } catch(e) { showLoginError(e.message); btn.disabled = false; btn.textContent = '登录'; }
 }
 
-// Login
-$("loginBtn").onclick = function(){
-  var k = $("loginKey").value.trim(), m = $("loginMsg");
-  if(!k){m.textContent="请输入 API Key";m.style.display="block";return;}
-  ADMIN_KEY = k; $("loginBtn").disabled = true; $("loginBtn").textContent = "登录中...";
-  api("/v1/admin/verify", "POST").then(function(d){
-    if(d.status === "ok"){
-      $("loginBg").style.display = "none"; $("dash").style.display = "block";
-      $("statAdminKey").textContent = "Key: " + d.admin_key.substring(0,12) + "...";
-      loadOverview(); loadUsers();
-    } else {
-      m.textContent = d.error || "验证失败"; m.style.display = "block";
-      $("loginBtn").disabled = false; $("loginBtn").textContent = "登录";
-    }
-  }).catch(function(e){
-    m.textContent = "请求失败: " + e.message; m.style.display = "block";
-    $("loginBtn").disabled = false; $("loginBtn").textContent = "登录";
-  });
-};
-$("loginKey").onkeydown = function(e){if(e.key==="Enter")$("loginBtn").click();};
-
-function showPage(n){
-  ["navOverview","navUsers","navCreate","navRecharge","navTxns","navReseller"].forEach(function(i){$(i).classList.remove("active");});
-  $("nav"+n.charAt(0).toUpperCase()+n.slice(1)).classList.add("active");
-  document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
-  $("page"+n.charAt(0).toUpperCase()+n.slice(1)).classList.add("active");
-  if(n==="overview") loadOverview();
-  if(n==="users") loadUsers();
-  if(n==="txns") loadTxns();
-  if(n==="reseller") loadResellers();
+function showLoginError(m) {
+  const el = $('loginError'); el.textContent = m; el.classList.remove('hidden');
 }
 
-// Overview
-function loadOverview(){
-  api("/v1/admin/stats").then(function(d){
-    $("statUsers").textContent = d.total_users;
-    $("statActiveUsers").textContent = (d.active_users || 0) + " 活跃";
-    $("statBalance").textContent = (d.total_balance || 0).toFixed(2) + " 元";
-    $("statRevenue").textContent = "¥" + (d.total_topup || 0).toFixed(2);
-    $("statTodayRev").textContent = "¥" + (d.today_revenue || 0).toFixed(2);
-    $("statTodayTokens").textContent = (d.today_tokens || 0) + " tokens";
-    $("statStatus").textContent = "正常"; $("statStatus").style.color = "#4ade80";
-    if(d.recent_transactions){
-      allTxns = d.recent_transactions;
-      renderRecentTxns();
-    }
-  }).catch(function(e){
-    $("statStatus").textContent = "连接异常"; $("statStatus").style.color = "#f87171";
-  });
+function navTo(page) {
+  document.querySelectorAll('.dash-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const pg = document.getElementById('page' + page.charAt(0).toUpperCase() + page.slice(1));
+  if (pg) pg.classList.add('active');
+  const nl = document.querySelector(`[data-page="${page}"]`);
+  if (nl) nl.classList.add('active');
+
+  if (page === 'overview') loadOverview();
+  else if (page === 'users') loadUsers();
+  else if (page === 'txns') loadTxns();
+  else if (page === 'reseller') loadResellers();
 }
 
-function renderRecentTxns(){
-  var txns = allTxns.slice(0, 20), h = "";
-  if(!txns.length){$("recentTxns").innerHTML='<div class="empty-state">暂无交易记录</div>';return;}
-  h = "<table><thead><tr><th>时间</th><th>用户</th><th>类型</th><th>金额</th><th>说明</th></tr></thead><tbody>";
-  for(var i=0;i<txns.length;i++){
-    var t = txns[i];
-    var tagCls = "tag", typeLabel = t.type;
-    if(t.type === "usage"){tagCls="tag tag-usage";typeLabel="用量扣费";}
-    else if(t.type === "registration_bonus" || t.type === "manual_create" || t.amount > 0){tagCls="tag tag-credit";typeLabel="充值";}
-    var timeStr = (t.time || "").substring(0, 16).replace("T", " ");
-    var detail = t.model || "";
-    if(t.tokens) detail += (detail?" | ":"") + t.tokens + " tokens";
-    h += "<tr><td style='font-size:12px;color:#666'>"+timeStr+"</td><td>"+t.user+"</td><td><span class='"+tagCls+"'>"+typeLabel+"</span></td><td>"+(t.amount > 0 ? "+" : "")+t.amount.toFixed(4)+"</td><td style='color:#666;font-size:12px'>"+detail+"</td></tr>";
-  }
-  h += "</tbody></table>";
-  $("recentTxns").innerHTML = h;
+// ── Data Loading ────────────────────────────────────────
+async function loadOverview() {
+  try {
+    const d = await adminApi.getStats();
+    $('statUsers').textContent = d.total_users || 0;
+    $('statActiveUsers').textContent = `活跃: ${d.active_users || 0}`;
+    $('statBalance').textContent = formatBalance(d.total_balance);
+    $('statRevenue').textContent = formatBalance(d.total_topup);
+    $('statTodayRev').textContent = formatBalance(d.today_revenue);
+    $('statTodayTokens').textContent = formatTokens(d.today_tokens);
+    renderRecentTxns((d.recent_transactions || []).slice(0, 20));
+  } catch(e) { showToast('加载概览失败: ' + e.message, 'error'); }
 }
 
-// Users
-function loadUsers(){
-  api("/v1/admin/users").then(function(d){
-    if(d.users){allUsers = d.users; renderUsers();}
-  }).catch(function(){});
+function renderRecentTxns(txns) {
+  if (!txns.length) { $('recentTxns').innerHTML = '<div class="empty-state"><div class="empty-state-desc">暂无交易</div></div>'; return; }
+  $('recentTxns').innerHTML = `<div class="table-wrap"><table><thead><tr><th>时间</th><th>用户</th><th>类型</th><th>金额</th><th>Token</th></tr></thead><tbody>${txns.map(t => `<tr><td>${formatDate(t.time)}</td><td>${escHtml(t.user||'')}</td><td><span class="badge ${t.type==='usage'?'badge-danger':'badge-success'}">${escHtml(t.type)}</span></td><td>${formatBalance(t.amount)}</td><td>${formatTokens(t.tokens)}</td></tr>`).join('')}</tbody></table></div>`;
 }
 
-function renderUsers(){
-  var q = ($("searchInput").value || "").toLowerCase();
-  var sf = $("statusFilter").value;
-  var f = allUsers.filter(function(u){
-    if(q && u.name.toLowerCase().indexOf(q)===-1 && u.api_key.toLowerCase().indexOf(q)===-1 && (u.email||"").toLowerCase().indexOf(q)===-1) return false;
-    if(sf==="active" && !u.is_active) return false;
-    if(sf==="disabled" && u.is_active) return false;
-    return true;
-  });
-  $("userCount").textContent = f.length + " / " + allUsers.length + " 用户";
-  if(!f.length){$("userList").innerHTML='<div class="empty-state">暂无符合条件的用户</div>';return;}
-  var h = "<table><thead><tr><th>用户名</th><th>邮箱</th><th>API Key</th><th>余额</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead><tbody>";
-  for(var i=0;i<f.length;i++){
-    var u = f[i];
-    var badge = u.is_active ? '<span class="badge on">启用</span>' : '<span class="badge off">禁用</span>';
-    h += "<tr onclick='showUserDetail(\""+u.api_key+"\")' style='cursor:pointer'>";
-    h += "<td><strong>"+u.name+"</strong></td>";
-    h += "<td style='color:#888;font-size:12px'>"+(u.email||"-")+"</td>";
-    h += '<td class="key-cell" onclick="event.stopPropagation();copyKey(\''+u.api_key+'\')">'+u.api_key.substring(0,16)+'... <span class="copy-btn" onclick="event.stopPropagation();copyKey(\''+u.api_key+'\')">复制</span></td>';
-    h += "<td>"+u.balance.toFixed(2)+" 元</td>";
-    h += "<td>"+badge+"</td>";
-    h += '<td style="font-size:12px;color:#666">'+(u.created_at||"-").substring(0,10)+"</td>";
-    var tt = u.is_active ? "禁用" : "启用"; var tc = u.is_active ? "btn-warning" : "btn-success";
-    h += '<td><button class="btn '+tc+' btn-sm" onclick="event.stopPropagation();togUser(\''+u.api_key+'\')">'+tt+'</button> <button class="btn btn-sm" style="background:#dc2626;color:#fff" onclick="event.stopPropagation();delUser(\''+u.api_key+'\')">删除</button></td>';
-    h += "</tr>";
-  }
-  h += "</tbody></table>";
-  $("userList").innerHTML = h;
+async function loadUsers() {
+  try {
+    const d = await adminApi.getUsers();
+    allUsers = d.users || [];
+    $('userCount').textContent = `共 ${allUsers.length} 个用户`;
+    renderUsers();
+  } catch(e) { showToast('加载用户失败: '+e.message, 'error'); }
 }
 
-$("searchInput").onkeyup = function(){renderUsers();};
-
-function togUser(k){
-  api("/v1/admin/users/toggle","POST",{api_key:k}).then(function(d){if(d.name)loadUsers();}).catch(function(){});
+function renderUsers() {
+  const q = ($('userSearch')?.value || '').toLowerCase();
+  const status = $('userStatusFilter')?.value || '';
+  let users = allUsers;
+  if (q) users = users.filter(u => (u.name||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q) || (u.api_key||'').toLowerCase().includes(q));
+  if (status) users = users.filter(u => status === 'active' ? u.is_active : !u.is_active);
+  const h = '<thead><tr><th>用户名</th><th>API Key</th><th>余额</th><th>状态</th><th>注册时间</th><th>操作</th></tr></thead>';
+  const b = users.map(u => `<tr class="user-row"><td onclick="showUserDetail('${escHtml(u.api_key)}')" style="cursor:pointer;color:var(--accent-text)">${escHtml(u.name)}</td><td class="text-mono" style="max-width:160px" onclick="copyToClipboard('${escHtml(u.api_key)}').then(()=>showToast('已复制','success'))" title="点击复制">${shortKey(u.api_key,14)}</td><td>${formatBalance(u.balance)}</td><td><span class="badge ${u.is_active?'badge-success':'badge-danger'}">${u.is_active?'启用':'禁用'}</span></td><td>${formatDate(u.created_at)}</td><td class="flex gap-2"><button class="btn btn-sm ${u.is_active?'btn-secondary':'btn-success'}" onclick="event.stopPropagation();togUser('${escHtml(u.api_key)}')">${u.is_active?'禁用':'启用'}</button><button class="btn btn-sm btn-danger" onclick="event.stopPropagation();delUser('${escHtml(u.api_key)}')">删除</button></td></tr>`).join('');
+  $('userList').innerHTML = h + b;
 }
 
-function delUser(k){
-  if(!confirm("确定要删除此用户吗？此操作不可恢复。")) return;
-  api("/v1/admin/users/delete","POST",{api_key:k}).then(function(d){
-    if(d.status==="ok"){loadUsers();loadOverview();}
-    else{alert(d.error||"删除失败");}
-  }).catch(function(){alert("请求失败");});
+async function showUserDetail(apiKey) {
+  const u = allUsers.find(x => x.api_key === apiKey);
+  if (!u) return;
+  let txnHtml = '<div class="empty-state"><div class="empty-state-desc">加载中...</div></div>';
+  $('modalTitle').textContent = u.name;
+  $('modalBody').innerHTML = `<div class="user-detail-grid"><div class="user-detail-item"><div class="lbl">用户名</div><div class="val">${escHtml(u.name)}</div></div><div class="user-detail-item"><div class="lbl">邮箱</div><div class="val">${escHtml(u.email||'—')}</div></div><div class="user-detail-item"><div class="lbl">余额</div><div class="val">${formatBalance(u.balance)}</div></div><div class="user-detail-item"><div class="lbl">状态</div><div class="val"><span class="badge ${u.is_active?'badge-success':'badge-danger'}">${u.is_active?'启用':'禁用'}</span></div></div><div class="user-detail-item" style="grid-column:span 2"><div class="lbl">API Key</div><div class="val text-mono" onclick="copyToClipboard('${escHtml(u.api_key)}').then(()=>showToast('已复制','success'))">${escHtml(u.api_key)}</div></div></div><h4 class="heading-sm mb-2">交易记录</h4><div id="modalTxns">${txnHtml}</div>`;
+  $('userModal').classList.remove('hidden');
+  try {
+    const resp = await fetch(origin()+'/v1/user/query', {method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+ADMIN_KEY},body:JSON.stringify({})}); // api_key not needed, auth header suffices
+    const d = await resp.json();
+    const txnBody = (d.transactions||[]).slice(0,30);
+    if (!txnBody.length) { $('modalTxns').innerHTML = '<div class="empty-state"><div class="empty-state-desc">暂无交易记录</div></div>'; return; }
+    $('modalTxns').innerHTML = `<div class="table-wrap"><table><thead><tr><th>时间</th><th>类型</th><th>金额</th><th>模型</th><th>Token</th></tr></thead><tbody>${txnBody.map(t=>`<tr><td>${formatDate(t.time)}</td><td><span class="badge ${t.type==='usage'?'badge-danger':'badge-success'}">${escHtml(t.type)}</span></td><td>${formatBalance(t.amount)}</td><td>${escHtml(t.model||'')}</td><td>${formatTokens(t.tokens)}</td></tr>`).join('')}</tbody></table></div>`;
+  } catch(e) { $('modalTxns').innerHTML = `<div class="empty-state"><div class="empty-state-desc">加载失败: ${escHtml(e.message)}</div></div>`; }
+}
+function closeUserModal() { $('userModal').classList.add('hidden'); }
+
+async function createUser() {
+  const name=$('newName').value.trim(), email=$('newEmail').value.trim(), bal=parseFloat($('newBal').value)||0;
+  if(!name){$('createMsg').textContent='请输入用户名';$('createMsg').classList.remove('hidden');return;}
+  try {
+    const d = await adminApi.createUser(name,email,bal);
+    $('createMsg').classList.add('hidden');
+    $('createOk').innerHTML=`用户 ${escHtml(d.name)} 创建成功！API Key: <code>${escHtml(d.api_key)}</code> <button class="btn btn-sm btn-ghost" onclick="copyToClipboard('${escHtml(d.api_key)}').then(()=>showToast('已复制','success'))">复制</button>`;
+    $('createOk').classList.remove('hidden');
+    $('newName').value='';$('newEmail').value='';$('newBal').value='0';
+  } catch(e) { $('createMsg').textContent=e.message; $('createMsg').classList.remove('hidden'); $('createOk').classList.add('hidden'); }
 }
 
-function copyKey(k){
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(k).then(function(){
-      alert("API Key 已复制到剪贴板");
-    }).catch(function(){});
-  }
+async function doTopUp() {
+  const key=$('topKey').value.trim(), amt=parseFloat($('topAmt').value);
+  if(!key){$('topErr').textContent='请输入用户 Key';$('topErr').classList.remove('hidden');return;}
+  if(!amt||amt<=0){$('topErr').textContent='金额必须大于 0';$('topErr').classList.remove('hidden');return;}
+  try {
+    const d = await adminApi.topUp(key,amt);
+    $('topErr').classList.add('hidden');
+    $('topOk').textContent=`充值成功！${escHtml(d.name)} 余额: ${formatBalance(d.balance)}`;
+    $('topOk').classList.remove('hidden');
+  } catch(e) { $('topErr').textContent=e.message; $('topErr').classList.remove('hidden'); $('topOk').classList.add('hidden'); }
 }
 
-// User detail modal
-function showUserDetail(apiKey){
-  var u = null;
-  for(var i=0;i<allUsers.length;i++){if(allUsers[i].api_key===apiKey){u=allUsers[i];break;}}
-  if(!u) return;
-  $("modalTitle").textContent = "用户详情 - " + u.name;
-  $("modalInfo").innerHTML = '<div class="info-item"><div class="l">用户名</div><div class="v">'+u.name+'</div></div><div class="info-item"><div class="l">邮箱</div><div class="v">'+(u.email||"-")+'</div></div><div class="info-item"><div class="l">余额</div><div class="v">'+u.balance.toFixed(4)+' 元</div></div><div class="info-item"><div class="l">API Key</div><div class="v" style="font-size:12px">'+u.api_key+' <button class="copy-btn" onclick="copyKey(\''+u.api_key+'\')">复制</button></div></div><div class="info-item"><div class="l">状态</div><div class="v">'+(u.is_active?"启用":"禁用")+'</div></div><div class="info-item"><div class="l">创建时间</div><div class="v">'+(u.created_at||"-")+'</div></div>';
-  $("modalTxns").innerHTML = '<div class="empty-state">加载中...</div>';
-  $("userModal").style.display = "flex";
-  // Load user transactions
-  api("/v1/user/query", "POST", {api_key: apiKey}).then(function(d){
-    if(d.transactions && d.transactions.length){
-      var h = "<table><thead><tr><th>时间</th><th>类型</th><th>金额</th><th>余额</th><th>模型</th><th>Tokens</th></tr></thead><tbody>";
-      for(var i=0;i<d.transactions.length;i++){
-        var tx = d.transactions[i];
-        var ttype = tx.type || "";
-        var tagCls = ttype === "usage" ? "tag-usage" : "tag-credit";
-        var label = ttype === "usage" ? "扣费" : "充值";
-        var timeStr = (tx.time||"").substring(0, 16).replace("T"," ");
-        h += "<tr><td style='font-size:12px;color:#666'>"+timeStr+"</td>";
-        h += '<td><span class="tag '+tagCls+'">'+label+'</span></td>';
-        h += "<td>"+(tx.amount > 0 ? "+" : "")+tx.amount.toFixed(4)+"</td>";
-        h += "<td>"+(tx.balance_after||0).toFixed(4)+"</td>";
-        h += "<td style='color:#888;font-size:12px'>"+(tx.model||"-")+"</td>";
-        h += "<td style='color:#888;font-size:12px'>"+(tx.tokens||"-")+"</td></tr>";
-      }
-      h += "</tbody></table>";
-      $("modalTxns").innerHTML = h;
-    } else {
-      $("modalTxns").innerHTML = '<div class="empty-state">暂无交易记录</div>';
-    }
-  }).catch(function(){
-    $("modalTxns").innerHTML = '<div class="empty-state">加载失败</div>';
-  });
+function setAmt(v) {
+  $('topAmt').value=v||'';
+  document.querySelectorAll('#amtBtns .btn').forEach(b=>b.classList.remove('btn-primary'));
+  $('topAmt').focus();
 }
 
-function closeModal(){$("userModal").style.display="none";}
+async function togUser(k) { try { await adminApi.toggleUser(k); loadUsers(); showToast('状态已切换','success'); } catch(e) { showToast(e.message,'error'); } }
+async function delUser(k) { if(!confirm('确定删除该用户？'))return; try { await adminApi.deleteUser(k); loadUsers(); showToast('已删除','success'); } catch(e) { showToast(e.message,'error'); } }
 
-// Create user
-document.getElementById("createResellerBtn").onclick=function(){
-  var n=document.getElementById("resellerName").value.trim(),m=document.getElementById("resellerCreateMsg");
-  if(!n){m.textContent="请输入代理名称";m.className="msg err";m.style.display="block";return;}
-  fetch(window.location.origin+"/v1/admin/create_reseller",{method:"POST",headers:{"Authorization":"Bearer "+ADMIN_KEY,"Content-Type":"application/json"},body:JSON.stringify({name:n})}).then(function(r){return r.json();}).then(function(d){
-    if(d.api_key){m.innerHTML="已创建代理 <b>"+d.name+"</b><br>API Key: <code style='color:#a5b4fc'>"+d.api_key+"</code><br>请将此 Key 发给对方，对方登录 /reseller 管理用户。";m.className="msg";m.style.display="block";document.getElementById("resellerName").value="";loadResellers();}
-    else{m.textContent=d.error||"创建失败";m.className="msg err";m.style.display="block";}
-  }).catch(function(e){m.textContent="请求失败:"+e.message;m.className="msg err";m.style.display="block";});
-};
-
-
-$("createBtn").onclick = function(){
-  var n = $("newName").value.trim(), e = $("newEmail").value.trim().toLowerCase();
-  var b = parseFloat($("newBal").value) || 0;
-  var m = $("createMsg");
-  if(!n){m.textContent="请输入用户名";m.className="msg err";m.style.display="block";return;}
-  api("/v1/admin/users","POST",{name:n,email:e,balance:b}).then(function(d){
-    if(d.api_key){
-      m.innerHTML = "已创建用户 <b>"+d.name+"</b>"+(d.email?" (<b>"+d.email+"</b>)":"")+"，初始余额 "+d.balance.toFixed(2)+" 元<br>API Key: <code style='color:#a5b4fc'>"+d.api_key+"</code><br><button class='copy-btn' onclick='navigator.clipboard.writeText(\""+d.api_key+"\");this.textContent=\"已复制\"'>复制 API Key</button>";
-      m.className = "msg"; m.style.display = "block";
-      $("newName").value = ""; loadOverview(); loadUsers();
-    } else {
-      m.textContent = d.error || "创建失败"; m.className = "msg err"; m.style.display = "block";
-    }
-  }).catch(function(e){m.textContent="请求失败: "+e.message;m.className="msg err";m.style.display="block";});
-};
-
-// Recharge
-function setAmt(val){
-  document.querySelectorAll(".amt-btn").forEach(function(b){b.classList.remove("active");});
-  if(val > 0){
-    $("topAmt").value = val;
-    event.target.classList.add("active");
-  } else {
-    $("topAmt").value = "";
-    $("topAmt").focus();
-  }
+async function loadTxns() {
+  try { const d=await adminApi.getStats(); allTxns=(d.recent_transactions||[]).slice(0,200); renderTxns(); }
+  catch(e) { showToast('加载交易失败: '+e.message,'error'); }
+}
+function renderTxns() {
+  const q=($('txnSearch')?.value||'').toLowerCase(); const type=$('txnTypeFilter')?.value||'';
+  let t=allTxns;
+  if(q) t=t.filter(x=>(x.user||'').toLowerCase().includes(q));
+  if(type) t=t.filter(x=>x.type===type);
+  $('txnCount').textContent=`共 ${t.length} 条`;
+  $('txnList').innerHTML=t.map(tx=>`<tr><td>${formatDate(tx.time)}</td><td>${escHtml(tx.user||'')}</td><td><span class="badge ${tx.type==='usage'?'badge-danger':'badge-success'}">${escHtml(tx.type)}</span></td><td>${formatBalance(tx.amount)}</td><td>${escHtml(tx.model||'')}</td><td>${formatTokens(tx.tokens)}</td></tr>`).join('');
 }
 
-$("topBtn").onclick = function(){
-  var k = $("topKey").value.trim(), a = parseFloat($("topAmt").value) || 0, m = $("topMsg");
-  if(!k){m.textContent="请输入用户 API Key";m.className="msg err";m.style.display="block";return;}
-  if(a<=0){m.textContent="充值金额必须大于 0";m.className="msg err";m.style.display="block";return;}
-  api("/v1/admin/users/topup","POST",{api_key:k,amount:a}).then(function(d){
-    if(d.balance!==undefined){
-      m.innerHTML = "已为 <b>"+d.name+"</b> 充值 <b>"+a.toFixed(2)+"</b> 元，当前余额 <b>"+d.balance.toFixed(2)+"</b> 元";
-      m.className = "msg"; m.style.display = "block";
-      $("topKey").value = ""; loadOverview(); loadUsers();
-    } else {
-      m.textContent = d.error || "充值失败"; m.className = "msg err"; m.style.display = "block";
-    }
-  }).catch(function(e){m.textContent="请求失败: "+e.message;m.className="msg err";m.style.display="block";});
-};
-
-// Transactions
-function renderResellers(resellers){
-  if(!resellers.length){document.getElementById("resellerList").innerHTML='<p style="color:#888;text-align:center;padding:20px">暂无代理</p>';return;}
-  var h="<table><tr><th>名称</th><th>API Key</th><th>用户数</th><th>用户总余额</th><th>创建时间</th></tr>";
-  for(var i=0;i<resellers.length;i++){var r=resellers[i];
-    h+="<tr><td>"+r.name+"</td><td class='key-cell'>"+r.api_key.substring(0,20)+"...</td><td>"+r.user_count+"</td><td>"+r.total_balance.toFixed(2)+" 元</td><td style='font-size:12px;color:#666'>"+(r.created_at||"-").substring(0,10)+"</td></tr>";}
-  h+="</table>";document.getElementById("resellerList").innerHTML=h;
+async function loadResellers() {
+  try {
+    const d=await adminApi.getResellers(); const r=d.resellers||[];
+    if(!r.length) { $('resellerList').innerHTML='<div class="empty-state"><div class="empty-state-desc">暂无代理</div></div>'; return; }
+    $('resellerList').innerHTML=`<div class="table-wrap"><table><thead><tr><th>名称</th><th>API Key</th><th>子用户数</th><th>总余额</th><th>创建时间</th></tr></thead><tbody>${r.map(rr=>`<tr><td>${escHtml(rr.name)}</td><td class="text-mono">${shortKey(rr.api_key,16)}</td><td>${rr.user_count}</td><td>${formatBalance(rr.total_balance)}</td><td>${formatDate(rr.created_at)}</td></tr>`).join('')}</tbody></table></div>`;
+  } catch(e) { showToast('加载代理列表失败: '+e.message,'error'); }
 }
 
-function loadResellers(){
-  api("/v1/admin/resellers").then(function(d){
-    if(d.resellers){renderResellers(d.resellers);}
-  }).catch(function(){});
+async function createReseller() {
+  const name=$('resellerName').value.trim(); if(!name){$('resellerMsg').textContent='请输入代理名称';$('resellerMsg').classList.remove('hidden');return;}
+  try{const d=await adminApi.createReseller(name);$('resellerMsg').classList.add('hidden');$('resellerOk').innerHTML=`代理创建成功！Key: <code>${escHtml(d.api_key)}</code>`;$('resellerOk').classList.remove('hidden');$('resellerName').value='';loadResellers();}
+  catch(e){$('resellerMsg').textContent=e.message;$('resellerMsg').classList.remove('hidden');$('resellerOk').classList.add('hidden');}
 }
-
-function loadTxns(){
-  api("/v1/admin/stats").then(function(d){
-    if(d.recent_transactions){allTxns = d.recent_transactions; renderTxns();}
-  }).catch(function(){});
-}
-
-function renderTxns(){
-  var q = ($("txnSearch").value || "").toLowerCase();
-  var tf = $("txnTypeFilter").value;
-  var f = allTxns.filter(function(t){
-    if(q && t.user.toLowerCase().indexOf(q)===-1) return false;
-    if(tf && t.type !== tf) return false;
-    return true;
-  });
-  $("txnCount").textContent = "共 " + f.length + " 条记录";
-  if(!f.length){$("txnList").innerHTML='<div class="empty-state">暂无匹配的交易记录</div>';return;}
-  var h = "<table><thead><tr><th>时间</th><th>用户</th><th>类型</th><th>金额</th><th>模型</th><th>Tokens</th></tr></thead><tbody>";
-  for(var i=0;i<f.length;i++){
-    var t = f[i];
-    var tagCls = "tag", typeLabel = t.type;
-    if(t.type === "usage"){tagCls="tag tag-usage";typeLabel="用量扣费";}
-    else if(t.type === "registration_bonus"){tagCls="tag tag-credit";typeLabel="注册赠送";}
-    else if(t.type === "manual_create"){tagCls="tag tag-credit";typeLabel="创建赠送";}
-    else if(t.amount > 0){tagCls="tag tag-credit";typeLabel="充值";}
-    var timeStr = (t.time || "").substring(0, 16).replace("T", " ");
-    h += "<tr><td style='font-size:12px;color:#666'>"+timeStr+"</td><td>"+t.user+"</td><td><span class='"+tagCls+"'>"+typeLabel+"</span></td><td>"+(t.amount > 0 ? "+" : "")+t.amount.toFixed(4)+"</td><td style='color:#888;font-size:12px'>"+(t.model||"-")+"</td><td style='color:#888;font-size:12px'>"+(t.tokens||"-")+"</td></tr>";
-  }
-  h += "</tbody></table>";
-  $("txnList").innerHTML = h;
-}
-
-$("txnSearch").onkeyup = function(){renderTxns();};
 </script>
-</div>
 </body>
 </html>
