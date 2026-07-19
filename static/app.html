@@ -337,7 +337,7 @@ async function doLogin(){
 }
 async function doRegister(){
   const n=$('regName').value.trim(),e=$('regEmail').value.trim(),p=$('regPassword').value;
-  if(!n){am('reg','请输入用户名');return}
+  if(!n||n.length<1){am('reg','用户名至少 1 个字符');return}
   if(!e||!isValidEmail(e)){am('reg','请输入正确的邮箱地址');return}
   if(!p||p.length<6){am('reg','密码至少 6 位');return}
   const b=$('regBtn');b.disabled=true;b.textContent='注册中...';
