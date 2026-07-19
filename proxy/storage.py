@@ -39,60 +39,43 @@ class DataStore:
 
 
 class FileDataStore(DataStore):
+    """Store data as a local JSON file with memory fallback for Render restarts."""
 
-    """Store data as a local JSON file."""
-
-
+    _memory_fallback: Dict[str, bytes] = {}  # class-level, survives within same process
 
     def __init__(self, path: str):
-
         self.path = path
 
-
-
     def load(self) -> Optional[bytes]:
-
+        # Try memory fallback first (survives file loss on Render restart)
+        cached = self._memory_fallback.get(self.path)
+        if cached:
+            print(f"[Storage] Using memory cache ({len(cached)} bytes)")
         try:
-
             data_dir = os.path.dirname(self.path)
-
             if data_dir:
-
                 os.makedirs(data_dir, exist_ok=True)
-
             with open(self.path, "r", encoding="utf-8") as f:
-
-                return f.read().encode("utf-8")
-
+                raw = f.read().encode("utf-8")
+                self._memory_fallback[self.path] = raw  # refresh cache
+                return raw
         except (FileNotFoundError, json.JSONDecodeError):
-
-            return None
-
+            return cached  # return cached data if file is gone
         except Exception:
-
-            return None
-
-
+            return cached
+        return cached
 
     def save(self, data: bytes) -> bool:
-
+        self._memory_fallback[self.path] = data  # always cache in memory
         try:
-
             data_dir = os.path.dirname(self.path)
-
             if data_dir:
-
                 os.makedirs(data_dir, exist_ok=True)
-
             with open(self.path, "w", encoding="utf-8") as f:
-
                 f.write(data.decode("utf-8"))
-
             return True
-
         except Exception:
-
-            return False
+            return False  # memory cache still holds the data
 
 
 
@@ -216,8 +199,15 @@ def create_store() -> DataStore:
         supabase_url = os.environ.get("SUPABASE_URL", _SU).strip()
         supabase_key = os.environ.get("SUPABASE_KEY", _SK).strip()
         if supabase_url and supabase_key:
-            print("[Storage] Using Supabase backend")
-            return SupabaseDataStore(supabase_url, supabase_key, timeout=5)
+            try:
+                # Quick connectivity test
+                import httpx
+                test_resp = httpx.get(f"{supabase_url.rstrip('/')}/rest/v1/", headers={"apikey": supabase_key}, timeout=3)
+                if test_resp.status_code < 500:
+                    print("[Storage] Using Supabase backend")
+                    return SupabaseDataStore(supabase_url, supabase_key, timeout=5)
+            except Exception as e:
+                print(f"[Storage] Supabase unreachable ({e}), falling back to file")
     
     print("[Storage] Using file backend:" + " " + USER_DATA_PATH)
     os.makedirs(os.path.dirname(USER_DATA_PATH), exist_ok=True)
