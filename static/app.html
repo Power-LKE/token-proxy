@@ -346,7 +346,7 @@ async function doRegister(){
 }
 function am(f,m){const el=$(f+'Msg');el.textContent=m;el.className='auth-msg err';setTimeout(()=>el.className='auth-msg',4000)}
 function setAuth(k,n){KEY=k;NAME=n;localStorage.setItem(P+'key',k);localStorage.setItem(P+'name',n);$('sidebarUser').textContent=n;$('logoutBtn').style.display='';renderConvs()}
-function doLogout(){KEY='';NAME='';CUR_CONV=null;CONVS=[];localStorage.removeItem(P+'key');localStorage.removeItem(P+'name');localStorage.removeItem(P+'convs');$('sidebarUser').textContent='未登录';$('logoutBtn').style.display='none';$('chatScroll').innerHTML='';$('convList').innerHTML='<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px">暂无对话</div>';$('authOverlay').classList.remove('hide');$('balText').textContent='—'}
+function doLogout(){KEY='';NAME='';CUR_CONV=null;CONVS=[];localStorage.removeItem('lp4_key');localStorage.removeItem('lp4_name');localStorage.removeItem('lp4_convs');localStorage.removeItem('lp3_key');localStorage.removeItem('lp3_name');localStorage.removeItem('lp3_msgs');localStorage.removeItem('lp3_convs');$('sidebarUser').textContent='未登录';$('logoutBtn').style.display='none';$('chatScroll').innerHTML='';$('convList').innerHTML='<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px">暂无对话</div>';$('authOverlay').classList.remove('hide');$('balText').textContent='—'}
 
 // ── Models ────────────────────────────────────────
 async function refreshModels(){
